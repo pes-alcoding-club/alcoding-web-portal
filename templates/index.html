@@ -1,0 +1,51 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Analysis Project</title>
+</head>
+<body>
+	<div class="main">
+            <h1> ALCODING </h1>
+            <h3>Sign Up</h3>
+    </div>
+
+    <div>
+        <form method="post">
+            {% csrf_token %}
+
+            <div>
+                <label for="name">Name: </label>
+                <input id="name" type="text" name="name" value={{ name }}>
+            </div>
+
+            <div>
+                <label for="email">Email: </label>
+                <input id="email" type="text" name="email" value={{ email }}>
+            </div>
+
+            <div>
+                <label for="phone">Phone: </label>
+                <input id="phone" type="text" name="phone" value={{ phone }}>
+            </div>
+
+            <div>
+                <label for="dob">DOB: </label>
+                <input id="dob" type="date" name="dob" value={{ dob }}>
+            </div>
+
+            <div>
+                <label for="password">Password: </label>
+                <input id="password" type="password" name="password" value={{ password }}>
+            </div>
+                <input type="submit" value="Sign Up">
+        </form>
+
+
+    </div><br><br>
+
+{#    <div><h3>Already a user?</h3><a href="login/">Login</a> </div>#}
+</body>
+</html>
