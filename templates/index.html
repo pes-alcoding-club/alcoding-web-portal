@@ -5,30 +5,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Data Analysis Project</title>
+     <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
 </head>
 <body>
 	<div class="main">
-            <h1> ALCODING </h1>
-            <h3>Sign Up</h3>
+            <h1 class="center-align blue lighten-3"> ALCODING </h1>
     </div>
 
+    <div class="container">
     <div>
+        <h4>Sign Up</h4>
         <form method="post">
+
             {% csrf_token %}
 
             <div>
                 <label for="name">Name: </label>
-                <input id="name" type="text" name="name" value={{ name }}>
+                <input id="name" type="text" name="name" placeholder = "Enter your name" value={{ name }} >
             </div>
 
             <div>
                 <label for="email">Email: </label>
-                <input id="email" type="text" name="email" value={{ email }}>
+                <input id="email" type="text" placeholder = "Enter your email id" name="email" value={{ email }}>
             </div>
 
             <div>
                 <label for="phone">Phone: </label>
-                <input id="phone" type="text" name="phone" value={{ phone }}>
+                <input id="phone" type="tel" placeholder = "Enter your phone number" name="phone" value={{ phone }}>
             </div>
 
             <div>
@@ -47,5 +51,6 @@
     </div><br><br>
 
 {#    <div><h3>Already a user?</h3><a href="login/">Login</a> </div>#}
+    </div>
 </body>
 </html>
