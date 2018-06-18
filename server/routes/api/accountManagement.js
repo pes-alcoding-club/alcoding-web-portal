@@ -6,6 +6,8 @@ module.exports = (app) => {
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
     var password = req.body.password;
+    console.log(firstName);
+    console.log(lastName);
     var email = req.body.email.toLowerCase().trim();
 
     if (!firstName) {
@@ -72,6 +74,8 @@ module.exports = (app) => {
 
     app.post('/api/account/signin', function (req, res) {
       var password = req.body.password;
+      console.log(firstName);
+      console.log(lastName);
       var email = req.body.email.toLowerCase().trim();
 
       if (!email) {
