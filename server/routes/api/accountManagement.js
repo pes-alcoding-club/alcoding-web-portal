@@ -11,19 +11,19 @@ module.exports = (app) => {
     var email = req.body.email.toLowerCase().trim();
 
     if (!firstName) {
-      return res.send({
+      return res.status(422).send({
         success: false,
         message: 'Error: First name cannot be blank.'
       });
     }
     if (!email) {
-      return res.send({
+      return res.status(422).send({
         success: false,
         message: 'Error: Email cannot be blank.'
       });
     }
     if (!password) {
-      return res.send({
+      return res.status(422).send({
         success: false,
         message: 'Error: Password cannot be blank.'
       });
@@ -36,12 +36,12 @@ module.exports = (app) => {
       email: email
     }, (err, previousUsers) => {
       if (err) {
-        return res.send({
+        return res.status(500).send({
           success: false,
           message: 'Error: Server find error'
         });
       } else if (previousUsers.length > 0) {
-        return res.send({
+        return res.status(409).send({
           success: false,
           message: 'Error: Account already exists.'
         });
@@ -57,13 +57,13 @@ module.exports = (app) => {
 
       newUser.save((err, user) => {
         if (err) {
-          return res.send({
+          return res.status(500).send({
             success: false,
             message: 'Error: Server error'
           });
         }
         console.log(newUser._id + " Added to DB.")
-        return res.send({
+        return res.status(200).send({
           success: true,
           message: 'Signed up'
         });
@@ -79,13 +79,13 @@ module.exports = (app) => {
       var email = req.body.email.toLowerCase().trim();
 
       if (!email) {
-        return res.send({
+        return res.status(422).send({
           success: false,
           message: 'Error: Email cannot be blank.'
         });
       }
       if (!password) {
-        return res.send({
+        return res.status(422).send({
           success: false,
           message: 'Error: Password cannot be blank.'
         });
@@ -96,13 +96,13 @@ module.exports = (app) => {
       }, (err, users) => {
         if (err) {
           console.log('err 2:', err);
-          return res.send({
+          return res.status(500).send({
             success: false,
             message: 'Error: Server Error.'
           });
         }
         if (users.length != 1) {
-          return res.send({
+          return res.status(400).send({
             success: false,
             message: 'Error: Invalid'
           });
@@ -110,7 +110,7 @@ module.exports = (app) => {
 
         const user = users[0];
         if (!user.checkPassword(password)) {
-          return res.send({
+          return res.status(400).send({
             success: false,
             message: 'Error: Invalid credentials.'
           });
@@ -124,13 +124,13 @@ module.exports = (app) => {
         userSession.save((err, doc) => {
           if (err) {
             console.log(err);
-            return res.send({
+            return res.status(500).send({
               success: false,
               message: 'Error: Server Error.'
             });
           }
           console.log(user._id + " session started.")
-          return res.send({
+          return res.status(200).send({
             success: true,
             message: 'Valid sign in',
             token: doc._id
