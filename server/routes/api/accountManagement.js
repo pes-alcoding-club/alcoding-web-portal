@@ -1,14 +1,17 @@
 const User = require('../../models/User');
 const UserSession = require('../../models/UserSession');
+const mongoose = require('mongoose');
+
+// TODO: Limit number of queries to these endpoints
+// TODO: Async functionality
 
 module.exports = (app) => {
   app.post('/api/account/signup', function (req, res) {
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
     var password = req.body.password;
-    console.log(firstName);
-    console.log(lastName);
     var email = req.body.email.toLowerCase().trim();
+    console.log('Request to signUp.');
 
     if (!firstName) {
       return res.status(422).send({
@@ -72,104 +75,107 @@ module.exports = (app) => {
 
   }), // end of sign up endpoint
 
-    app.post('/api/account/signin', function (req, res) {
-      var password = req.body.password;
-      var email = req.body.email.toLowerCase().trim();
+  app.post('/api/account/signin', function (req, res) {
+    var password = req.body.password;
+    var email = req.body.email.toLowerCase().trim();
+    console.log("Email: " + "attempting to signIn.");
 
-      if (!email) {
-        return res.status(422).send({
+    if (!email) {
+      return res.status(422).send({
+        success: false,
+        message: 'Error: Email cannot be blank.'
+      });
+    }
+    if (!password) {
+      return res.status(422).send({
+        success: false,
+        message: 'Error: Password cannot be blank.'
+      });
+    }
+
+    User.find({
+      email: email
+    }, (err, users) => {
+      if (err) {
+        console.log('err 2:', err);
+        return res.status(500).send({
           success: false,
-          message: 'Error: Email cannot be blank.'
+          message: 'Error: Server Error.'
         });
       }
-      if (!password) {
-        return res.status(422).send({
+      if (users.length != 1) {
+        return res.status(400).send({
           success: false,
-          message: 'Error: Password cannot be blank.'
+          message: 'Error: Invalid'
         });
       }
 
-      User.find({
-        email: email
-      }, (err, users) => {
+      const user = users[0];
+      if (!user.checkPassword(password)) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: Invalid credentials.'
+        });
+      }
+
+      // Otherwise correct user
+      const userSession = new UserSession();
+      userSession.userId = user._id;
+      userSession.save((err, doc) => {
         if (err) {
-          console.log('err 2:', err);
+          console.log(err);
           return res.status(500).send({
             success: false,
             message: 'Error: Server Error.'
           });
         }
-        if (users.length != 1) {
-          return res.status(400).send({
-            success: false,
-            message: 'Error: Invalid'
-          });
-        }
-
-        const user = users[0];
-        if (!user.checkPassword(password)) {
-          return res.status(400).send({
-            success: false,
-            message: 'Error: Invalid credentials.'
-          });
-        }
-
-        console.log('here');
-        
-        // Otherwise correct user
-        const userSession = new UserSession();
-        userSession.userId = user._id;
-        userSession.save((err, doc) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).send({
-              success: false,
-              message: 'Error: Server Error.'
-            });
-          }
-          console.log(user._id + " session started.")
-          return res.status(200).send({
-            success: true,
-            message: 'Valid sign in',
-            token: doc._id
-          });
+        console.log(user._id + " session started.")
+        return res.status(200).send({
+          success: true,
+          message: 'Valid sign in',
+          token: doc._id
         });
       });
     });
+  }), //end of sign in endpoint
 
-    app.get('api/account/logout', function(req,res){
-      var token = req.query.tokenID;
-      // Example - localhost:8888/api/account/logout?tokenID=349573asd
-      console.log(token+" is requesting to logout");
-      if(!token){
-          return res.status(422).send({
-              success:false,
-              message:'Error: Token parameter cannot be blank'
-          });
-      }
-      UserSession.findOneAndUpdate({
-          _id:token,
-          isLoggedOut:false
-      },{
-          $set:{isLoggedOut:true}
-      }, null, (err, sessions) => {
-          if(err){
-              return res.status(500).send({
-                  success:false,
-                  message: "Error: Server error"
-              });
-          }
-          if(sessions.length!=1){
-              return res.status(400).send({
-                  success:false,
-                  message:"Error: Invalid"
-              });
-          }
-  
-          return res.status(200).send({
-              success:true,
-              message:'User has logged out'
-          });
+  app.get('/api/account/logout', function (req, res) {
+    // GET http://localhost:8080/api/account/logout?tokenID=5b27acd353f181147f09f341
+    var token = req.query.tokenID;
+    console.log("Token: " + token + " is requesting to logout.");
+
+    if (!token) {
+      return res.status(422).send({
+        success: false,
+        message: 'Error: Token parameter cannot be blank'
       });
-    });
+    }
+    UserSession.findOneAndUpdate({
+      _id: mongoose.Types.ObjectId(token),
+      isLoggedOut: false
+    }, {
+        $set: {
+          isLoggedOut: true
+        }
+      }, null, (err, session) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+        if (!session) {
+          return res.status(400).send({
+            success: false,
+            message: "Error: Invalid"
+          });
+        }
+
+        return res.status(200).send({
+          success: true,
+          message: 'User has been logged out'
+        });
+      });
+  });//end of login endpoint
+
 };
