@@ -6,6 +6,8 @@ module.exports = (app) => {
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
     var password = req.body.password;
+    console.log(firstName);
+    console.log(lastName);
     var email = req.body.email.toLowerCase().trim();
 
     if (!firstName) {
@@ -132,6 +134,42 @@ module.exports = (app) => {
             token: doc._id
           });
         });
+      });
+    });
+
+    app.get('api/account/logout', function(req,res){
+      var token = req.query.tokenID;
+      // Example - localhost:8888/api/account/logout?tokenID=349573asd
+      console.log(token+" is requesting to logout");
+      if(!token){
+          return res.status(422).send({
+              success:false,
+              message:'Error: Token parameter cannot be blank'
+          });
+      }
+      UserSession.findOneAndUpdate({
+          _id:token,
+          isLoggedOut:false
+      },{
+          $set:{isLoggedOut:true}
+      }, null, (err, sessions) => {
+          if(err){
+              return res.status(500).send({
+                  success:false,
+                  message: "Error: Server error"
+              });
+          }
+          if(sessions.length!=1){
+              return res.status(400).send({
+                  success:false,
+                  message:"Error: Invalid"
+              });
+          }
+  
+          return res.status(200).send({
+              success:true,
+              message:'User has logged out'
+          });
       });
     });
 };
