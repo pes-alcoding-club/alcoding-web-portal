@@ -137,8 +137,8 @@ module.exports = (app) => {
       });
     });
 
-    app.get('api/account/logout?token=:tokenID', function(req,res){
-      var token = req.params.tokenID;
+    app.get('api/account/logout/', function(req,res){
+      var token = req.query.tokenID;
       console.log(token+" is requesting to logout");
       if(!token){
           return res.status(422).send({
