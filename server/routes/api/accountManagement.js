@@ -79,31 +79,14 @@ module.exports = (app) => {
     var email = req.body.email.toLowerCase().trim();
     console.log("Email: " + "attempting to signIn.");
 
-    if (!email) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Email cannot be blank.'
-      });
-    }
-    if (!password) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Password cannot be blank.'
-      });
-    }
-
-    User.find({
-      email: email
-    }, (err, users) => {
-      if (err) {
-        console.log('err 2:', err);
-        return res.status(500).send({
+      if (!email) {
+        return res.status(422).send({
           success: false,
           message: 'Error: Server Error.'
         });
       }
-      if (users.length != 1) {
-        return res.status(400).send({
+      if (!password) {
+        return res.status(422).send({
           success: false,
           message: 'Error: Invalid'
         });
@@ -122,120 +105,45 @@ module.exports = (app) => {
       userSession.userId = user._id;
       userSession.save((err, doc) => {
         if (err) {
-          console.log(err);
+          console.log('err 2:', err);
           return res.status(500).send({
             success: false,
             message: 'Error: Server Error.'
           });
         }
-        console.log(user._id + " session started.")
-        return res.status(200).send({
-          success: true,
-          message: 'Valid sign in',
-          token: doc._id
-        });
-      });
-    });
-  }), //end of sign in endpoint
-
-  app.get('/api/account/logout', function (req, res) {
-    // GET http://localhost:8080/api/account/logout?tokenID=5b27acd353f181147f09f341
-    var token = req.query.tokenID;
-    console.log("Token: " + token + " is requesting to logout.");
-
-    if (!token) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Token parameter cannot be blank'
-      });
-    }
-    UserSession.findOneAndUpdate({
-      _id: mongoose.Types.ObjectId(token),
-      isLoggedOut: false
-    }, {
-        $set: {
-          isLoggedOut: true
-        }
-      }, null, (err, session) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error"
-          });
-        }
-        if (!session) {
+        if (users.length != 1) {
           return res.status(400).send({
             success: false,
             message: "Error: Invalid"
           });
         }
 
-        return res.status(200).send({
-          success: true,
-          message: 'User has been logged out'
-        });
-      });
-  });//end of login endpoint
-
-  app.get('/api/account/getDetails', function(req, res){
-    // GET http://localhost:8080/api/account/getDetails?tokenID=5b2bdcfd1f584e0270058705
-    var token = req.query.tokenID;
-    console.log("Token: " + token + " is requesting for user details.");
-
-    //Verify that token is present
-    if(!token){
-      return res.status(422).send({
-        sucess:false,
-        message: 'Error: Token parameter cannot be blank'
-      });
-    }
-
-    UserSession.find({
-      _id : mongoose.Types.ObjectId(token)
-    }, (err,users) => {
-      if(err){
-        return res.status(500).send({
-          success: false,
-          message: "Error: Server error"
-        });
-      }
-
-      if(users.length!=1){
-        return res.status(400).send({
-          success: false,
-          message: 'Error: Invalid'
-        });
-      }
-
-      console.log(users[0]);
-
-      //Check whether user is logged in
-      if(users[0].isLoggedOut==true){
-        return res.status(400).send({
-          sucess:false,
-          message: "Error: The user has logged out"
-        });
-      }
-
-      // Get the userId of the user
-      const userId = users[0].userId;
-      console.log("User "+userId+" is requesting to login");
-      
-      // Search for the user in the User model with his userId
-      User.find({
-        _id : userId
-      }, (err,users) => {
-        if(err){
-          return res.status(500).send({
+        const user = users[0];
+        if (!user.checkPassword(password)) {
+          return res.status(400).send({
             success: false,
             message: "Error: Server error"
           });
         }
 
-        if(users.length!=1){
-          return res.status(400).send({
-            success: false,
-            message: 'Error: Invalid'
+        console.log('here');
+        
+        // Otherwise correct user
+        const userSession = new UserSession();
+        userSession.userId = user._id;
+        userSession.save((err, doc) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({
+              success: false,
+              message: 'Error: Server Error.'
+            });
+          }
+          console.log(user._id + " session started.")
+          return res.status(200).send({
+            success: true,
+            message: 'Valid sign in',
+            token: doc._id
           });
         }
 
@@ -249,5 +157,4 @@ module.exports = (app) => {
         });
       });
     });
-  });
 };
