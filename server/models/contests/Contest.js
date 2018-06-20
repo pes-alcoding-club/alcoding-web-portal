@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
+const ContestSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -8,6 +8,13 @@ const UserSchema = new mongoose.Schema({
   url: {
     type: String,
     required: true,
+  },
+  ranksUrl: {
+    type: String,
+    required: true,
+  },
+  maxScore: {
+    type: Number,
   },
   date: {
     type: Date,
@@ -23,4 +30,4 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Contest', ContestSchema);

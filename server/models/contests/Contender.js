@@ -13,6 +13,9 @@ const ContenderSchema = new mongoose.Schema({
     contest: {
       type: String,
     },
+    score: {
+      type: Number,
+    },
     rank: {
       type: Number,
     }
