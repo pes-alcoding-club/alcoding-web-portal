@@ -59,7 +59,6 @@ UserSchema.methods.generateHash = function (password) {
 };
 
 UserSchema.methods.checkPassword = function (plainTextPassword) {
-  console.log("Checking Match.")
   return bcrypt.compareSync(plainTextPassword, this.password);
 }
 
