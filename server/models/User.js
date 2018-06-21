@@ -38,11 +38,18 @@ const UserSchema = new mongoose.Schema({
       default: Date.now()
     }
   },
+  displayName:{
+    type: String
+  },
+  isStudent:{
+    type: Boolean,
+    default: false
+  },
   isDeleted: {
     type: Boolean,
     default: false
   }
-});
+}, {strict: false});
 
 // const saltRounds = 10;
 // UserSchema.methods = {

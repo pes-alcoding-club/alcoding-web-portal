@@ -1,6 +1,11 @@
 const User = require('../../models/User');
 const UserSession = require('../../models/UserSession');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const generateHash = function (password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(saltRounds), null);
+};
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
@@ -11,6 +16,7 @@ module.exports = (app) => {
     var lastName = req.body.lastName;
     var password = req.body.password;
     var email = req.body.email.toLowerCase().trim();
+    var SRN = req.body.SRN;
     console.log('Request to signUp.');
 
     if (!firstName) {
@@ -49,16 +55,25 @@ module.exports = (app) => {
           message: 'Error: Account already exists.'
         });
       }
-
+      //Store the values of the 
+      var Data={
+        "name": {
+          "firstName": firstName,
+          "lastName": lastName
+        },
+        "email": email,
+        "password": generateHash(password),
+        "phone": req.body.phone,
+        "dob":req.body.dob
+      };
+      if(SRN){
+        Data.SRN=SRN;
+        Data.isStudent=true;
+      }
       // Save the new user
-      const newUser = new User();
+      const newUser = new User(Data);
 
-      newUser.email = email;
-      newUser.name.firstName = firstName;
-      newUser.name.lastName = lastName;
-      newUser.password = newUser.generateHash(password);
-
-      newUser.save((err, user) => {
+      newUser.save((err) => {
         if (err) {
           return res.status(500).send({
             success: false,
@@ -178,4 +193,77 @@ module.exports = (app) => {
       });
   });//end of login endpoint
 
+  app.get('/api/account/getDetails', function(req, res){
+    // GET http://localhost:8080/api/account/getDetails?tokenID=5b2bdcfd1f584e0270058705
+    var token = req.query.tokenID;
+    console.log("Token: " + token + " is requesting for user details.");
+
+    //Verify that token is present
+    if(!token){
+      return res.status(422).send({
+        sucess:false,
+        message: 'Error: Token parameter cannot be blank'
+      });
+    }
+
+    UserSession.find({
+      _id : mongoose.Types.ObjectId(token)
+    }, (err,users) => {
+      if(err){
+        return res.status(500).send({
+          success: false,
+          message: "Error: Server error"
+        });
+      }
+
+      if(users.length!=1){
+        return res.status(400).send({
+          success: false,
+          message: 'Error: Invalid'
+        });
+      }
+
+      console.log(users[0]);
+
+      //Check whether user is logged in
+      if(users[0].isLoggedOut==true){
+        return res.status(400).send({
+          sucess:false,
+          message: "Error: The user has logged out"
+        });
+      }
+
+      // Get the userId of the user
+      const userId = users[0].userId;
+      console.log("User "+userId+" is requesting to login");
+      
+      // Search for the user in the User model with his userId
+      User.find({
+        _id : userId
+      }, (err,users) => {
+        if(err){
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+
+        if(users.length!=1){
+          return res.status(400).send({
+            success: false,
+            message: 'Error: Invalid'
+          });
+        }
+
+        var user = users[0];
+        
+        //Display the information of the user under data
+        return res.status(200).send({
+          success: true,
+          message: "User: " + user._id + " details successfully retrieved",
+          data: user
+        });
+      });
+    });
+  });
 };
