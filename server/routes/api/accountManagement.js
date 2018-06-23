@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 var verifyToken = require('../VerifyToken');
 // var privateKey = fs.readFileSync('sslcert/server.key'); privateKey for jwt to encrpyt. Can be asymmetric as well.
-var privateKey = "mySecret";
+var privateKey = "mySecret"; //Change in VerifyToken.js as well.
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
@@ -176,10 +176,10 @@ module.exports = (app) => {
       var user_id = req.query.userID;
 
       //Verify that token is present
-      if (!token) {
+      if (!user_id) {
         return res.status(400).send({
           success: false,
-          message: 'Error: Token parameter cannot be blank'
+          message: 'Error: userID parameter cannot be blank'
         });
       }
 
@@ -219,5 +219,5 @@ module.exports = (app) => {
           user: user
         });
       });
-    });
+    }); //end of getDetails endpoint
 };
