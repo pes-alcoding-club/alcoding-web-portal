@@ -18,19 +18,19 @@ module.exports = (app) => {
     console.log('Request to signUp.');
 
     if (!firstName) {
-      return res.status(422).send({
+      return res.status(400).send({
         success: false,
         message: 'Error: First name cannot be blank.'
       });
     }
     if (!email) {
-      return res.status(422).send({
+      return res.status(400).send({
         success: false,
         message: 'Error: Email cannot be blank.'
       });
     }
     if (!password) {
-      return res.status(422).send({
+      return res.status(400).send({
         success: false,
         message: 'Error: Password cannot be blank.'
       });
@@ -84,13 +84,13 @@ module.exports = (app) => {
       console.log("Email: " + "attempting to signIn.");
 
       if (!email) {
-        return res.status(422).send({
+        return res.status(400).send({
           success: false,
           message: 'Error: Email cannot be blank.'
         });
       }
       if (!password) {
-        return res.status(422).send({
+        return res.status(400).send({
           success: false,
           message: 'Error: Password cannot be blank.'
         });
@@ -155,6 +155,36 @@ module.exports = (app) => {
       }
 
       console.log(user_id + " is requesting to logout.");
+      // Condition executed if non-admin
+      if (user_id != req.user_id)
+      {
+        return res.status(403).send({
+          success: false,
+          message: 'Error: Forbidden request.'
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: 'User has been logged out',
+        token: ''
+      });
+    }), //end of logout endpoint
+
+    app.get('/api/account/getDetails', verifyToken, function (req, res) {
+      // GET http://localhost:8080/api/account/getDetails?userID=5b2bdcfd1f584e0270058705
+      var user_id = req.query.userID;
+
+      //Verify that token is present
+      if (!token) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: Token parameter cannot be blank'
+        });
+      }
+
+      console.log("Request to access details of " + user_id);
+      // Condition executed if non-admin
       if (user_id != req.user_id) //Condition for non-admins.
       {
         return res.status(403).send({
@@ -162,85 +192,32 @@ module.exports = (app) => {
           message: 'Error: Forbidden request.'
         });
       }
-      return res.status(200).send({
-        success: true,
-        message: 'User has been logged out',
-        token: ''
-      });
-    });
-},//end of logout endpoint
 
-app.get('/api/account/getDetails', function (req, res) {
-  // GET http://localhost:8080/api/account/getDetails?tokenID=5b2bdcfd1f584e0270058705
-  var token = req.query.tokenID;
-  console.log("Token: " + token + " is requesting for user details.");
+      // Search for the user in the User model with his userId
+      User.find({
+        _id: user_id
+      }, (err, users) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
 
-  //Verify that token is present
-  if (!token) {
-    return res.status(422).send({
-      sucess: false,
-      message: 'Error: Token parameter cannot be blank'
-    });
-  }
+        if (users.length != 1) {
+          return res.status(404).send({
+            success: false,
+            message: 'Error: User not found.'
+          });
+        }
+        var user = users[0];
 
-  UserSession.find({
-    _id: mongoose.Types.ObjectId(token)
-  }, (err, users) => {
-    if (err) {
-      return res.status(500).send({
-        success: false,
-        message: "Error: Server error"
-      });
-    }
-
-    if (users.length != 1) {
-      return res.status(400).send({
-        success: false,
-        message: 'Error: Invalid'
-      });
-    }
-
-    console.log(users[0]);
-
-    //Check whether user is logged in
-    if (users[0].isLoggedOut == true) {
-      return res.status(400).send({
-        sucess: false,
-        message: "Error: The user has logged out"
-      });
-    }
-
-    // Get the userId of the user
-    const userId = users[0].userId;
-    console.log("User " + userId + " is requesting to login");
-
-    // Search for the user in the User model with his userId
-    User.find({
-      _id: userId
-    }, (err, users) => {
-      if (err) {
-        return res.status(500).send({
-          success: false,
-          message: "Error: Server error"
+        // Return a response with user data
+        return res.status(200).send({
+          success: true,
+          message: "User: " + user._id + " details successfully retrieved",
+          user: user
         });
-      }
-
-      if (users.length != 1) {
-        return res.status(400).send({
-          success: false,
-          message: 'Error: Invalid'
-        });
-      }
-
-      var user = users[0];
-
-      //Display the information of the user under data
-      return res.status(200).send({
-        success: true,
-        message: "User: " + user._id + " details successfully retrieved",
-        data: user
       });
     });
-  });
-});
 };
