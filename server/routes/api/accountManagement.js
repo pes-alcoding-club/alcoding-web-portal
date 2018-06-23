@@ -1,11 +1,13 @@
 const User = require('../../models/User');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+var verifyToken = require('../VerifyToken');
 // var privateKey = fs.readFileSync('sslcert/server.key'); privateKey for jwt to encrpyt. Can be asymmetric as well.
 var privateKey = "mySecret";
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
+// TODO: Add CORS
 
 module.exports = (app) => {
   app.post('/api/account/signup', function (req, res) {
@@ -134,66 +136,87 @@ module.exports = (app) => {
           return res.status(200).send({
             success: true,
             message: 'Valid sign in',
+            user_id: payload.user_id,
             token: token
           });
         });
       });
     }), //end of sign in endpoint
 
-    app.get('/api/account/logout', function (req, res) {
-      // GET http://localhost:8080/api/account/logout?tokenID=5b27acd353f181147f09f341
-      var token = req.query.tokenID;
-      console.log("Token: " + token + " is requesting to logout.");
+    app.get('/api/account/logout', verifyToken, function (req, res) {
+      // GET http://localhost:8080/api/account/logout?userID=5b27acd353f181147f09f341
+      var user_id = req.query.userID;
 
-      if (!token) {
-        return res.status(422).send({
+      if (!user_id) {
+        return res.status(400).send({
           success: false,
-          message: 'Error: Token parameter cannot be blank'
+          message: 'Error: UserID parameter cannot be blank'
         });
       }
-      UserSession.findOneAndUpdate({
-        _id: mongoose.Types.ObjectId(token),
-        isLoggedOut: false
-      }, {
-          $set: {
-            isLoggedOut: true
-          }
-        }, null, (err, session) => {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: "Error: Server error"
-            });
-          }
-          if (!session) {
-            return res.status(400).send({
-              success: false,
-              message: "Error: Invalid"
-            });
-          }
 
-          return res.status(200).send({
-            success: true,
-            message: 'User has been logged out'
-          });
+      console.log(user_id + " is requesting to logout.");
+      if (user_id != req.user_id) //Condition for non-admins.
+      {
+        return res.status(403).send({
+          success: false,
+          message: 'Error: Forbidden request.'
         });
-    });//end of logout endpoint
+      }
+      return res.status(200).send({
+        success: true,
+        message: 'User has been logged out',
+        token: ''
+      });
+    });
+},//end of logout endpoint
 
-  app.get('/api/account/getDetails', function (req, res) {
-    // GET http://localhost:8080/api/account/getDetails?tokenID=5b2bdcfd1f584e0270058705
-    var token = req.query.tokenID;
-    console.log("Token: " + token + " is requesting for user details.");
+app.get('/api/account/getDetails', function (req, res) {
+  // GET http://localhost:8080/api/account/getDetails?tokenID=5b2bdcfd1f584e0270058705
+  var token = req.query.tokenID;
+  console.log("Token: " + token + " is requesting for user details.");
 
-    //Verify that token is present
-    if (!token) {
-      return res.status(422).send({
-        sucess: false,
-        message: 'Error: Token parameter cannot be blank'
+  //Verify that token is present
+  if (!token) {
+    return res.status(422).send({
+      sucess: false,
+      message: 'Error: Token parameter cannot be blank'
+    });
+  }
+
+  UserSession.find({
+    _id: mongoose.Types.ObjectId(token)
+  }, (err, users) => {
+    if (err) {
+      return res.status(500).send({
+        success: false,
+        message: "Error: Server error"
       });
     }
 
-    UserSession.find({
-      _id: mongoose.Types.ObjectId(token)
+    if (users.length != 1) {
+      return res.status(400).send({
+        success: false,
+        message: 'Error: Invalid'
+      });
+    }
+
+    console.log(users[0]);
+
+    //Check whether user is logged in
+    if (users[0].isLoggedOut == true) {
+      return res.status(400).send({
+        sucess: false,
+        message: "Error: The user has logged out"
+      });
+    }
+
+    // Get the userId of the user
+    const userId = users[0].userId;
+    console.log("User " + userId + " is requesting to login");
+
+    // Search for the user in the User model with his userId
+    User.find({
+      _id: userId
     }, (err, users) => {
       if (err) {
         return res.status(500).send({
@@ -209,47 +232,15 @@ module.exports = (app) => {
         });
       }
 
-      console.log(users[0]);
+      var user = users[0];
 
-      //Check whether user is logged in
-      if (users[0].isLoggedOut == true) {
-        return res.status(400).send({
-          sucess: false,
-          message: "Error: The user has logged out"
-        });
-      }
-
-      // Get the userId of the user
-      const userId = users[0].userId;
-      console.log("User " + userId + " is requesting to login");
-
-      // Search for the user in the User model with his userId
-      User.find({
-        _id: userId
-      }, (err, users) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error"
-          });
-        }
-
-        if (users.length != 1) {
-          return res.status(400).send({
-            success: false,
-            message: 'Error: Invalid'
-          });
-        }
-
-        var user = users[0];
-
-        //Display the information of the user under data
-        return res.status(200).send({
-          success: true,
-          message: "User: " + user._id + " details successfully retrieved",
-          data: user
-        });
+      //Display the information of the user under data
+      return res.status(200).send({
+        success: true,
+        message: "User: " + user._id + " details successfully retrieved",
+        data: user
       });
     });
   });
+});
 };
