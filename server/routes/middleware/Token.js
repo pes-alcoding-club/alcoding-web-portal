@@ -1,10 +1,10 @@
 var jwt = require('jsonwebtoken');
-const UserSession = require('../models/UserSession')
+const UserSession = require('../../models/UserSession');
+const User = require('../../models/User');
 var privateKey = "mySecret";
 
 function verifyToken(req, res, next) {
-  // var token = req.headers['x-access-token']; this is for express headers, not tested
-  var token = req.headers['authorization'].split(' ')[1]; // normal headers "Authorization: Bearer 2kj234df0ds2f3n40n"
+  var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'].split(' ')[1]; // normal headers "Authorization: Bearer 2kj234df0ds2f3n40n"
   if (!token)
     return res.status(403).send({ auth: false, message: 'No token provided.' });
 
@@ -28,6 +28,7 @@ function verifyToken(req, res, next) {
     }
     // save to request for use in other routes
     req.user_id = decoded.user_id;
+    req.role = decoded.role;
     req.token = token;
     // Check log in status
     UserSession.findOne({
@@ -45,7 +46,28 @@ function verifyToken(req, res, next) {
           message: "Error: Invalid token."
         });
       }
-      // Condition executed if non-admin
+      next();
+    });
+  });
+}
+
+var requireRole = function (role) {
+  return function (req, res, next) {
+    verifyToken(req, res, function () {
+      if (req.role != role) {
+        return res.status(403).send({
+          success: false,
+          message: "Error: Forbidden request."
+        });
+      }
+      next();
+    });
+  }
+}
+
+var verifyUser = () => {
+  return function (req, res, next) {
+    verifyToken(req, res, function () {
       if (req.params.userID != req.user_id) {
         return res.status(403).send({
           success: false,
@@ -54,7 +76,11 @@ function verifyToken(req, res, next) {
       }
       next();
     });
-  });
+  }
 }
 
-module.exports = verifyToken;
+// Use verifyToken to check if the token is valid
+// Use verifyUser for non-admins when they want to access their own data
+// Use requireRole for role specfic functions, for eg, instructors setting up assignments or admin signup
+
+module.exports = { verifyToken, requireRole, verifyUser };
