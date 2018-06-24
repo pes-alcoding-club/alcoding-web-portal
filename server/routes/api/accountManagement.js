@@ -81,7 +81,7 @@ module.exports = (app) => {
     app.post('/api/account/signin', function (req, res) {
       var password = req.body.password;
       var email = req.body.email.toLowerCase().trim();
-      console.log("Email: " + email + "attempting to signIn.");
+      console.log("Email: " + email + " attempting to signIn.");
 
       if (!email) {
         return res.status(400).send({
@@ -165,39 +165,34 @@ module.exports = (app) => {
         });
       }
 
-      UserSession.findOneAndUpdate({
-        token: req.token,
-        isLoggedOut: false
-      }, {
-          $set: {
-            isLoggedOut: true
-          }
-        }, null, (err, session) => {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: "Error: Server error"
-            });
-          }
-          if (!session) {
-            return res.status(400).send({
-              success: false,
-              message: "Error: Invalid."
-            });
-          }
-
-          return res.status(200).send({
-            success: true,
-            message: 'User has been logged out'
+      UserSession.findOneAndRemove({
+        token: req.token
+      }, (err, session) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
           });
+        }
+        if (!session) {
+          return res.status(400).send({
+            success: false,
+            message: "Error: Invalid."
+          });
+        }
+
+        return res.status(200).send({
+          success: true,
+          message: 'User has been logged out'
         });
+      });
     }), //end of logout endpoint
 
     app.get('/api/account/:userID/details', verifyToken, function (req, res) {
       // GET http://localhost:8080/api/account/:userID/details
       var user_id = req.params.userID;
 
-      //Verify that userID is present
+      //Verify that userID is present as a parameter
       if (!user_id) {
         return res.status(400).send({
           success: false,

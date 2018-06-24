@@ -9,16 +9,29 @@ function verifyToken(req, res, next) {
     return res.status(403).send({ auth: false, message: 'No token provided.' });
 
   jwt.verify(token, privateKey, function (err, decoded) {
-    if (err)
-      return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
+    if (err) {
+      if (err.name == "TokenExpiredError") {
+        console.log("Deleting token from db.")
+        // delete token from UserSession
+        UserSession.findOneAndRemove({
+          token: token
+        }, (err) => {
+          if (err) {
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error"
+            });
+          }
+        });
+      }
+      return res.status(401).send({ auth: false, err });
+    }
     // save to request for use in other routes
     req.user_id = decoded.user_id;
     req.token = token;
     // Check log in status
     UserSession.findOne({
-      token: token,
-      isLoggedOut: false
+      token: token
     }, null, (err, session) => {
       if (err) {
         return res.status(500).send({
@@ -29,7 +42,7 @@ function verifyToken(req, res, next) {
       if (!session) {
         return res.status(401).send({
           success: false,
-          message: "Error: User logged out."
+          message: "Error: Invalid token."
         });
       }
       // Condition executed if non-admin
