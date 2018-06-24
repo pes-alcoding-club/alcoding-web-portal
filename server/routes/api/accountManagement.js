@@ -81,7 +81,7 @@ module.exports = (app) => {
     app.post('/api/account/signin', function (req, res) {
       var password = req.body.password;
       var email = req.body.email.toLowerCase().trim();
-      console.log("Email: " + "attempting to signIn.");
+      console.log("Email: " + email + "attempting to signIn.");
 
       if (!email) {
         return res.status(400).send({
@@ -143,9 +143,9 @@ module.exports = (app) => {
       });
     }), //end of sign in endpoint
 
-    app.get('/api/account/logout', verifyToken, function (req, res) {
-      // GET http://localhost:8080/api/account/logout?userID=5b27acd353f181147f09f341
-      var user_id = req.query.userID;
+    app.get('/api/account/:userID/logout', verifyToken, function (req, res) {
+      // GET http://localhost:8080/api/account/:userID/logout
+      var user_id = req.params.userID;
 
       if (!user_id) {
         return res.status(400).send({
@@ -155,14 +155,6 @@ module.exports = (app) => {
       }
 
       console.log(user_id + " is requesting to logout.");
-      // Condition executed if non-admin
-      if (user_id != req.user_id)
-      {
-        return res.status(403).send({
-          success: false,
-          message: 'Error: Forbidden request.'
-        });
-      }
 
       return res.status(200).send({
         success: true,
@@ -171,11 +163,11 @@ module.exports = (app) => {
       });
     }), //end of logout endpoint
 
-    app.get('/api/account/getDetails', verifyToken, function (req, res) {
-      // GET http://localhost:8080/api/account/getDetails?userID=5b2bdcfd1f584e0270058705
-      var user_id = req.query.userID;
+    app.get('/api/account/:userID/details', verifyToken, function (req, res) {
+      // GET http://localhost:8080/api/account/:userID/details
+      var user_id = req.params.userID;
 
-      //Verify that token is present
+      //Verify that userID is present
       if (!user_id) {
         return res.status(400).send({
           success: false,
@@ -184,16 +176,7 @@ module.exports = (app) => {
       }
 
       console.log("Request to access details of " + user_id);
-      // Condition executed if non-admin
-      if (user_id != req.user_id) //Condition for non-admins.
-      {
-        return res.status(403).send({
-          success: false,
-          message: 'Error: Forbidden request.'
-        });
-      }
-
-      // Search for the user in the User model with his userId
+      // Search for the user in the User model with his user_id
       User.find({
         _id: user_id
       }, (err, users) => {
@@ -210,7 +193,10 @@ module.exports = (app) => {
             message: 'Error: User not found.'
           });
         }
-        var user = users[0];
+        var user = users[0].toObject();
+        delete user.password;
+        delete user.isDeleted;
+        delete user.__v;
 
         // Return a response with user data
         return res.status(200).send({

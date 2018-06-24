@@ -13,6 +13,15 @@ function verifyToken(req, res, next) {
 
     // if everything good, save to request for use in other routes
     req.user_id = decoded.user_id;
+
+    // Condition executed if non-admin
+    if (req.params.userID != req.user_id)
+    {
+      return res.status(403).send({
+        success: false,
+        message: 'Error: Forbidden request.'
+      });
+    }
     next();
   });
 }
