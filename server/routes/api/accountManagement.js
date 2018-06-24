@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const UserSession = require('../../models/UserSession')
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 var verifyToken = require('../VerifyToken');
@@ -75,7 +76,6 @@ module.exports = (app) => {
         });
       });
     });
-
   }), // end of sign up endpoint
 
     app.post('/api/account/signin', function (req, res) {
@@ -108,7 +108,7 @@ module.exports = (app) => {
           });
         }
         if (users.length != 1) {
-          return res.status(400).send({
+          return res.status(401).send({
             success: false,
             message: 'Error: Invalid'
           });
@@ -116,7 +116,7 @@ module.exports = (app) => {
 
         const user = users[0];
         if (!user.checkPassword(password)) {
-          return res.status(400).send({
+          return res.status(401).send({
             success: false,
             message: 'Error: Invalid credentials.'
           });
@@ -132,12 +132,23 @@ module.exports = (app) => {
               message: 'Error: Server Error.'
             });
           }
-          console.log("JWT generated.");
-          return res.status(200).send({
-            success: true,
-            message: 'Valid sign in',
-            user_id: payload.user_id,
-            token: token
+
+          newSession = new UserSession();
+          newSession.token = token;
+          newSession.save((err, session) => {
+            if (err) {
+              return res.status(500).send({
+                success: false,
+                message: 'Error: Server error'
+              });
+            }
+            console.log("JWT generated.");
+            return res.status(200).send({
+              success: true,
+              message: 'Valid sign in',
+              user_id: payload.user_id,
+              token: token
+            });
           });
         });
       });
@@ -154,13 +165,32 @@ module.exports = (app) => {
         });
       }
 
-      console.log(user_id + " is requesting to logout.");
+      UserSession.findOneAndUpdate({
+        token: req.token,
+        isLoggedOut: false
+      }, {
+          $set: {
+            isLoggedOut: true
+          }
+        }, null, (err, session) => {
+          if (err) {
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error"
+            });
+          }
+          if (!session) {
+            return res.status(400).send({
+              success: false,
+              message: "Error: Invalid."
+            });
+          }
 
-      return res.status(200).send({
-        success: true,
-        message: 'User has been logged out',
-        token: ''
-      });
+          return res.status(200).send({
+            success: true,
+            message: 'User has been logged out'
+          });
+        });
     }), //end of logout endpoint
 
     app.get('/api/account/:userID/details', verifyToken, function (req, res) {
@@ -201,7 +231,7 @@ module.exports = (app) => {
         // Return a response with user data
         return res.status(200).send({
           success: true,
-          message: "User: " + user._id + " details successfully retrieved",
+          message: "Details successfully retrieved",
           user: user
         });
       });

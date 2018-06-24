@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+const UserSession = require('../models/UserSession')
 var privateKey = "mySecret";
 
 function verifyToken(req, res, next) {
@@ -11,12 +12,30 @@ function verifyToken(req, res, next) {
     if (err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
-    // if everything good, save to request for use in other routes
+    // save to request for use in other routes
     req.user_id = decoded.user_id;
+    req.token = token;
+    // Check log in status
+    UserSession.findOne({
+      token: req.token,
+      isLoggedOut: false
+    }, null, (err, session) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: "Error: Server error"
+        });
+      }
+      if (!session) {
+        return res.status(401).send({
+          success: false,
+          message: "Error: User logged out."
+        });
+      }
+    });
 
     // Condition executed if non-admin
-    if (req.params.userID != req.user_id)
-    {
+    if (req.params.userID != req.user_id) {
       return res.status(403).send({
         success: false,
         message: 'Error: Forbidden request.'
