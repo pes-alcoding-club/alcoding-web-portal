@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
     req.token = token;
     // Check log in status
     UserSession.findOne({
-      token: req.token,
+      token: token,
       isLoggedOut: false
     }, null, (err, session) => {
       if (err) {
@@ -32,16 +32,15 @@ function verifyToken(req, res, next) {
           message: "Error: User logged out."
         });
       }
+      // Condition executed if non-admin
+      if (req.params.userID != req.user_id) {
+        return res.status(403).send({
+          success: false,
+          message: 'Error: Forbidden request.'
+        });
+      }
+      next();
     });
-
-    // Condition executed if non-admin
-    if (req.params.userID != req.user_id) {
-      return res.status(403).send({
-        success: false,
-        message: 'Error: Forbidden request.'
-      });
-    }
-    next();
   });
 }
 
