@@ -22,32 +22,6 @@ class Login extends Component {
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
   };
 
-  componentDidMount() {
-    const obj = getFromStorage('App');
-    if (obj && obj.token) {
-      const { token } = obj;
-      // Verify token
-      fetch('/api/account/verify?token=' + token)
-        .then(res => res.json())
-        .then(json => {
-          if (json.success) {
-            this.setState({
-              token,
-              isLoading: false
-            });
-          } else {
-            this.setState({
-              isLoading: false,
-            });
-          }
-        });
-    } else {
-      this.setState({
-        isLoading: false,
-      });
-    }
-  }
-
 
   onTextboxChangeSignInPassword(event) {
     this.setState({
@@ -87,7 +61,7 @@ class Login extends Component {
           setInStorage('App', {
             token: json.token,
             user_ID: json.user_ID
-           });
+          });
           this.setState({
             signInError: json.message,
             isLoading: false,
