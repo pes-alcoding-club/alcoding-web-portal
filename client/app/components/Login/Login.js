@@ -84,7 +84,10 @@ class Login extends Component {
       .then(json => {
         console.log('json', json);
         if (json.success) {
-          setInStorage('App', { token: json.token });
+          setInStorage('App', {
+            token: json.token,
+            user_ID: json.user_ID
+           });
           this.setState({
             signInError: json.message,
             isLoading: false,
