@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
       default: Date.now()
     }
   },
+  role: {
+    type: String,
+    default: "student"
+  },
   isDeleted: {
     type: Boolean,
     default: false

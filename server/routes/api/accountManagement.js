@@ -1,162 +1,106 @@
 const User = require('../../models/User');
-const UserSession = require('../../models/UserSession');
-const mongoose = require('mongoose');
+const UserSession = require('../../models/UserSession')
+const jwt = require('jsonwebtoken');
+var verifyUser = require('../middleware/Token').verifyUser;
+// var privateKey = fs.readFileSync('sslcert/server.key'); privateKey for jwt to encrpyt. Can be asymmetric as well.
+var privateKey = "mySecret"; //Change in VerifyToken.js as well.
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
+// TODO: Add CORS
+// TODO: Change logout to POST as it isn't idempotent
 
 module.exports = (app) => {
-  app.post('/api/account/signup', function (req, res) {
-    var firstName = req.body.firstName;
-    var lastName = req.body.lastName;
-    var password = req.body.password;
-    var email = req.body.email.toLowerCase().trim();
-    console.log('Request to signUp.');
+    app.post('/api/account/signin', function (req, res) {
+      var password = req.body.password;
+      var email = req.body.email.toLowerCase().trim();
+      console.log("Email: " + email + " attempting to signIn.");
 
-    if (!firstName) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: First name cannot be blank.'
-      });
-    }
-    if (!email) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Email cannot be blank.'
-      });
-    }
-    if (!password) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Password cannot be blank.'
-      });
-    }
-
-    // Steps:
-    // 1. Verify email doesn't exist
-    // 2. Save
-    User.find({
-      email: email
-    }, (err, previousUsers) => {
-      if (err) {
-        return res.status(500).send({
-          success: false,
-          message: 'Error: Server find error'
-        });
-      } else if (previousUsers.length > 0) {
-        return res.status(409).send({
-          success: false,
-          message: 'Error: Account already exists.'
-        });
-      }
-      // Save the new user
-      const newUser = new User();
-
-      newUser.email = email;
-      newUser.name.firstName = firstName;
-      newUser.name.lastName = lastName;
-      newUser.password = newUser.generateHash(password);
-
-      newUser.save((err, user) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: 'Error: Server error'
-          });
-        }
-        console.log(newUser._id + " Added to DB.")
-        return res.status(200).send({
-          success: true,
-          message: 'Signed up'
-        });
-      });
-    });
-
-  }), // end of sign up endpoint
-
-  app.post('/api/account/signin', function (req, res) {
-    var password = req.body.password;
-    var email = req.body.email.toLowerCase().trim();
-    console.log("Email: " + "attempting to signIn.");
-
-    if (!email) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Email cannot be blank.'
-      });
-    }
-    if (!password) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Password cannot be blank.'
-      });
-    }
-
-    User.find({
-      email: email
-    }, (err, users) => {
-      if (err) {
-        console.log('err 2:', err);
-        return res.status(500).send({
-          success: false,
-          message: 'Error: Server Error.'
-        });
-      }
-      if (users.length != 1) {
+      if (!email) {
         return res.status(400).send({
           success: false,
-          message: 'Error: Invalid'
+          message: 'Error: Email cannot be blank.'
         });
       }
-
-      const user = users[0];
-      if (!user.checkPassword(password)) {
+      if (!password) {
         return res.status(400).send({
           success: false,
-          message: 'Error: Invalid credentials.'
+          message: 'Error: Password cannot be blank.'
         });
       }
 
-      // Otherwise correct user
-      const userSession = new UserSession();
-      userSession.userId = user._id;
-      userSession.save((err, doc) => {
+      User.find({
+        email: email,
+        isDeleted: false
+      }, (err, users) => {
         if (err) {
-          console.log(err);
+          console.log('err 2:', err);
           return res.status(500).send({
             success: false,
             message: 'Error: Server Error.'
           });
         }
-        console.log(user._id + " session started.")
-        return res.status(200).send({
-          success: true,
-          message: 'Valid sign in',
-          token: doc._id
+        if (users.length != 1) {
+          return res.status(401).send({
+            success: false,
+            message: 'Error: Invalid'
+          });
+        }
+
+        const user = users[0];
+        if (!user.checkPassword(password)) {
+          return res.status(401).send({
+            success: false,
+            message: 'Error: Invalid credentials.'
+          });
+        }
+
+        // Otherwise correct user
+        payload = { user_id: user._id, role: user.role };
+        jwt.sign(payload, privateKey, { expiresIn: "2d" }, (err, token) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({
+              success: false,
+              message: 'Error: Server Error.'
+            });
+          }
+
+          newSession = new UserSession();
+          newSession.token = token;
+          newSession.save((err, session) => {
+            if (err) {
+              return res.status(500).send({
+                success: false,
+                message: 'Error: Server error'
+              });
+            }
+            console.log("JWT generated.");
+            return res.status(200).send({
+              success: true,
+              message: 'Valid sign in',
+              user_id: payload.user_id,
+              token: token
+            });
+          });
         });
       });
-    });
-  }), //end of sign in endpoint
+    }), //end of sign in endpoint
 
-  app.get('/api/account/logout', function (req, res) {
-    // GET http://localhost:8080/api/account/logout?tokenID=5b27acd353f181147f09f341
-    var token = req.query.tokenID;
-    console.log("Token: " + token + " is requesting to logout.");
+    app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
+      // GET http://localhost:8080/api/account/:userID/logout
+      var user_id = req.params.userID;
 
-    if (!token) {
-      return res.status(422).send({
-        success: false,
-        message: 'Error: Token parameter cannot be blank'
-      });
-    }
-    UserSession.findOneAndUpdate({
-      _id: mongoose.Types.ObjectId(token),
-      isLoggedOut: false
-    }, {
-        $set: {
-          isLoggedOut: true
-        }
-      }, null, (err, session) => {
+      if (!user_id) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: UserID parameter cannot be blank'
+        });
+      }
+
+      UserSession.findOneAndRemove({
+        token: req.token
+      }, (err, session) => {
         if (err) {
           return res.status(500).send({
             success: false,
@@ -166,7 +110,7 @@ module.exports = (app) => {
         if (!session) {
           return res.status(400).send({
             success: false,
-            message: "Error: Invalid"
+            message: "Error: Invalid."
           });
         }
 
@@ -175,79 +119,49 @@ module.exports = (app) => {
           message: 'User has been logged out'
         });
       });
-  });//end of login endpoint
+    }), //end of logout endpoint
 
-  app.get('/api/account/getDetails', function(req, res){
-    // GET http://localhost:8080/api/account/getDetails?tokenID=5b2bdcfd1f584e0270058705
-    var token = req.query.tokenID;
-    console.log("Token: " + token + " is requesting for user details.");
+    app.get('/api/account/:userID/details', verifyUser, function (req, res) {
+      // GET http://localhost:8080/api/account/:userID/details
+      var user_id = req.params.userID;
 
-    //Verify that token is present
-    if(!token){
-      return res.status(422).send({
-        sucess:false,
-        message: 'Error: Token parameter cannot be blank'
-      });
-    }
-
-    UserSession.find({
-      _id : mongoose.Types.ObjectId(token)
-    }, (err,users) => {
-      if(err){
-        return res.status(500).send({
-          success: false,
-          message: "Error: Server error"
-        });
-      }
-
-      if(users.length!=1){
+      //Verify that userID is present as a parameter
+      if (!user_id) {
         return res.status(400).send({
           success: false,
-          message: 'Error: Invalid'
+          message: 'Error: userID parameter cannot be blank'
         });
       }
 
-      console.log(users[0]);
-
-      //Check whether user is logged in
-      if(users[0].isLoggedOut==true){
-        return res.status(400).send({
-          sucess:false,
-          message: "Error: The user has logged out"
-        });
-      }
-
-      // Get the userId of the user
-      const userId = users[0].userId;
-      console.log("User "+userId+" is requesting to login");
-      
-      // Search for the user in the User model with his userId
+      console.log("Request to access details of " + user_id);
+      // Search for the user in the User model with his user_id
       User.find({
-        _id : userId
-      }, (err,users) => {
-        if(err){
+        _id: user_id
+      }, (err, users) => {
+        if (err) {
           return res.status(500).send({
             success: false,
             message: "Error: Server error"
           });
         }
 
-        if(users.length!=1){
-          return res.status(400).send({
+        if (users.length != 1) {
+          return res.status(404).send({
             success: false,
-            message: 'Error: Invalid'
+            message: 'Error: User not found.'
           });
         }
+        var user = users[0].toObject();
+        delete user.password;
+        delete user.isDeleted;
+        delete user.__v;
 
-        var user = users[0];
-        
-        //Display the information of the user under data
+        // Return a response with user data
         return res.status(200).send({
           success: true,
-          message: "User: " + user._id + " details successfully retrieved",
-          data: user
+          message: "Details successfully retrieved",
+          user: user
         });
       });
-    });
-  });
+    }); //end of getDetails endpoint
 };
