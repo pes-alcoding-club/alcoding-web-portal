@@ -22,6 +22,11 @@ class Login extends Component {
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
   };
 
+  componentDidMount() {
+    this.setState({
+      isLoading: false
+    });
+ }
 
   onTextboxChangeSignInPassword(event) {
     this.setState({
@@ -54,7 +59,8 @@ class Login extends Component {
         email: signInEmail,
         password: signInPassword,
       }),
-    }).then(res => console.log(res.status))
+    }).then(res => 
+      console.log(res.status))
       .then(json => {
         console.log('json', json);
         if (json.success) {
@@ -98,7 +104,7 @@ class Login extends Component {
                 onChange={this.onTextboxChangeSignInEmail}
               />
             </div>
-            <div class="form-group">
+            <div className="form-group">
               <input
                 type="password"
                 className="form-control"
@@ -108,7 +114,7 @@ class Login extends Component {
                 onChange={this.onTextboxChangeSignInPassword}
               />
             </div>
-            <div class="form-group">
+            <div className="form-group">
               <button type="submit" className="btn btn-primary btn-block" onClick={this.onSignIn}>Log in</button>
             </div>
           </form>
