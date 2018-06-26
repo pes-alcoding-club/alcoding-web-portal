@@ -63,19 +63,18 @@ class Login extends Component {
     axios.post("/api/account/signin", qs.stringify(user))
       .then((response) => {
         console.log(response);
-        
-        if (response.success) {
-          setInStorage('app', { token: json.token, user_id: json.user_id });
+        if (response.data.success) {
+          setInStorage('app', { token: response.data.token, user_id: response.data.user_id });
           this.setState({
-            signInError: json.message,
+            signInError: response.data.message,
             isLoading: false,
             signInPassword: '',
             signInEmail: '',
-            token: json.token,
+            token: response.data.token,
           });
         } else {
           this.setState({
-            signInError: response.message,
+            signInError: response.data.message,
             isLoading: false,
           });
         }
