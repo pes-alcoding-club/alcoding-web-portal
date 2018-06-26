@@ -4,6 +4,8 @@ import {
   setInStorage,
   getFromStorage,
 } from '../../utils/storage';
+import axios from 'axios';
+import qs from 'qs';
 
 class Login extends Component {
   constructor(props) {
@@ -26,48 +28,44 @@ class Login extends Component {
     this.setState({
       isLoading: false
     });
- }
+  }
 
   onTextboxChangeSignInPassword(event) {
+    event.preventDefault();
     this.setState({
       signInPassword: event.target.value,
     });
+
   }
 
   onTextboxChangeSignInEmail(event) {
+    event.preventDefault();
     this.setState({
       signInEmail: event.target.value,
     });
+
   }
 
-  onSignIn() {
-    // Grab state
+  onSignIn(event) {
+    event.preventDefault();
+
     const {
       signInEmail,
       signInPassword,
+      signInError
     } = this.state;
-    this.setState({
-      isLoading: true,
-    });
-    // Post request to backend
-    fetch('/api/account/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: signInEmail,
-        password: signInPassword,
-      }),
-    }).then(res => 
-      console.log(res.status))
-      .then(json => {
-        console.log('json', json);
-        if (json.success) {
-          setInStorage('App', {
-            token: json.token,
-            user_ID: json.user_ID
-          });
+
+    const user = {
+      email: signInEmail,
+      password: signInPassword
+    };
+
+    axios.post("/api/account/signin", qs.stringify(user))
+      .then((response) => {
+        console.log(response);
+        
+        if (response.success) {
+          setInStorage('app', { token: json.token, user_id: json.user_id });
           this.setState({
             signInError: json.message,
             isLoading: false,
@@ -77,19 +75,25 @@ class Login extends Component {
           });
         } else {
           this.setState({
-            signInError: json.message,
+            signInError: response.message,
             isLoading: false,
           });
         }
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
+
   render() {
     const {
       signInEmail,
       signInPassword,
+      signInError
     } = this.state;
 
     return (
+
       <div className="container-fluid">
         <div className="row justify-content-center">
           <form className="col-5 align-items-center">
@@ -100,7 +104,7 @@ class Login extends Component {
                 className="form-control"
                 placeholder="Email"
                 required="required"
-                value={this.state.signInEmail}
+                value={signInEmail}
                 onChange={this.onTextboxChangeSignInEmail}
               />
             </div>
@@ -110,7 +114,7 @@ class Login extends Component {
                 className="form-control"
                 placeholder="Password"
                 required="required"
-                value={this.state.signInPassword}
+                value={signInPassword}
                 onChange={this.onTextboxChangeSignInPassword}
               />
             </div>
