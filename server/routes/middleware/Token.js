@@ -3,7 +3,8 @@ const UserSession = require('../../models/UserSession');
 const User = require('../../models/User');
 var privateKey = "mySecret";
 
-function verifyToken(req, res, next) {
+var verifyToken = function (req, res, next) {
+  console.log("Verifying token.");
   var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'].split(' ')[1]; // normal headers "Authorization: Bearer 2kj234df0ds2f3n40n"
   if (!token)
     return res.status(403).send({ auth: false, message: 'No token provided.' });
@@ -65,18 +66,17 @@ var requireRole = function (role) {
   }
 }
 
-var verifyUser = () => {
-  return function (req, res, next) {
-    verifyToken(req, res, function () {
-      if (req.params.userID != req.user_id) {
-        return res.status(403).send({
-          success: false,
-          message: 'Error: Forbidden request.'
-        });
-      }
+var verifyUser = function (req, res, next) {
+  verifyToken(req, res, function () {
+    if (req.params.userID == req.user_id || req.role == "admin") {
       next();
-    });
-  }
+    }
+    else
+      return res.status(403).send({
+        success: false,
+        message: 'Error: Forbidden request.'
+      });
+  });
 }
 
 // Use verifyToken to check if the token is valid
