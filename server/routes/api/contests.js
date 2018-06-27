@@ -1,11 +1,13 @@
-const User = require('../../models/contests/Contender');
-const UserSession = require('../../models/contests/Contest')
+const Contender = require('../../models/contests/Contender');
+const Contest = require('../../models/contests/Contest')
 
 const User = require('../../models/User');
-const UserSession = require('../../models/UserSession')
+
+var requireRole = require('../middleware/Token').requireRole;
+var verifyUser = require('../middleware/Token').verifyUser;
 
 module.exports = (app) => {
-    app.post('/api/contests/handle', function (req, res) {
+    app.post('/api/contests/handle', verifyUser, function (req, res) {
       var platform = req.body.platform;
       var handle = req.body.handle;
 
@@ -24,7 +26,7 @@ module.exports = (app) => {
       });
     }),
 
-    app.post('/api/contests/history', function (req, res) {
+    app.post('/api/contests/history', requireRole("admin"), function (req, res) {
       var contest = req.body.contest;
       var score = req.body.score;
       var rank = req.body.rank;
@@ -44,7 +46,7 @@ module.exports = (app) => {
       });
     }),
 
-    app.post('/api/contests/contest', function (req, res) {
+    app.post('/api/contests/contest', requireRole("admin"), function (req, res) {
       var name = req.body.name;
       var url = req.body.url;
       var platform = req.body.platform;
@@ -79,13 +81,13 @@ module.exports = (app) => {
       });
     }),
 
-    app.post('/api/contests/contender', function (req, res) {
+    app.post('/api/contests/contender', requireRole("admin"), function (req, res) {
       var currentRank = req.body.currentRank;
 
       if (!currentRank) {
         return res.status(400).send({
           success: false,
-          message: 'Error: CurrentRank required. Defualt to -1 if unknown.'
+          message: 'Error: Current Rank required. -1 if unknown.'
         });
       }
       newContender = new Contender();
@@ -105,42 +107,46 @@ module.exports = (app) => {
       });
     }), // Completion of post methods
 
-    app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
-      // GET http://localhost:8080/api/account/:userID/logout
-      var user_id = req.params.userID;
-
-      if (!user_id) {
-        return res.status(400).send({
-          success: false,
-          message: 'Error: UserID parameter cannot be blank'
-        });
+    app.get('/api/contests/leaderboard', function (req, res) {
+      var limitTo = req.body.limitTo;
+      if(!limitTo){
+        limitTo = 100;
       }
 
-      UserSession.findOneAndRemove({
-        token: req.token
-      }, (err, session) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error"
-          });
-        }
-        if (!session) {
-          return res.status(400).send({
-            success: false,
-            message: "Error: Invalid."
-          });
-        }
+      console.log("Request to access leaderbaord.");
 
-        return res.status(200).send({
-          success: true,
-          message: 'User has been logged out'
+      Contender.
+        find({
+          isDeleted: false,
+          currentRank: { $ne: -1 },
+        }).
+        limit(limitTo).
+        sort({ currentRank: 1}, (err, contenders) => {
+          if (err) {
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error"
+            });
+          }
+          var i;
+          var leaderbaord = {};
+          for (i=0; i<contenders.length; i++){
+            rankHolder = {
+              rank: contenders[i].currentRank,
+              user: contenders[i].user.name.firstName,
+            };
+            leaderbaord.push(rankHolder);
+          }
+          return res.status(200).send({
+            success: true,
+            message: "Leaderboard successfully retrieved",
+            leaderboard: leaderbaord
+          });
+
         });
-      });
-    }), //end of logout endpoint
+    });
 
-    app.get('/api/account/:userID/details', verifyUser, function (req, res) {
-      // GET http://localhost:8080/api/account/:userID/details
+    app.get('/api/contests/:userID/contender', verifyUser, function (req, res) {
       var user_id = req.params.userID;
 
       //Verify that userID is present as a parameter
@@ -151,7 +157,7 @@ module.exports = (app) => {
         });
       }
 
-      console.log("Request to access details of " + user_id);
+      console.log("Request to access contender details of " + user_id);
       // Search for the user in the User model with his user_id
       User.find({
         _id: user_id
@@ -170,16 +176,33 @@ module.exports = (app) => {
           });
         }
         var user = users[0].toObject();
-        delete user.password;
-        delete user.isDeleted;
-        delete user.__v;
+        Contender.find({
+          user: user,
+          isDeleted: false 
+        }, (err, contenders) => {
+          if (err) {
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error"
+            });
+          }
 
-        // Return a response with user data
-        return res.status(200).send({
-          success: true,
-          message: "Details successfully retrieved",
-          user: user
-        });
+          if (contenders.length != 1) {
+            return res.status(404).send({
+              success: false,
+              message: 'Error: Contender not found.'
+            });
+          }
+          var contender = contenders[0].toObject();
+          delete contender.user;
+          delete contender.isDeleted;
+  
+          return res.status(200).send({
+            success: true,
+            message: "Details successfully retrieved",
+            contender: contender
+          });
+        })
       });
-    }); //end of getDetails endpoint
+    });
 };
