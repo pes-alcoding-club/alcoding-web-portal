@@ -26,23 +26,96 @@ module.exports = (app) => {
       });
     }),
 
-    app.post('/api/contests/history', requireRole("admin"), function (req, res) {
-      var contest = req.body.contest;
+    app.post('/api/contests/updateContender', requireRole("admin"), function (req, res) {
+      var email = req.body.email;
+      var contestName = req.body.contestName;
       var score = req.body.score;
       var rank = req.body.rank;
+      var currentRank = req.body.currentRank;
 
-      if (!contest || !score || !rank) {
+      if (!email) {
         return res.status(400).send({
           success: false,
-          message: 'Error: All fields required.'
+          message: 'Error: Email field is required'
         });
       }
-      newHistory = {"contest": contest, "score": score, "rank": rank};
-      Contender.findOneAndUpdate({user: req.user}, {$push: {history: newHistory}});
 
-      return res.status(200).send({
-        success: true,
-        message: 'History Added',
+      User.find({
+        email: email
+      }, (err, users) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+
+        if (users.length != 1) {
+          return res.status(404).send({
+            success: false,
+            message: 'Error: User not found.'
+          });
+        }
+        var user = users[0].toObject();
+
+        Contest.find({
+          name: contestName
+        }, (err, contests) => {
+          if(err){
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error"
+            });
+          }
+
+          if (contests.length != 1) {
+            return res.status(404).send({
+              success: false,
+              message: 'Error: Contest not found.'
+            });
+          }
+          var contest = contests[0].toObject();
+          newHistory = {"contest": contest, "score": score, "rank": rank};
+          Contender.findOneAndUpdate({user: user}, {$push: {history: newHistory}});
+          Contender.findOneAndUpdate({user: user}, {currentRank: currentRank});
+  
+          return res.status(200).send({
+            success: true,
+            message: 'Contender Updated',
+          });
+        })
+      });
+    }),
+
+    app.post('/api/contests/updatecontender', requireRole("admin"), function (req, res) {
+      var contest = req.body.contest;
+      var handle = req.body.handle;
+      var currentRank = req.body.currentRank;
+      
+      if (!name || !url || !platform || !ranksUrl || !date) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: Name, URL, Platform, RanksURL, Date are required fields.'
+        });
+      }
+      newContest = new Contest();
+      newContest.name = name;
+      newContest.url = url;
+      newContest.platform = platform;
+      newContest.ranksUrl = ranksUrl;
+      newContest.maxScore = maxScore;
+      newContest.date = date;
+      newContest.save((err) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: 'Error: Server error'
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: 'New contest created',
+        });
       });
     }),
 

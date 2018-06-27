@@ -15,7 +15,8 @@ const ContenderSchema = new mongoose.Schema({
   }],
   history: [{
     contest: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Contest'
     },
     score: {
       type: Number,
