@@ -87,37 +87,6 @@ module.exports = (app) => {
       });
     }),
 
-    app.post('/api/contests/updatecontender', requireRole("admin"), function (req, res) {
-      var contest = req.body.contest;
-      var handle = req.body.handle;
-      var currentRank = req.body.currentRank;
-      
-      if (!name || !url || !platform || !ranksUrl || !date) {
-        return res.status(400).send({
-          success: false,
-          message: 'Error: Name, URL, Platform, RanksURL, Date are required fields.'
-        });
-      }
-      newContest = new Contest();
-      newContest.name = name;
-      newContest.url = url;
-      newContest.platform = platform;
-      newContest.ranksUrl = ranksUrl;
-      newContest.maxScore = maxScore;
-      newContest.date = date;
-      newContest.save((err) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: 'Error: Server error'
-          });
-        }
-        return res.status(200).send({
-          success: true,
-          message: 'New contest created',
-        });
-      });
-    }),
 
     app.post('/api/contests/contest', requireRole("admin"), function (req, res) {
       var name = req.body.name;
