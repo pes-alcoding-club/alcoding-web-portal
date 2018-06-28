@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 const ContestSchema = new mongoose.Schema({
   name: {

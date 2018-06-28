@@ -2,7 +2,8 @@ const User = require('../../models/User');
 const UserSession = require('../../models/UserSession')
 const jwt = require('jsonwebtoken');
 var verifyUser = require('../middleware/Token').verifyUser;
-var privateKey = fs.readFileSync('../../sslcert/server.key');
+const fs = require('fs');
+var privateKey = fs.readFileSync('server/sslcert/server.key');
 // var privateKey = "mySecret"; //Change in VerifyToken.js as well.
 
 // TODO: Limit number of queries to these endpoints
@@ -115,8 +116,6 @@ module.exports = (app) => {
             message: "Error: Invalid."
           });
         }
-
-        var user = users[0];
         
         //Display the information of the user under data
         return res.status(200).send({
