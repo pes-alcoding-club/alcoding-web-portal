@@ -1,7 +1,8 @@
 var jwt = require('jsonwebtoken');
 const UserSession = require('../../models/UserSession');
 const User = require('../../models/User');
-var privateKey = "mySecret";
+const fs = require('fs');
+var privateKey = fs.readFileSync('server/sslcert/server.key');
 
 var verifyToken = function (req, res, next) {
   console.log("Verifying token.");
@@ -25,7 +26,7 @@ var verifyToken = function (req, res, next) {
           }
         });
       }
-      return res.status(401).send({ auth: false, err });
+      return res.status(401).send({ auth: false, token: token, err });
     }
     // save to request for use in other routes
     req.user_id = decoded.user_id;
