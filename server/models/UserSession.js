@@ -1,17 +1,9 @@
 const mongoose = require('mongoose');
 
 const UserSessionSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.SchemaTypes.ObjectId,
+  token: {
+    type: String,
     required: true
-  }, 
-  timestamp: {
-      type: Date,
-      default: Date.now()
-  },
-  isLoggedOut: {
-    type: Boolean,
-    default: false
   }
 });
 
