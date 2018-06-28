@@ -104,19 +104,25 @@ module.exports = (app) => {
         if (err) {
           return res.status(500).send({
             success: false,
-            message: "Error: Server error"
+            message: "Error: Invalid"
           });
         }
-        if (!session) {
+
+        const user = users[0];
+        if (!user.checkPassword(password)) {
           return res.status(400).send({
             success: false,
             message: "Error: Invalid."
           });
         }
 
+        var user = users[0];
+        
+        //Display the information of the user under data
         return res.status(200).send({
           success: true,
-          message: 'User has been logged out'
+          message: "User: " + user._id + " details successfully retrieved",
+          data: user
         });
       });
     }), //end of logout endpoint
