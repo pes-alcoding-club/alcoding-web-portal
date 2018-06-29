@@ -16,6 +16,7 @@ class Login extends Component {
       signInError: "",
       isLoading: false,
       error: null,
+      showWarning: false,
       token: ""
     };
 
@@ -26,7 +27,8 @@ class Login extends Component {
 
   componentDidMount() {
     this.setState({
-      isLoading: false
+      isLoading: false,
+      showWarning:false
     });
   }
 
@@ -52,7 +54,8 @@ class Login extends Component {
     const {
       signInEmail,
       signInPassword,
-      signInError
+      signInError,
+      showWarning
     } = this.state;
 
     const user = {
@@ -71,16 +74,22 @@ class Login extends Component {
             signInPassword: '',
             signInEmail: '',
             token: response.data.token,
+            
           });
         } else {
           this.setState({
             signInError: response.data.message,
             isLoading: false,
+            signInPassword: '',
+            showWarning: true
           });
         }
       })
       .catch((error) => {
         console.log(error);
+        this.setState({
+          showWarning: true
+        })
       });
   }
 
@@ -88,7 +97,7 @@ class Login extends Component {
     const {
       signInEmail,
       signInPassword,
-      signInError
+      showWarning
     } = this.state;
 
     return (
@@ -103,7 +112,7 @@ class Login extends Component {
                 className="form-control"
                 placeholder="Email"
                 required="required"
-                value={signInEmail}
+                value={this.signInEmail}
                 onChange={this.onTextboxChangeSignInEmail}
               />
             </div>
@@ -113,14 +122,18 @@ class Login extends Component {
                 className="form-control"
                 placeholder="Password"
                 required="required"
-                value={signInPassword}
+                value={this.signInPassword}
                 onChange={this.onTextboxChangeSignInPassword}
               />
             </div>
+          
+            
             <div className="form-group">
               <button type="submit" className="btn btn-primary btn-block" onClick={this.onSignIn}>Log in</button>
             </div>
+            {showWarning ? <div className='text-warning'> Invalid sign in, please try again </div> : null}
           </form>
+          
         </div>
       </div>
     )
