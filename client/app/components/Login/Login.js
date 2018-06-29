@@ -74,6 +74,7 @@ class Login extends Component {
             signInPassword: '',
             signInEmail: '',
             token: response.data.token,
+            showWarning: false
             
           });
         } else {
