@@ -94,7 +94,12 @@ class Login extends Component {
   }
 
   render() {
-    
+    const {
+      signInEmail,
+      signInPassword,
+      showWarning
+    } = this.state;
+
     return (
 
       <div className="container-fluid">
@@ -126,7 +131,7 @@ class Login extends Component {
             <div className="form-group">
               <button type="submit" className="btn btn-primary btn-block" onClick={this.onSignIn}>Log in</button>
             </div>
-            {this.showWarning ? <div className='text-warning'> Invalid sign in, please try again </div> : null}
+            {showWarning ? <div className='text-warning'> Invalid sign in, please try again </div> : null}
           </form>
           
         </div>
