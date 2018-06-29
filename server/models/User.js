@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
+var Schema = mongoose.Schema;
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -38,9 +39,19 @@ const UserSchema = new mongoose.Schema({
       default: Date.now()
     }
   },
-  role: {
+  role: { // student, admin, professor, staff
     type: String,
     default: "student"
+  },
+  courses: {
+    taking: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Course'
+    }],
+    giving: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Course'
+    }],
   },
   isDeleted: {
     type: Boolean,
