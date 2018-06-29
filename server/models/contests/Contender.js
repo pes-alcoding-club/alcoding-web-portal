@@ -1,17 +1,23 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 const ContenderSchema = new mongoose.Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  handle: [{
-    type: Map,
-    of: String
+  handles: [{
+    platform: {
+      type: String
+    },
+    handle: {
+      type: String
+    }
   }],
   history: [{
     contest: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Contest'
     },
     score: {
       type: Number,

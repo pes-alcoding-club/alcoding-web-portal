@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 const ContestSchema = new mongoose.Schema({
   name: {
+    type: String,
+    required: true
+  },
+  platform: {
     type: String,
     required: true
   },
@@ -13,12 +18,12 @@ const ContestSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  maxScore: {
-    type: Number,
-  },
   date: {
     type: Date,
     required: true
+  },
+  maxScore: {
+    type: Number,
   },
   contenders: {
     type: [Schema.Types.ObjectId],
