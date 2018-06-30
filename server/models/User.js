@@ -47,6 +47,18 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "student"
   },
+  files: [
+    {
+      file_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+      },
+      file_name: {
+        type: String,
+        required: true
+      }
+    }
+  ],
   isDeleted: {
     type: Boolean,
     default: false
