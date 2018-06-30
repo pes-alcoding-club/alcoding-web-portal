@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 const UserSession = require('../models/UserSession');
-var privateKey = "mySecret";
+const readFileSync = require('fs').readFileSync;
+var privateKey = readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 
 var verifyToken = function (req, res, next) {
   console.log("Verifying token.");
