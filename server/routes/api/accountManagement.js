@@ -1,7 +1,7 @@
 const User = require('../../models/User');
-const UserSession = require('../../models/UserSession')
+const UserSession = require('../../models/UserSession');
 const jwt = require('jsonwebtoken');
-var verifyUser = require('../middleware/Token').verifyUser;
+var verifyUser = require('../../middleware/Token').verifyUser;
 // var privateKey = fs.readFileSync('sslcert/server.key'); privateKey for jwt to encrpyt. Can be asymmetric as well.
 var privateKey = "mySecret"; //Change in VerifyToken.js as well.
 

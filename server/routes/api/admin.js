@@ -1,5 +1,5 @@
 const User = require('../../models/User');
-var requireRole = require('../middleware/Token').requireRole;
+var requireRole = require('../../middleware/Token').requireRole;
 
 
 module.exports = (app) => {
