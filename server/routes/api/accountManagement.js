@@ -12,9 +12,10 @@ var privateKey = "mySecret"; //Change in VerifyToken.js as well.
 
 module.exports = (app) => {
     app.post('/api/account/signin', function (req, res) {
-      var usn = req.body._id;
+      var usn = req.body.usn;
       var password = req.body.password;
       var email = req.body.email.toLowerCase().trim();
+      console.log(usn);
       console.log("Email: " + email + " attempting to signIn.");
       if (!usn) {
         return res.status(400).send({
@@ -36,9 +37,9 @@ module.exports = (app) => {
       }
 
       User.find({
-        email: email,
+        email:email,
         isDeleted: false
-      }, (err, users) => {
+      }, (err, users) => { console.log(users);
         if (err) {
           console.log('err 2:', err);
           return res.status(500).send({

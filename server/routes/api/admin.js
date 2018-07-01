@@ -6,7 +6,7 @@ module.exports = (app) => {
      app.post('/api/admin/signup', function (req, res) {
 
         // TODO: Change Email to usn
-	var usn = req.body._id;
+	var usn = req.body.usn;
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var password = req.body.password;
@@ -39,10 +39,10 @@ module.exports = (app) => {
         }
 
         // Steps:
-        // 1. Verify email doesn't exist
+        // 1. Verify USN doesn't exist
         // 2. Save
         User.find({
-            email: email
+            usn: usn
         }, (err, previousUsers) => {
             if (err) {
                 return res.status(500).send({
@@ -52,27 +52,29 @@ module.exports = (app) => {
             } else if (previousUsers.length > 0) {
                 return res.status(409).send({
                     success: false,
-                    message: 'Error: Account already exists.'
+                    message: 'Error: USN already exists.'
                 });
+
             }
             // Save the new user
             const newUser = new User();
 
-            newUser.email = email;
+            newUser.basic_info.email = email;
             newUser.name.firstName = firstName;
             newUser.name.lastName = lastName;
-            newUser._id = usn;
-            newUser.password = newUser.generateHash(password);
+            newUser.usn= usn;
+	    newUser.basic_info.DisplayName = firstName + " " + lastName;
+            newUser.basic_info.password = newUser.generateHash(password);
             if (role && role != "admin") {
                 // TODO: in the else part, throw an error "Cannot assign role 'admin' "
-                newUser.role = role;
+                newUser.basic_info.role = role;
             }
 
             newUser.save((err, user) => {
                 if (err) {
                     return res.status(500).send({
                         success: false,
-                        message: 'Error: Server error101'
+                        message: 'Error: Server error'
                     });
                 }
                 console.log(newUser._id + " Added to DB.")

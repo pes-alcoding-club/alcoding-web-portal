@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
 
-const UserSchema = new mongoose.Schema({
-  _id: String,
+const UserSchema = new mongoose.Schema({  
   name: {
     firstName: {
       type: String,
@@ -13,7 +12,18 @@ const UserSchema = new mongoose.Schema({
       default: ""
     }
   },
-  email: {
+  usn: {
+    type: String,
+    default: "",
+    required: true
+ },
+  
+  basic_info :{
+   email: {
+    type: String,
+    default: ""
+  },
+  DisplayName: {
     type: String,
     default: ""
   },
@@ -47,7 +57,7 @@ const UserSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false
-  }
+  }}
 });
 
 // const saltRounds = 10;
