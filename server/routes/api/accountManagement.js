@@ -12,10 +12,16 @@ var privateKey = "mySecret"; //Change in VerifyToken.js as well.
 
 module.exports = (app) => {
     app.post('/api/account/signin', function (req, res) {
+      var usn = req.body._id;
       var password = req.body.password;
       var email = req.body.email.toLowerCase().trim();
       console.log("Email: " + email + " attempting to signIn.");
-
+      if (!usn) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: USN cannot be blank.'
+        });
+      }
       if (!email) {
         return res.status(400).send({
           success: false,

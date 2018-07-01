@@ -3,9 +3,10 @@ var requireRole = require('../middleware/Token').requireRole;
 
 
 module.exports = (app) => {
-    app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
+     app.post('/api/admin/signup',requireRole("admin"), function (req, res) {
 
         // TODO: Change Email to usn
+	var usn = req.body._id;
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var password = req.body.password;
@@ -13,7 +14,12 @@ module.exports = (app) => {
         var usn = req.body.usn;
         var role = req.body.role;
         // console.log(req.body);
-
+	if (!usn) {
+            return res.status(400).send({
+                success: false,
+                message: 'Error: USN cannot be blank.'
+            });
+	}
         if (!firstName) {
             return res.status(400).send({
                 success: false,

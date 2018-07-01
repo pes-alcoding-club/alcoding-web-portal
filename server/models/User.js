@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
 
 const UserSchema = new mongoose.Schema({
+  _id: String,
   name: {
     firstName: {
       type: String,
@@ -20,6 +21,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+
   dob: {
     type: Date
   },
