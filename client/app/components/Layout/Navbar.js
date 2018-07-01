@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { logoutUser } from '../../actions/authActions';
 
 class Navbar extends Component {
-  
+
   onLogoutClick(event) {
     event.preventDefault();
     this.props.logoutUser();
@@ -15,27 +15,42 @@ class Navbar extends Component {
     const { isAuthenticated, user } = this.props.auth;
 
     const authLinks = (
-      <ul className="navbar-nav ml-auto">
+      <div className="collapse navbar-collapse">
+        <ul className="navbar-nav mr-auto">
+          <li className="nav-item">
+            <Link className="nav-link" to="/courses">
+              Courses
+          </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/assignments">
+              Assignments
+          </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/contests">
+              Contests
+          </Link>
+          </li>
+        </ul>
+        <ul className="navbar-nav">
 
-        <li className="nav-item">
-          <Link className="nav-link" to="/landing">
-            Dashboard
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="/landing">
-            Profile
-          </Link>
-        </li>
-        <li className="nav-item">
-          <a
-            href=""
-            onClick={this.onLogoutClick.bind(this)}
-            className="nav-link"
-          >Logout </a>
-        </li>
-      </ul>
+          <li className="nav-item">
+            <Link className="nav-link" to="/profile">
+              Profile
+        </Link>
+          </li>
+          <li className="nav-item">
+            <a
+              href=""
+              onClick={this.onLogoutClick.bind(this)}
+              className="nav-link"
+            >Logout </a>
+          </li>
+        </ul>
+      </div>
     );
+    
 
     const guestLinks = (
       <ul className="navbar-nav ml-auto">
@@ -49,21 +64,22 @@ class Navbar extends Component {
 
     return (
       <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
-        <div className="container">
-          <Link className="navbar-brand" to="/">
-            Alcoding
-          </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#mobile-nav"
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
 
+        <Link className="navbar-brand" to="/">
+          Alcoding
+          </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#mobile-nav"
+        >
+          <span className="navbar-toggler-icon" />
+        </button>
+        
           {isAuthenticated ? authLinks : guestLinks}
-        </div>
+        
+        
 
       </nav>
     );
