@@ -3,7 +3,7 @@ var requireRole = require('../middleware/Token').requireRole;
 
 
 module.exports = (app) => {
-     app.post('/api/admin/signup',requireRole("admin"), function (req, res) {
+     app.post('/api/admin/signup', function (req, res) {
 
         // TODO: Change Email to usn
 	var usn = req.body._id;
@@ -11,7 +11,6 @@ module.exports = (app) => {
         var lastName = req.body.lastName;
         var password = req.body.password;
         var email = req.body.email;
-        var usn = req.body.usn;
         var role = req.body.role;
         // console.log(req.body);
 	if (!usn) {
@@ -62,7 +61,7 @@ module.exports = (app) => {
             newUser.email = email;
             newUser.name.firstName = firstName;
             newUser.name.lastName = lastName;
-            newUser.usn = usn;
+            newUser._id = usn;
             newUser.password = newUser.generateHash(password);
             if (role && role != "admin") {
                 // TODO: in the else part, throw an error "Cannot assign role 'admin' "
@@ -73,7 +72,7 @@ module.exports = (app) => {
                 if (err) {
                     return res.status(500).send({
                         success: false,
-                        message: 'Error: Server error'
+                        message: 'Error: Server error101'
                     });
                 }
                 console.log(newUser._id + " Added to DB.")
