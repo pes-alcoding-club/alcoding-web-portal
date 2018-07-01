@@ -1,23 +1,16 @@
 import React, { Component } from 'react';
-import 'whatwg-fetch';
-import {
-  setInStorage,
-  getFromStorage,
-} from '../../utils/storage';
-import axios from 'axios';
-import qs from 'qs';
-
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { loginUser } from '../../actions/authActions';
 class Login extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       signInEmail: "",
       signInpassword: "",
-      signInError: "",
-      isLoading: false,
-      error: null,
-      showWarning: false,
-      token: ""
+      errors: {},
+      
     };
 
     this.onSignIn = this.onSignIn.bind(this);
@@ -26,10 +19,19 @@ class Login extends Component {
   };
 
   componentDidMount() {
-    this.setState({
-      isLoading: false,
-      showWarning:false
-    });
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push('/landing');
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push('/landing');
+    }
+
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
   }
 
   onTextboxChangeSignInPassword(event) {
@@ -50,55 +52,21 @@ class Login extends Component {
 
   onSignIn(event) {
     event.preventDefault();
-
-    const {
-      signInEmail,
-      signInPassword,
-      signInError,
-      showWarning
-    } = this.state;
-
+    
     const user = {
-      email: signInEmail,
-      password: signInPassword
+      email: this.state.signInEmail,
+      password: this.state.signInPassword
     };
 
-    axios.post("/api/account/signin", qs.stringify(user))
-      .then((response) => {
-        console.log(response);
-        if (response.data.success) {
-          setInStorage('app', { token: response.data.token, user_id: response.data.user_id });
-          this.setState({
-            signInError: response.data.message,
-            isLoading: false,
-            signInPassword: '',
-            signInEmail: '',
-            token: response.data.token,
-            showWarning: false
-            
-          });
-        } else {
-          this.setState({
-            signInError: response.data.message,
-            isLoading: false,
-            signInPassword: '',
-            showWarning: true
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({
-          showWarning: true
-        })
-      });
+   this.props.loginUser(user);
+   console.log(this.props.auth)
   }
 
   render() {
     const {
       signInEmail,
       signInPassword,
-      showWarning
+      errors
     } = this.state;
 
     return (
@@ -113,8 +81,10 @@ class Login extends Component {
                 className="form-control"
                 placeholder="Email"
                 required="required"
-                value={this.signInEmail}
+                value={signInEmail}
                 onChange={this.onTextboxChangeSignInEmail}
+                error={errors.email}
+
               />
             </div>
             <div className="form-group">
@@ -123,8 +93,10 @@ class Login extends Component {
                 className="form-control"
                 placeholder="Password"
                 required="required"
-                value={this.signInPassword}
+                value={signInPassword}
                 onChange={this.onTextboxChangeSignInPassword}
+                error={errors.password}
+
               />
             </div>
           
@@ -132,9 +104,9 @@ class Login extends Component {
             <div className="form-group">
               <button type="submit" className="btn btn-primary btn-block" onClick={this.onSignIn}>Log in</button>
             </div>
-            {showWarning ? <div className='text-warning'> Invalid sign in, please try again </div> : null}
           </form>
           
+
         </div>
       </div>
     )
@@ -142,4 +114,17 @@ class Login extends Component {
 }
 
 
-export default Login;
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+
+});
+
+export default connect(mapStateToProps, { loginUser })(Login);
