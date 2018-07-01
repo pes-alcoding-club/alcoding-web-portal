@@ -10,6 +10,7 @@ export const loginUser = user => dispatch => {
             console.log(response);
             
             if (response.data.success) {
+                
                 //save data into local storage
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user_id',response.data.user_id);
