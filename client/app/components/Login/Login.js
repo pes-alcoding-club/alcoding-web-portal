@@ -59,7 +59,7 @@ class Login extends Component {
     };
 
    this.props.loginUser(user);
-   console.log(this.props.auth)
+   
   }
 
   render() {

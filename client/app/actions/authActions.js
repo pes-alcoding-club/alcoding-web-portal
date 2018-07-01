@@ -5,7 +5,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 export const loginUser = user => dispatch => {
-    axios.post("/api/account/signin", user)
+    axios.post("/api/account/signin", qs.stringify(user))
         .then((response) => {
             console.log(response);
             token = response.data.token
@@ -23,7 +23,7 @@ export const loginUser = user => dispatch => {
         .catch(err =>
             dispatch({
                 type: GET_ERRORS,
-                payload: err.response.data
+                payload: err
             })
         );
 };
