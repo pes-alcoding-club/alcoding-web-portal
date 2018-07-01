@@ -3,32 +3,24 @@ var requireRole = require('../middleware/Token').requireRole;
 
 
 module.exports = (app) => {
-     app.post('/api/admin/signup', function (req, res) {
+    app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
 
-        // TODO: Change Email to usn
-	var usn = req.body.usn;
+        var usn = req.body.usn;
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var password = req.body.password;
         var email = req.body.email;
         var role = req.body.role;
-        // console.log(req.body);
-	if (!usn) {
+        if (!usn) {
             return res.status(400).send({
                 success: false,
                 message: 'Error: USN cannot be blank.'
             });
-	}
+        }
         if (!firstName) {
             return res.status(400).send({
                 success: false,
                 message: 'Error: First name cannot be blank.'
-            });
-        }
-        if (!email) {
-            return res.status(400).send({
-                success: false,
-                message: 'Error: Email cannot be blank.'
             });
         }
         if (!password) {
@@ -59,15 +51,21 @@ module.exports = (app) => {
             // Save the new user
             const newUser = new User();
 
-            newUser.basic_info.email = email;
+            newUser.basicInfo.email = email;
             newUser.name.firstName = firstName;
             newUser.name.lastName = lastName;
-            newUser.usn= usn;
-	    newUser.basic_info.DisplayName = firstName + " " + lastName;
-            newUser.basic_info.password = newUser.generateHash(password);
+            newUser.usn = usn;
+            newUser.basicInfo.displayName = firstName + " " + lastName;
+            newUser.basicInfo.password = newUser.generateHash(password);
             if (role && role != "admin") {
                 // TODO: in the else part, throw an error "Cannot assign role 'admin' "
-                newUser.basic_info.role = role;
+                newUser.basicInfo.role = role;
+            }
+            else{
+                return res.status(500).send({
+                    success: false,
+                    message: 'Error: Server error. Cannot assign role \'admin\''
+                });
             }
 
             newUser.save((err, user) => {
