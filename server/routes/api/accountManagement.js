@@ -15,8 +15,8 @@ module.exports = (app) => {
       var usn = req.body.usn;
       var password = req.body.password;
       var email = req.body.email.toLowerCase().trim();
-      console.log(usn);
       console.log("Email: " + email + " attempting to signIn.");
+      console.log("USN: " + usn + " attempting to signIn.");
       if (!usn) {
         return res.status(400).send({
           success: false,
@@ -37,9 +37,9 @@ module.exports = (app) => {
       }
 
       User.find({
-        email:email,
+        usn: usn,
         isDeleted: false
-      }, (err, users) => { console.log(users);
+      }, (err, users) => {
         if (err) {
           console.log('err 2:', err);
           return res.status(500).send({
