@@ -18,12 +18,12 @@ const UserSchema = new mongoose.Schema({
     required: true
  },
   
-  basic_info :{
+  basicInfo :{
    email: {
     type: String,
     default: ""
   },
-  DisplayName: {
+  displayName: {
     type: String,
     default: ""
   },
