@@ -8,12 +8,11 @@ export const loginUser = user => dispatch => {
     axios.post("/api/account/signin", qs.stringify(user))
         .then((response) => {
             console.log(response);
-            token = response.data.token
-            user_id = response.data.user_id
+            
             if (response.data.success) {
                 //save data into local storage
-                localStorage.setItem('token', token);
-                localStorage.setItem('user_id', user_id);
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user_id',response.data.user_id);
 
                 //set current user
                 dispatch(setCurrentUser(token));
