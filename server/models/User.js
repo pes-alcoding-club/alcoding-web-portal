@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
+var Schema = mongoose.Schema;
+
+// TODO: Add USN field and make it the unique key insteaad of email
+// Hence change the endpoints
+// Add display name field
+// Add a default for each so that it appears in the profile page.
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -37,6 +43,20 @@ const UserSchema = new mongoose.Schema({
       type: Date,
       default: Date.now()
     }
+  },
+  role: { // student, admin, professor, staff
+    type: String,
+    default: "student"
+  },
+  courses: {
+    taking: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Course'
+    }],
+    giving: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Course'
+    }],
   },
   isDeleted: {
     type: Boolean,
