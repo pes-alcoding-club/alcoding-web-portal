@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 
 // TODO: Add USN field and make it the unique key insteaad of email
 // Hence change the endpoints
@@ -47,11 +47,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "student"
   },
+  files: [mongoose.Schema.Types.ObjectId],
   isDeleted: {
     type: Boolean,
     default: false
   }
-});
+}, {strict:false});
 
 // const saltRounds = 10;
 // UserSchema.methods = {
