@@ -1,17 +1,16 @@
-import React from 'react';
+import React,{ Component } from 'react';
+import Navbar from '../Layout/Navbar';
 
-import { Link } from 'react-router-dom';
-
-const Header = () => (
-  <header>
-    <Link to="/">Home</Link>
-
-    <nav>
-      <Link to="/helloworld">Hello World</Link>
-    </nav>
-
-    <hr />
-  </header>
-);
-
+class Header extends Component {
+  constructor() {
+    super();
+  }
+  render(){
+    return(
+      <header>
+        <Navbar/>
+      </header>
+    );
+  }
+}
 export default Header;

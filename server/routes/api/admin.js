@@ -6,13 +6,12 @@ module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
 
         // TODO: Change Email to usn
-        var firstName = req.body.firstName;
-        var lastName = req.body.lastName;
-        var password = req.body.password;
-        var email = req.body.email;
-        var usn = req.body.usn;
-        var role = req.body.role;
-        // console.log(req.body);
+        var firstName = '' + req.body.firstName;
+        var lastName = '' + req.body.lastName;
+        var password = '' + req.body.password;
+        var email = ('' + req.body.email).toLowerCase().trim();
+        var usn = '' + req.body.usn;
+        var role = '' + req.body.role;
 
         if (!firstName) {
             return res.status(400).send({
