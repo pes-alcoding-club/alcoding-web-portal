@@ -1,9 +1,9 @@
 const User = require('../../models/User');
-const UserSession = require('../../models/UserSession')
+const UserSession = require('../../models/UserSession');
 const jwt = require('jsonwebtoken');
-var verifyUser = require('../middleware/Token').verifyUser;
-// var privateKey = fs.readFileSync('sslcert/server.key'); privateKey for jwt to encrpyt. Can be asymmetric as well.
-var privateKey = "mySecret"; //Change in VerifyToken.js as well.
+var verifyUser = require('../../middleware/Token').verifyUser;
+const readFileSync = require('fs').readFileSync;
+var privateKey = readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality

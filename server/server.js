@@ -16,7 +16,7 @@ var privateKey = fs.readFileSync('server/sslcert/server.key', 'utf8');
 var certificate = fs.readFileSync('server/sslcert/server.crt', 'utf8');
 
 const isDev = process.env.NODE_ENV !== 'production';
-const port  = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 
 
 // Configuration
@@ -26,16 +26,24 @@ const port  = process.env.PORT || 8080;
 mongoose.connect(isDev ? config.db_dev : config.db);
 mongoose.Promise = global.Promise;
 
+// ExpressJS
 var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+// CORS provision
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // API routes
 require('./routes')(app);
 
 if (isDev) {
+  // Dev Server
   const compiler = webpack(webpackConfig);
 
   app.use(historyApiFallback({
@@ -57,7 +65,9 @@ if (isDev) {
 
   app.use(webpackHotMiddleware(compiler));
   app.use(express.static(path.resolve(__dirname, '../dist')));
-} else {
+}
+else {
+  // Production Server
   app.use(express.static(path.resolve(__dirname, '../dist')));
   app.get('*', function (req, res) {
     res.sendFile(path.resolve(__dirname, '../dist/index.html'));
@@ -65,7 +75,7 @@ if (isDev) {
   });
 }
 
-var credentials = {key: privateKey, cert: certificate};
+var credentials = { key: privateKey, cert: certificate };
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(8443);
 

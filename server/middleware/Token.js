@@ -1,11 +1,17 @@
 var jwt = require('jsonwebtoken');
-const UserSession = require('../../models/UserSession');
-const User = require('../../models/User');
-var privateKey = "mySecret";
+const UserSession = require('../models/UserSession');
+const readFileSync = require('fs').readFileSync;
+var privateKey = readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 
 var verifyToken = function (req, res, next) {
   console.log("Verifying token.");
-  var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'].split(' ')[1]; // normal headers "Authorization: Bearer 2kj234df0ds2f3n40n"
+  try {
+    // x-access-token preferred
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'].split(' ')[1];
+  }
+  catch (err) {
+    var token = undefined;
+  }
   if (!token)
     return res.status(403).send({ auth: false, message: 'No token provided.' });
 
