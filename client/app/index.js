@@ -8,22 +8,17 @@ import {
   Switch
 } from 'react-router-dom'
 import { setCurrentUser,logoutUser,loginUser } from './actions/authActions';
-import Landing from '../app/components/Layout/Landing';
 import { Provider } from 'react-redux';
 import store from '../app/store/store';
-
 import PrivateRoute from '../app/components/common/PrivateRoute';
 import Header from '../app/components/Header/Header';
 import Footer from '../app/components/Footer/Footer';
-
-
-import NotFound from '../app/components/App/NotFound';
-
 import Home from '../app/components/Home/Home';
-import Profile_Page from '../app/components/Pages/Profile';
+import Profile from '../app/components/Pages/Profile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses';
+import Landing from '../app/components/Layout/Landing';
 import Login from '../app/components/Login/Login';
 
 
@@ -42,12 +37,12 @@ render((
       <Header />
       <Route exact path="/" component={Home}/>
       <div className='Container'>
-      <Switch>
+      {/* <Switch>
         <Route path="/login" component={Login}/>
-      </Switch>
-      <Switch>
+      </Switch> */}
+      {/* <Switch>
                 <PrivateRoute exact path="/landing" component={Landing} />
-      </Switch>
+      </Switch> */}
       <Switch>
                 <PrivateRoute exact path="/assignments" component={Assignments} />
       </Switch>
@@ -58,7 +53,7 @@ render((
                 <PrivateRoute exact path="/courses" component={Courses} />
       </Switch>
       <Switch>
-                <PrivateRoute exact path="/profile" component={Profile_Page} />
+                <PrivateRoute exact path="/profile" component={Profile} />
       </Switch>
       </div>
     <Footer />
