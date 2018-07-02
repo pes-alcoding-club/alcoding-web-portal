@@ -10,7 +10,6 @@ class Login extends Component {
       signInEmail: "",
       signInpassword: "",
       errors: {},
-      
     };
 
     this.onSignIn = this.onSignIn.bind(this);
@@ -51,15 +50,13 @@ class Login extends Component {
   }
 
   onSignIn(event) {
-    event.preventDefault();
-    
+    event.preventDefault();   
     const user = {
       email: this.state.signInEmail,
       password: this.state.signInPassword
     };
 
    this.props.loginUser(user);
-   
   }
 
   render() {
@@ -84,7 +81,6 @@ class Login extends Component {
                 value={signInEmail}
                 onChange={this.onTextboxChangeSignInEmail}
                 error={errors.email}
-
               />
             </div>
             <div className="form-group">
@@ -96,7 +92,6 @@ class Login extends Component {
                 value={signInPassword}
                 onChange={this.onTextboxChangeSignInPassword}
                 error={errors.password}
-
               />
             </div>
           
@@ -106,13 +101,11 @@ class Login extends Component {
             </div>
           </form>
           
-
         </div>
       </div>
     )
   }
 }
-
 
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,

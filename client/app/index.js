@@ -26,6 +26,7 @@ import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses';
 import Login from '../app/components/Login/Login';
 
+
 import './styles/styles.scss';
 
 if(localStorage.token){
