@@ -4,7 +4,7 @@ export default class Assignments extends Component {
   render() {
     return (
       <div>
-        Assignments page
+        Assignments Page
       </div>
     )
   }
