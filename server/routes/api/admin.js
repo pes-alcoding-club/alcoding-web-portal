@@ -6,6 +6,7 @@ module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
 
         // TODO: Change Email to usn
+
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var password = req.body.password;

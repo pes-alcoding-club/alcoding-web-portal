@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 
 class Home extends Component {
-  constructor() {
-    super();
-
-  }
-
-
+  
   render() {
     return (
       <>
+      COMMON HOMEPAGE FOR GUEST USERS AND LOGGED IN USERS
         
       </>
     );
