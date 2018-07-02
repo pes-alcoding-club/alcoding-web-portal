@@ -111,7 +111,7 @@ class Navbar extends Component {
         </ul>
       </div>
     );
-    
+
 
     const guestLinks = (
       <div className="collapse navbar-collapse">
