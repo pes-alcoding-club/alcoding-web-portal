@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
 
+// TODO: Add USN field and make it the unique key insteaad of email
+// Hence change the endpoints
+// Add display name field
+// Add a default for each so that it appears in the profile page.
+
 const UserSchema = new mongoose.Schema({
   name: {
     firstName: {
