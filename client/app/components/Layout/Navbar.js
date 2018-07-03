@@ -118,7 +118,7 @@ class Navbar extends Component {
         <ul className="navbar-nav ml-auto">
         <form className="form-inline">
         <li className="nav-item">
-        <div className="form-group">
+        <div className="form-group  mr-sm-2">
         <input
                 className="form-control"
                 placeholder="Email"
@@ -176,7 +176,6 @@ Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
   logoutUser: PropTypes.func.isRequired,
   loginUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
 

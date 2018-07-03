@@ -2,27 +2,22 @@ const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
 var path = require('path');
-var dir = '/Users/adityavinodkumar/Desktop/Code/Alcoding/server/adminfiles/';
-//Enter your respective adminuploads directory above
 var fs = require("fs");
 var multer = require('multer');
 var keyName = "inputFile" //Change according to your key name for file
-
-//Adds the adminuploads directory  
-if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-}
 
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
 
         // TODO: Change Email to usn
+
         var firstName = '' + req.body.firstName;
         var lastName = '' + req.body.lastName;
         var password = '' + req.body.password;
         var email = ('' + req.body.email).toLowerCase().trim();
         var usn = '' + req.body.usn;
         var role = '' + req.body.role;
+        // console.log(req.body);
 
         if (!firstName) {
             return res.status(400).send({
@@ -89,8 +84,15 @@ module.exports = (app) => {
         });
     }); // end of sign up endpoint
 
+
+    var dir = process.cwd() + '/../temp';
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
     var storage = multer.diskStorage({
-        destination: dir,
+        destination: function (req, file, cb) {
+            cb(null, dir)
+        },
         filename: function (req, file, cb) {
             cb(null, file.originalname);
         }
@@ -98,7 +100,7 @@ module.exports = (app) => {
     var upload = multer({ storage: storage });
     //TODO: Make better cryptic naming convention for files 
 
-    app.post('/api/admin/upload', upload.single(keyName), requireRole("admin"), function (req, res) {
+    app.post('/api/admin/file', upload.single(keyName), requireRole("admin"), function (req, res) {
         if (!req.file) {
             return res.status(400).send({
                 success: false,
@@ -109,14 +111,14 @@ module.exports = (app) => {
         File.find({
             user_id: req.user_id,
             originalname: req.file.originalname
-        }, function (err, users) {
+        }, function (err, files) {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: Server error"
                 });
             }
-            else if (users.length > 0) {
+            else if (files.length > 0) {
                 return res.status(400).send({
                     success: false,
                     message: "Error: File is already entered by user."
