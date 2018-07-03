@@ -10,6 +10,8 @@ class Login extends Component {
       signInEmail: "",
       signInpassword: "",
       errors: {},
+      showWarning: false,
+      user : {}
       
     };
 
@@ -17,17 +19,31 @@ class Login extends Component {
     this.onTextboxChangeSignInEmail = this.onTextboxChangeSignInEmail.bind(this);
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
   };
-
+  
   componentDidMount() {
+    this.setState({
+      showWarning : false
+    })
     if (this.props.auth.isAuthenticated) {
       this.props.history.push('/landing');
+      this.setState({
+        user : this.props.auth.user
+      })
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       this.props.history.push('/landing');
+      this.setState({
+        user : this.props.auth.user
+      })
     }
+    else{
+      this.setState({
+      showWarning : true
+    })
+  }
 
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
@@ -53,12 +69,12 @@ class Login extends Component {
   onSignIn(event) {
     event.preventDefault();
     
-    const user = {
+    const userData = {
       email: this.state.signInEmail,
       password: this.state.signInPassword
     };
 
-   this.props.loginUser(user);
+   this.props.loginUser(userData);
    
   }
 
@@ -66,9 +82,8 @@ class Login extends Component {
     const {
       signInEmail,
       signInPassword,
-      errors
+      errors,showWarning
     } = this.state;
-
     return (
 
       <div className="container-fluid">
@@ -84,7 +99,6 @@ class Login extends Component {
                 value={signInEmail}
                 onChange={this.onTextboxChangeSignInEmail}
                 error={errors.email}
-
               />
             </div>
             <div className="form-group">
@@ -98,9 +112,10 @@ class Login extends Component {
                 error={errors.password}
 
               />
+              { showWarning ? <p className='text-warning'> Invalid sign in </p> : null}
+
             </div>
           
-            
             <div className="form-group">
               <button type="submit" className="btn btn-primary btn-block" onClick={this.onSignIn}>Log in</button>
             </div>
@@ -123,7 +138,8 @@ Login.propTypes = {
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  errors: state.errors
+  errors: state.errors,
+  user: state.user
 
 });
 
