@@ -11,7 +11,7 @@ class Profile extends React.Component {
         super();
         this.state = {
             usn: "",
-            name: {},
+            name: "",
             basicInfo: {}
         };
         this.updateValue = this.updateValue.bind(this);
@@ -38,16 +38,12 @@ class Profile extends React.Component {
                     return;
                 }
                 var data = response.data;
-                // Temporary manipulation until basicInfo is added
-                self.setState({ usn: data.user.usn, name: data.user.name.firstName + " " + data.user.name.lastName });
-                var user = data.user;
-                delete user.name;
-                delete user.usn;
-                delete user.timestamp;
-                self.setState({ basicInfo: user });
-                // console.log(self.state);
-                // end of manipulation
-
+                // TODO: Update dob with calendar
+                self.setState({ 
+                    usn: data.user.usn, 
+                    name: data.user.name.firstName + " " + data.user.name.lastName,
+                    basicInfo: data.user.basicInfo
+                });
             })
             .catch(function (error) {
                 // TODO: Try again after sometime? 
@@ -98,7 +94,7 @@ class Profile extends React.Component {
                     <StaticBox field="USN" val={this.state.usn} />
                     
                     <StaticBox field="Name" val={this.state.name} />
-                    <hr class="my-2"/>
+                    <hr className="my-2"/>
                     {
                         Object.keys(this.state.basicInfo).map((oneKey, i) => {
                             return (
