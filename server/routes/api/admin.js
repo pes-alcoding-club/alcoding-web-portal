@@ -2,13 +2,12 @@ const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
 var path = require('path');
-var dir = '/Users/adityavinodkumar/Desktop/Code/Alcoding/server/adminfiles/';
-//Enter your respective adminuploads directory above
+var dir = process.cwd() + '/../temp';
 var fs = require("fs");
 var multer = require('multer');
 var keyName = "inputFile" //Change according to your key name for file
 
-//Adds the adminuploads directory  
+//Adds the directory  
 if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
 }
@@ -90,7 +89,9 @@ module.exports = (app) => {
     }); // end of sign up endpoint
 
     var storage = multer.diskStorage({
-        destination: dir,
+        destination: function (req, file, cb) {
+            cb(null, dir);
+        },
         filename: function (req, file, cb) {
             cb(null, file.originalname);
         }
@@ -109,17 +110,36 @@ module.exports = (app) => {
         File.find({
             user_id: req.user_id,
             originalname: req.file.originalname
-        }, function (err, users) {
+        }, function (err, files) {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: Server error"
                 });
             }
-            else if (users.length > 0) {
+            else if (files.length > 0) {
+                var foundFile = files[0];
+                File.findOneAndUpdate({
+                    _id:foundFile._id
+                }, { 
+                    $inc:{ __v : 1 },
+                    $set: {
+                        encoding: req.file.encoding,
+                        mimetype: req.file.mimetype,
+                        size: req.file.size
+                    }
+                }, null, function(err,file){
+                    if (err) {
+                        return res.status(500).send({
+                            success: false,
+                            message: 'Error: Server error'
+                        });
+                    }
+                    console.log("Version of file "+ file._id +" is updated ");
+                });
                 return res.status(400).send({
-                    success: false,
-                    message: "Error: File is already entered by user."
+                    success: true,
+                    message: "File is already entered by user. Version updated"
                 })
             }
             else {
