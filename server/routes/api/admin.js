@@ -7,12 +7,12 @@ module.exports = (app) => {
 
         // TODO: Change Email to usn
 
-        var firstName = req.body.firstName;
-        var lastName = req.body.lastName;
-        var password = req.body.password;
-        var email = req.body.email;
-        var usn = req.body.usn;
-        var role = req.body.role;
+        var firstName = '' + req.body.firstName;
+        var lastName = '' + req.body.lastName;
+        var password = '' + req.body.password;
+        var email = ('' + req.body.email).toLowerCase().trim();
+        var usn = '' + req.body.usn;
+        var role = '' + req.body.role;
         // console.log(req.body);
 
         if (!firstName) {
