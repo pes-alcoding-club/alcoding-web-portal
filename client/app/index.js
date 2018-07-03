@@ -18,8 +18,6 @@ import Profile from '../app/components/Pages/Profile/Profile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses';
-import Landing from '../app/components/Layout/Landing';
-import Login from '../app/components/Login/Login';
 
 
 import './styles/styles.scss';
