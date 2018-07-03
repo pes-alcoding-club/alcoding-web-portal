@@ -11,13 +11,12 @@ module.exports = (app) => {
 
         // TODO: Change Email to usn
 
-        var firstName = '' + req.body.firstName;
-        var lastName = '' + req.body.lastName;
-        var password = '' + req.body.password;
-        var email = ('' + req.body.email).toLowerCase().trim();
-        var usn = '' + req.body.usn;
-        var role = '' + req.body.role;
-        // console.log(req.body);
+        var usn = req.body.usn;
+        var firstName = req.body.firstName;
+        var lastName = req.body.lastName;
+        var email = req.body.email;
+        var password = req.body.password;
+        var role = req.body.role;
 
         if (!firstName) {
             return res.status(400).send({
@@ -25,10 +24,10 @@ module.exports = (app) => {
                 message: 'Error: First name cannot be blank.'
             });
         }
-        if (!email) {
+        if (!usn) {
             return res.status(400).send({
                 success: false,
-                message: 'Error: Email cannot be blank.'
+                message: 'Error: usn cannot be blank.'
             });
         }
         if (!password) {
@@ -38,11 +37,14 @@ module.exports = (app) => {
             });
         }
 
-        // Steps:
-        // 1. Verify email doesn't exist
-        // 2. Save
+        // Process data
+        usn = ('' + usn).toUpperCase().trim();
+        email = ('' + email).toLowerCase().trim();
+        password = '' + password;
+
+        // Deduplication flow
         User.find({
-            email: email
+            usn: usn
         }, (err, previousUsers) => {
             if (err) {
                 return res.status(500).send({
@@ -58,13 +60,19 @@ module.exports = (app) => {
             // Save the new user
             const newUser = new User();
 
-            newUser.email = email;
-            newUser.name.firstName = firstName;
-            newUser.name.lastName = lastName;
             newUser.usn = usn;
+            newUser.name.firstName = firstName;
+            if (lastName) { newUser.name.lastName = lastName; }
+            if (email) { newUser.basicInfo.email = email; }
             newUser.password = newUser.generateHash(password);
-            if (role && role != "admin") {
-                // TODO: in the else part, throw an error "Cannot assign role 'admin' "
+        
+            if (role) {
+                if (role == "admin") {
+                    return res.status(403).send({
+                        success: false,
+                        message: "Error: Forbidden request, Cannot assign role:\"admin\"."
+                    });
+                }
                 newUser.role = role;
             }
 
