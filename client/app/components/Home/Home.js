@@ -1,106 +1,40 @@
 import React, { Component } from 'react';
-import 'whatwg-fetch';
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
-    this.state = {
-      counters: []
-    };
-
-    this.newCounter = this.newCounter.bind(this);
-    this.incrementCounter = this.incrementCounter.bind(this);
-    this.decrementCounter = this.decrementCounter.bind(this);
-    this.deleteCounter = this.deleteCounter.bind(this);
-
-    this._modifyCounter = this._modifyCounter.bind(this);
   }
 
-  componentDidMount() {
-    fetch('/api/counters')
-      .then(res => res.json())
-      .then(json => {
-        this.setState({
-          counters: json
-        });
-      });
-  }
-
-  newCounter() {
-    fetch('/api/counters', { method: 'POST' })
-      .then(res => res.json())
-      .then(json => {
-        let data = this.state.counters;
-        data.push(json);
-
-        this.setState({
-          counters: data
-        });
-      });
-  }
-
-  incrementCounter(index) {
-    const id = this.state.counters[index]._id;
-
-    fetch(`/api/counters/${id}/increment`, { method: 'PUT' })
-      .then(res => res.json())
-      .then(json => {
-        this._modifyCounter(index, json);
-      });
-  }
-
-  decrementCounter(index) {
-    const id = this.state.counters[index]._id;
-
-    fetch(`/api/counters/${id}/decrement`, { method: 'PUT' })
-      .then(res => res.json())
-      .then(json => {
-        this._modifyCounter(index, json);
-      });
-  }
-
-  deleteCounter(index) {
-    const id = this.state.counters[index]._id;
-
-    fetch(`/api/counters/${id}`, { method: 'DELETE' })
-      .then(_ => {
-        this._modifyCounter(index, null);
-      });
-  }
-
-  _modifyCounter(index, data) {
-    let prevData = this.state.counters;
-
-    if (data) {
-      prevData[index] = data;
-    } else {
-      prevData.splice(index, 1);
-    }
-
-    this.setState({
-      counters: prevData
-    });
-  }
 
   render() {
+    const staticText = {
+      aboutUs: "The Alcoding Club is part of the Computer Science & Engineering Department of PES University. It was formed in 2014 under the supervision of Prof. Channa Bankapur.",
+      latestNews: "2 July 2018: The meeting to kick off the club was successfully conducted in B-Block, G201, the headquaters.",
+      announcements: "Important: All further meetings stand cancelled until further intimation."
+    }
+
     return (
-      <>
-        <p>Counters:</p>
-
-        <ul>
-          { this.state.counters.map((counter, i) => (
-            <li key={i}>
-              <span>{counter.count} </span>
-              <button onClick={() => this.incrementCounter(i)}>+</button>
-              <button onClick={() => this.decrementCounter(i)}>-</button>
-              <button onClick={() => this.deleteCounter(i)}>x</button>
-            </li>
-          )) }
-        </ul>
-
-        <button onClick={this.newCounter}>New counter</button>
-      </>
+        <div className="card-deck">
+          <div className="card bg-light">
+            <div className="card-body text-center">
+            <h4 class="card-title">About Us</h4>
+            <p class="card-text">{staticText.aboutUs}</p>
+            </div>
+          </div>
+          <div className="card bg-light">
+            <div className="card-body text-center">
+            <h4 class="card-title">Latest News</h4>
+            <p class="card-text">{staticText.latestNews}</p>
+            </div>
+          </div>
+          <div className="card bg-light">
+            <div className="card-body text-center">
+            <h4 class="card-title">Announcements</h4>
+            <p class="card-text">{staticText.announcements}</p>
+            </div>
+          </div>
+        </div>
     );
   }
 }

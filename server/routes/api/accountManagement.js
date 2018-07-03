@@ -1,10 +1,9 @@
 const User = require('../../models/User');
-const UserSession = require('../../models/UserSession')
+const UserSession = require('../../models/UserSession');
 const jwt = require('jsonwebtoken');
-var verifyUser = require('../middleware/Token').verifyUser;
-const fs = require('fs');
-var privateKey = fs.readFileSync('server/sslcert/server.key');
-// var privateKey = "mySecret"; //Change in VerifyToken.js as well.
+var verifyUser = require('../../middleware/Token').verifyUser;
+const readFileSync = require('fs').readFileSync;
+var privateKey = readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
@@ -13,8 +12,8 @@ var privateKey = fs.readFileSync('server/sslcert/server.key');
 
 module.exports = (app) => {
     app.post('/api/account/signin', function (req, res) {
-      var password = req.body.password;
-      var email = req.body.email.toLowerCase().trim();
+      var password = '' + req.body.password;
+      var email = ('' + req.body.email).toLowerCase().trim();
       console.log("Email: " + email + " attempting to signIn.");
 
       if (!email) {
