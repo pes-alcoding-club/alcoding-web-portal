@@ -17,7 +17,7 @@ import Home from '../app/components/Home/Home';
 import Profile from '../app/components/Pages/Profile/Profile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
-import Courses from '../app/components/Pages/Courses';
+import Courses from '../app/components/Pages/Courses/Courses';
 
 
 import './styles/styles.scss';
