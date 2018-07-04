@@ -7,9 +7,16 @@ const AssignmentSchema = new mongoose.Schema({
     ref: 'Course',
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   type: { // MCQ, Quiz, Code
     type: String,
     required: true,
+  },
+  details: {
+    type: String,
   },
   maxMarks: {
     type: Number,
