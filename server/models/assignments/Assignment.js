@@ -11,6 +11,10 @@ const AssignmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  uniqueID: {
+    type: String,
+    required: true,
+  },
   type: { // MCQ, Quiz, Code
     type: String,
     required: true,
@@ -49,7 +53,7 @@ const AssignmentSchema = new mongoose.Schema({
   },
   POC: { // Point Of Contact
     type: Schema.Types.ObjectId,
-    ref: 'Professor',
+    ref: 'User',
   },
   isDeleted: {
     type: Boolean,
