@@ -20,7 +20,7 @@ import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses';
 import Landing from '../app/components/Layout/Landing';
 import Login from '../app/components/Login/Login';
-
+import SignupForm from '../app/components/Admin/SignupForm';
 
 import './styles/styles.scss';
 
@@ -54,6 +54,9 @@ render((
       </Switch>
       <Switch>
                 <PrivateRoute exact path="/profile" component={Profile} />
+      </Switch>
+	<Switch>
+                <PrivateRoute exact path="/admin" component={SignupForm} />
       </Switch>
       </div>
     <Footer />
