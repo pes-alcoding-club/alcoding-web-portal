@@ -121,7 +121,7 @@ class Navbar extends Component {
         <div className="form-group  mr-sm-2">
         <input
                 className="form-control"
-                placeholder="Usn"
+                placeholder="USN"
                 required="required"
                 value={signInUsn}
                 onChange={this.onTextboxChangeSignInUsn}
