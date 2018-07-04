@@ -1,29 +1,11 @@
-import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import axios from 'axios';
-import { connect } from 'react-redux';
+import React, { Component } from 'react'
 
-class Courses extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-
-    };
-    // functions
+export default class Courses extends Component {
+  render() {
+    return (
+      <div>
+        Courses Page
+      </div>
+    )
   }
-
-  componentDidMount(){
-    var token = localStorage.getItem('token');
-    var userID = localStorage.getItem('user_id');
-    if(!token || !userID){
-      console.log("Not logged in.");
-      <Redirect to="/" />
-    }
-
-    var apiPath = '/api/'
-  }
-
 }
-
-export default Courses;
-
