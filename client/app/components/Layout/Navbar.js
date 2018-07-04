@@ -9,13 +9,13 @@ class Navbar extends Component {
   constructor() {
     super();
     this.state = {
-      signInEmail: "",
+      signInUsn: "",
       signInpassword: "",
       errors: {},
     };
 
     this.onSignIn = this.onSignIn.bind(this);
-    this.onTextboxChangeSignInEmail = this.onTextboxChangeSignInEmail.bind(this);
+    this.onTextboxChangeSignInUsn = this.onTextboxChangeSignInUsn.bind(this);
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
   };
 
@@ -45,10 +45,10 @@ class Navbar extends Component {
 
   }
 
-  onTextboxChangeSignInEmail(event) {
+  onTextboxChangeSignInUsn(event) {
     event.preventDefault();
     this.setState({
-      signInEmail: event.target.value,
+      signInUsn: event.target.value,
     });
 
   }
@@ -56,7 +56,7 @@ class Navbar extends Component {
   onSignIn(event) {
     event.preventDefault();   
     const user = {
-      email: this.state.signInEmail,
+      usn: this.state.signInUsn,
       password: this.state.signInPassword
     };
 
@@ -70,7 +70,7 @@ class Navbar extends Component {
   }
   render() {
     const {
-      signInEmail,
+      signInUsn,
       signInPassword,
       errors
     } = this.state;
@@ -118,14 +118,14 @@ class Navbar extends Component {
         <ul className="navbar-nav ml-auto">
         <form className="form-inline">
         <li className="nav-item">
-        <div className="form-group">
+        <div className="form-group  mr-sm-2">
         <input
                 className="form-control"
-                placeholder="Email"
+                placeholder="USN"
                 required="required"
-                value={signInEmail}
-                onChange={this.onTextboxChangeSignInEmail}
-                error={errors.email}
+                value={signInUsn}
+                onChange={this.onTextboxChangeSignInUsn}
+                error={errors.usn}
               />
               <pre> </pre>
 				</div>
@@ -177,7 +177,6 @@ Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
   logoutUser: PropTypes.func.isRequired,
   loginUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
 
