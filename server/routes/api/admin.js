@@ -1,10 +1,13 @@
 const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
+var diskStorage = require('../../middleware/fileStorage').diskStorage;
+var addDirectory = require('../../middleware/fileStorage').addDirectory;
 var path = require('path');
-var fs = require("fs");
-var multer = require('multer');
+var dir = process.cwd() + '/../temp';
 var keyName = "inputFile" //Change according to your key name for file
+
+addDirectory(dir);
 
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
@@ -92,21 +95,7 @@ module.exports = (app) => {
         });
     }); // end of sign up endpoint
 
-
-    var dir = process.cwd() + '/../temp';
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-    var storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, dir)
-        },
-        filename: function (req, file, cb) {
-            cb(null, file.originalname);
-        }
-    });
-    var upload = multer({ storage: storage });
-    //TODO: Make better cryptic naming convention for files 
+    var upload = diskStorage(dir); 
 
     app.post('/api/admin/file', upload.single(keyName), requireRole("admin"), function (req, res) {
         if (!req.file) {
