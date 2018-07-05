@@ -35,7 +35,7 @@ class MutableBox extends React.Component {
                     <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.val} />
                 </div>
                 
-                <button onClick={this.edit} type="button" className="btn btn-primary mb-2">Edit</button>
+                <button onClick={this.edit} type="button" className="btn btn-dark mb-2">Edit</button>
             </form>
         );
     }

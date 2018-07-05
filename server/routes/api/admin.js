@@ -5,9 +5,9 @@ var path = require('path');
 var fs = require("fs");
 var multer = require('multer');
 var keyName = "inputFile" //Change according to your key name for file
-
+requireRole("admin"),
 module.exports = (app) => {
-    app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
+    app.post('/api/admin/signup',  function (req, res) {
 
         // TODO: Change Email to usn
 

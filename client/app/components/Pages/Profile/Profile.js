@@ -102,7 +102,7 @@ class Profile extends React.Component {
                             )
                         })
                     }
-                    <button onClick={this.onConfirm} type="button" className="btn btn-primary">Confirm</button>
+                    <button onClick={this.onConfirm} type="button" className="btn btn-dark">Confirm</button>
                     {/* <div><pre>{JSON.stringify(this.state, null, 2)}</pre></div> */}
                 </div>
             </div>
