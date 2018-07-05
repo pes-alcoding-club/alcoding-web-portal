@@ -1,5 +1,4 @@
 import { SET_CURRENT_USER } from '../actions/types';
-import { GET_ERRORS } from '../actions/types';
 
 import axios from 'axios';
 import qs from 'qs';
@@ -21,10 +20,7 @@ export const loginUser = user => dispatch => {
 
         })
         .catch(err =>
-            dispatch({
-                type: GET_ERRORS,
-                payload: err
-            })
+            alert('Invalid Login')
         );
 };
 
