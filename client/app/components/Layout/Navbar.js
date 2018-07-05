@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginUser, logoutUser, getDetails } from '../../actions/authActions';
+import { loginUser, logoutUser, getName } from '../../actions/authActions';
 
 class Navbar extends Component {
   constructor() {
@@ -21,7 +21,7 @@ class Navbar extends Component {
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
       if(this.state.bool){
-      this.props.getDetails()
+      this.props.getName()
       this.setState({
         bool: false
       });
@@ -35,7 +35,7 @@ class Navbar extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       if(this.state.bool){
-        nextProps.getDetails()
+        nextProps.getName()
         this.setState({
           bool: false
         });
@@ -84,7 +84,7 @@ class Navbar extends Component {
       signInPassword,
       
     } = this.state;
-    const { isAuthenticated, user, userDetails } = this.props.auth;
+    const { isAuthenticated, user, userName } = this.props.auth;
     const authLinks = (
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav mr-auto">
@@ -106,7 +106,7 @@ class Navbar extends Component {
         </ul>
         <ul className="navbar-nav">
         <li className="nav-item text-light pt-2 pr-2">
-          {this.props.auth.userDetails.firstName}
+          {this.props.auth.userName.firstName}
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/profile">
@@ -192,4 +192,4 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { loginUser, logoutUser, getDetails })(Navbar);
+export default connect(mapStateToProps, { loginUser, logoutUser, getName })(Navbar);

@@ -50,7 +50,7 @@ export const logoutUser = () => dispatch => {
     dispatch(setCurrentUser({}))
 }
 
-export const getDetails = () => dispatch => {
+export const getName = () => dispatch => {
     var userID = localStorage.getItem('user_id')
     var token = localStorage.getItem('token')
     axios.get('/api/account/' + userID + '/details',

@@ -3,7 +3,7 @@ import isEmpty from '../isEmpty';
 const initialState = {
     isAuthenticated: false,
     user: {},
-    userDetails : {}
+    userName : {}
 }
 
 export default function(state = initialState, action){
@@ -17,7 +17,7 @@ export default function(state = initialState, action){
         case GET_DETAILS:
             return {
                 ...state,
-                userDetails : action.payload
+                userName : action.payload
             };
             
         default:
