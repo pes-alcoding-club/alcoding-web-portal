@@ -107,11 +107,11 @@ module.exports = (app) => {
         }
     });
 
-    app.get('/api/admin/file/:filename', requireRole('admin'), retrieveFile(dir) ,function (req, res) {
-        if (!req.params.filename) {
+    app.get('/api/admin/file/:fileid', requireRole('admin'), retrieveFile(dir) ,function (req, res) {
+        if (!req.params.fileid) {
             return res.status(400).send({
                 success: false,
-                message: "Error: filename has not been entered in parameters"
+                message: "Error: file_id has not been entered in parameters"
             });
         }
     });
