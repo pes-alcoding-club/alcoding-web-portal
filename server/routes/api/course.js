@@ -4,9 +4,9 @@ var Course = require('../../models/assignments/Course');
 var Assignment = require('../../models/assignments/Assignment');
 
 module.exports = (app) => {
-    app.post('/api/course/createCourse', function(req, res){
+    app.post('/api/assignments/createCourse', requireRole("admin"), function(req, res){
 
-    var name = '' + req.body.name;
+    var name = req.body.name;
     var code = req.body.code;
     var department = req.body.department;
     var description = req.body.description;
@@ -88,7 +88,7 @@ module.exports = (app) => {
 )
 })
 // end of createCourse endpoint
-app.post('/api/assignment/createAssignment', function(req, res){
+app.post('/api/assignments/createAssignment', requireRole("admin"), function(req, res){
 
     var name = '' + req.body.name;
     var user = '' + req.body.user;
@@ -151,8 +151,8 @@ app.post('/api/assignment/createAssignment', function(req, res){
     })
 })
 
-})// end of Assignments endpoint
-app.get('/api/course/:userID/', verifyUser, function (req, res) {
+})// WIP
+app.get('/api/assignments/:userID/courses', verifyUser, function (req, res) {
     if (!req.params.userID) {
         return res.status(400).send({
             success: false,
@@ -187,11 +187,11 @@ app.get('/api/course/:userID/', verifyUser, function (req, res) {
     }); //end of userCourses endpoint
 })
 
-  app.get('/api/assignments/:courseID', verifyUser, function (req, res) {
+  app.get('/api/assignments/:courseID/assignments', verifyUser, function (req, res) {
     if(!req.params.courseID){
       return res.status(400).send({
         success: false,
-        message: 'courseID not entered in parameters'
+        message: 'CourseID not entered in parameters'
       });
     }
       Assignment.find({
