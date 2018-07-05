@@ -32,11 +32,11 @@ class SignupForm extends Component {
 		return (
 			<div>
 				<h3>Upload Student Details :</h3>
-				<form id="formObject" onChange={this.handleSubmit}>
+				<form id="formObject">
 					<span>Please upload a .csv file</span>
 					<input type="file" className="form-control w-25 center" ref={this.fileInput} />
 					<br />
-					<button type="submit" className="form-control w-25">Submit</button>
+					<button type="submit" className="form-control w-25" onClick={this.handleSubmit}>Submit</button>
 				</form>
 			</div>
 		);
