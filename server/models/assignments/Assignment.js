@@ -36,21 +36,21 @@ const AssignmentSchema = new mongoose.Schema({
       type: Date,
     },
   },
-  submissions: {
+  submissions: [{
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
     },
-    submissionUrl: {
-      type: String,
-      required: true
+    file: {
+      type: Schema.Types.ObjectId,
+      ref: 'Files',
     },
     marksObtained: {
       type: Number,
       default: 0
     }
-  },
+  }],
   POC: { // Point Of Contact
     type: Schema.Types.ObjectId,
     ref: 'User',
