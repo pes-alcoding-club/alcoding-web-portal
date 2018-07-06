@@ -13,10 +13,14 @@ class AssignmentCard extends Component {
     return(
       <div id="AssignmentCard">
         <div className="card bg-light mx-auto">
-          <div className="card-title text-center"><h3><strong>{this.props.name}</strong>: <i>{this.props.code}</i></h3></div>
+          <div className="card-title"><h3><i>{this.props.uniqueID}</i>: <strong>{this.props.name}</strong></h3></div>
           <div className="card-body text-left">
-            Description: {this.props.description}<br />
-            Resource URL: <a href={'//'+this.props.resourceUrl}>{this.props.resourceUrl}</a>
+            Description: {this.props.details}<br />
+            Type: {this.props.type}<br />
+            Due Date: {this.props.dueDate}<br />
+            Maximum Marks: {this.props.maxMarks}<br />
+            Resource URL: <a href={'//'+this.props.resourceUrl}>{this.props.resourceUrl}</a><br /><br />
+            <input placeholder="Upload File"/> <a href="/" className="btn btn-dark btn-sm" role="button">Submit</a>
           </div>
         </div>
         <br/>

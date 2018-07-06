@@ -8,10 +8,10 @@ class Assignments extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      courses: [],
       role: "student",
       assignments: [],
     };
-    // functions
   }
 
   componentDidMount(){
@@ -59,33 +59,35 @@ class Assignments extends Component {
           <Redirect to="/" />
       }
       var data = response.data;
-      console.log(data);
+      // console.log(data);
       self.setState({ 
-          courses: data.courses.courses
+        courses: data.courses.courses
       });
-    })
-    .catch(function (error) { 
-      console.log('Error2: ', error);
-    });
 
-    var apiPath = '/api/assignments/:courseID/assignments'
-    axios.get(apiPath, {
-      headers: {
+      var courses = data.courses.courses;
+      for (var i = 0; i < courses.length; i++){
+        var apiPath = '/api/assignments/'+ courses[i].code +'/assignments'
+        axios.get(apiPath, {
+          headers: {
           'x-access-token': token,
           'Content-Type': 'application/json'
-      }
-    })
-    .then(function (response) {
-      if (!response.data.success) {
-          // TODO: throw appropriate error and redirect
-          console.log("Error1: " + response.data);
-          <Redirect to="/" />
-      }
-      var data = response.data;
-      console.log(data);
-      self.setState({ 
-          courses: data.courses.courses
-      });
+        }
+        })
+        .then(function (response) {
+          if (!response.data.success) {
+              console.log("Error1: " + response.data);
+          }
+          var data = response.data;
+          console.log(data);
+          self.setState({ 
+            assignments: self.state.assignments.concat(data.assignments.assignments)
+          });
+        })
+        .catch(function (error) { 
+          console.log('Error2: ', error);
+        });
+      }// End of for loop
+
     })
     .catch(function (error) { 
       console.log('Error2: ', error);
@@ -100,21 +102,20 @@ class Assignments extends Component {
     const studContent = (
     <div>
       {
-        this.state.courses.map(function(each) {
-          return <CourseCard key={each.code} name={each.name} code={each.code} description={each.description} resourceUrl={each.resourceUrl}/>
+        this.state.assignments.map(function(each) {
+          return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} dueDate={each.duration.endDate} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl}/>
         })
       }
+      <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
     </div>
-
     );
+
     if(this.state.role=="professor"){
       content = profContent;
     }
     else{
       content = studContent;
     }
-
-
     return(
       <div>{content}</div>
       

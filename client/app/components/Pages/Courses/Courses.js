@@ -63,8 +63,6 @@ class Courses extends Component {
       self.setState({ 
           courses: data.courses.courses
       });
-      console.log("Here");
-      console.log(this.state.courses);
     })
     .catch(function (error) { 
       console.log('Error2: ', error);
@@ -83,6 +81,7 @@ class Courses extends Component {
           return <CourseCard key={each.code} name={each.name} code={each.code} description={each.description} resourceUrl={each.resourceUrl}/>
         })
       }
+      <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
     </div>
 
     );
