@@ -109,7 +109,7 @@ var fileUpload = function (req, res) {
 var retrieveFile = function (dir) {
     return function (req, res) {
         File.find({
-            originalname: req.params.filename
+            _id: req.params.fileid
         }, function (err, files) {
             if (err) {
                 return res.status(500).send({
