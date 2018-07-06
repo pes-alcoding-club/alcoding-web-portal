@@ -128,6 +128,7 @@ class Navbar extends Component {
     const guestLinks = (
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav ml-auto">
+
           <form className="form-inline">
             <li className="nav-item">
               <div className="form-group  mr-sm-2">
@@ -156,6 +157,7 @@ class Navbar extends Component {
               <button type="submit" className="btn btn-pill btn-dark" onClick={this.onSignIn}>Log in</button>
             </li>
           </form>
+
         </ul>
       </div>
     );
