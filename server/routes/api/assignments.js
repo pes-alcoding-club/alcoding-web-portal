@@ -1,5 +1,3 @@
-var verifyUser = require('../../middleware/Token').verifyUser;
-var requireRole = require('../../middleware/Token').requireRole;
 var Course = require('../../models/assignments/Course');
 var Assignment = require('../../models/assignments/Assignment');
 
@@ -30,46 +28,64 @@ module.exports = (app) => {
         });
       }
 
-      // Return a response with course data
       return res.status(200).send({
         success: true,
         message: "Details successfully retrieved.",
         courses: {courses}
       });
-    }); //end of userCourses endpoint
+    });
 })
 
-  app.get('/api/assignments/:courseID/assignments', function (req, res) {
-    if(!req.params.courseID){
+  app.get('/api/assignments/:courseCode/assignments', function (req, res) {
+    var courseCode = req.params.courseCode;
+    if(!courseCode){
       return res.status(400).send({
         success: false,
-        message: 'CourseID not entered in parameters'
+        message: 'CourseCode not in parameters'
       });
     }
-      Assignment.find({
-        course: req.params.courseID,
-        isDeleted: false
-      }, (err, assignments) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error."
+        Course.find({
+          code: courseCode,
+          isDeleted: false
+        }, (err, courses) => {
+          if(err){
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error."
+            });
+          }
+          if (courses.length < 1) {
+            return res.status(404).send({
+              success: false,
+              message: 'Error: No courses found.'
+            });
+          }
+          var course = courses[0];
+          Assignment.find({
+            course: course._id,
+            isDeleted: false
+          }, (err, assignments) => {
+            if (err) {
+              return res.status(500).send({
+                success: false,
+                message: "Error: Server error."
+              });
+            }
+  
+          if (assignments.length < 1) {
+            return res.status(404).send({
+              success: false,
+              message: 'Error: No assignments found for this course.'
+            });
+          }
+  
+          return res.status(200).send({
+            success: true,
+            message: "Details successfully retrieved.",
+            assignments: {assignments}
           });
-        }
-
-      if (assignments.length < 1) {
-        return res.status(404).send({
-          success: false,
-          message: 'Error: No assignments found for this course.'
         });
-      }
 
-      // Return a response with assignments data
-      return res.status(200).send({
-        success: true,
-        message: "Details successfully retrieved.",
-        assignments: Object.assign({},...assignments)
-      });
-    });
+      })
   })
-} //end ofcourseAssignments endpoint
+}
