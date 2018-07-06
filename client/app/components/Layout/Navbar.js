@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { logoutUser } from '../../actions/authActions';
-import { loginUser } from '../../actions/authActions';
+import { loginUser, logoutUser, getName } from '../../actions/authActions';
 
 class Navbar extends Component {
   constructor() {
@@ -11,7 +10,7 @@ class Navbar extends Component {
     this.state = {
       signInUsn: "",
       signInpassword: "",
-      errors: {},
+      bool: true
     };
 
     this.onSignIn = this.onSignIn.bind(this);
@@ -21,20 +20,31 @@ class Navbar extends Component {
 
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
+      if(this.state.bool){
+      this.props.getName()
+      this.setState({
+        bool: false
+      });
+    }
       <Redirect to="/" />
       //this.props.history.push('/landing');
     }
   }
 
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
+      if(this.state.bool){
+        nextProps.getName()
+        this.setState({
+          bool: false
+        });
+      }
       <Redirect to="/" />
       //this.props.history.push('/landing');
     }
 
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
+   
   }
 
   onTextboxChangeSignInPassword(event) {
@@ -54,13 +64,13 @@ class Navbar extends Component {
   }
 
   onSignIn(event) {
-    event.preventDefault();   
+    event.preventDefault();
     const user = {
       usn: this.state.signInUsn,
       password: this.state.signInPassword
     };
 
-   this.props.loginUser(user);
+    this.props.loginUser(user);
   }
 
   onLogoutClick(event) {
@@ -72,9 +82,9 @@ class Navbar extends Component {
     const {
       signInUsn,
       signInPassword,
-      errors
+      
     } = this.state;
-    const { isAuthenticated, user } = this.props.auth;
+    const { isAuthenticated, user, userName } = this.props.auth;
     const authLinks = (
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav mr-auto">
@@ -95,7 +105,9 @@ class Navbar extends Component {
           </li>
         </ul>
         <ul className="navbar-nav">
-
+        <li className="nav-item text-light pt-2 pr-2">
+          {this.props.auth.userName.firstName}
+          </li>
           <li className="nav-item">
             <Link className="nav-link" to="/profile">
               Profile
@@ -116,36 +128,34 @@ class Navbar extends Component {
     const guestLinks = (
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav ml-auto">
-        <form className="form-inline">
-        <li className="nav-item">
-        <div className="form-group  mr-sm-2">
-        <input
-                className="form-control"
-                placeholder="USN"
-                required="required"
-                value={signInUsn}
-                onChange={this.onTextboxChangeSignInUsn}
-                error={errors.usn}
-              />
-				</div>
-        </li>
-        <li className="nav-item">
-        <div className="form-group">
-        <input
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                required="required"
-                value={signInPassword}
-                onChange={this.onTextboxChangeSignInPassword}
-                error={errors.password}
-              />
-				</div>
-        </li>
-        <li className="nav-item">
-        <button type="submit" className="btn btn-pill btn-dark" onClick={this.onSignIn}>Log in</button>
-        </li>
-        </form>
+          <form className="form-inline">
+            <li className="nav-item">
+              <div className="form-group  mr-sm-2">
+                <input
+                  className="form-control"
+                  placeholder="USN"
+                  required="required"
+                  value={signInUsn}
+                  onChange={this.onTextboxChangeSignInUsn}
+                />
+              </div>
+            </li>
+            <li className="nav-item">
+              <div className="form-group">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Password"
+                  required="required"
+                  value={signInPassword}
+                  onChange={this.onTextboxChangeSignInPassword}
+                />
+              </div>
+            </li>
+            <li className="nav-item">
+              <button type="submit" className="btn btn-pill btn-dark" onClick={this.onSignIn}>Log in</button>
+            </li>
+          </form>
         </ul>
       </div>
     );
@@ -164,8 +174,8 @@ class Navbar extends Component {
         >
           <span className="navbar-toggler-icon" />
         </button>
-        
-          {isAuthenticated ? authLinks : guestLinks}
+
+        {isAuthenticated ? authLinks : guestLinks}
 
       </nav>
     );
@@ -176,12 +186,10 @@ Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
   logoutUser: PropTypes.func.isRequired,
   loginUser: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  errors: state.errors
 });
 
-export default connect(mapStateToProps, { loginUser, logoutUser })(Navbar);
+export default connect(mapStateToProps, { loginUser, logoutUser, getName })(Navbar);
