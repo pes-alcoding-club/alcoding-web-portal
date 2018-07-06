@@ -66,7 +66,8 @@ class Assignments extends Component {
 
       var courses = data.courses.courses;
       for (var i = 0; i < courses.length; i++){
-        var apiPath = '/api/assignments/'+ courses[i].code +'/assignments'
+        var apiPath = '/api/assignments/'+ courses[i].code +'/'+ userID +'/assignmentsNotSubmitted';
+        // var apiPath = '/api/assignments/'+ courses[i].code +'/assignments'
         axios.get(apiPath, {
           headers: {
           'x-access-token': token,
