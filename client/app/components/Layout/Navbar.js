@@ -127,6 +127,7 @@ class Navbar extends Component {
                 onChange={this.onTextboxChangeSignInUsn}
                 error={errors.usn}
               />
+              <pre> </pre>
 				</div>
         </li>
         <li className="nav-item">
