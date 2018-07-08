@@ -20,6 +20,9 @@ class Navbar extends Component {
 
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
+      this.setState({
+        bool: true
+      })
       if(this.state.bool){
       this.props.getName()
       this.setState({
@@ -34,6 +37,9 @@ class Navbar extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
+      this.setState({
+        bool: true
+      })
       if(this.state.bool){
         nextProps.getName()
         this.setState({
