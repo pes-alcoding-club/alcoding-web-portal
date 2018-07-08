@@ -188,7 +188,6 @@ module.exports = (app) => {
     User.findOneAndUpdate(
       {_id: user_id},
       {basicInfo: Object.assign({},update)},
-      { new: true },
       (err) => {
 
         if (err) {
