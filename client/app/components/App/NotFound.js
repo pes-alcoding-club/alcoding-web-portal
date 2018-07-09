@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
   <div>
       <div className="row text-center">
           <div className="col-12">
-              <p className='lead'>Page not found</p> 
+              <p className="lead">Page not found</p> 
               <p className="lead">The requested URL <code>{location.pathname}</code> was not found on this server.
               </p>
-              <button className="btn btn-light"><Link to="/">Go home</Link></button>
+              <button className="btn btn-default"><Link to="/">Home</Link></button>
           </div>
      </div>
   </div>
