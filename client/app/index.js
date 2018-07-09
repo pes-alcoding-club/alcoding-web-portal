@@ -18,9 +18,11 @@ import Profile from '../app/components/Pages/Profile/Profile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses/Courses';
+import NotFound from './components/App/NotFound';
 
 
 import './styles/styles.scss';
+
 
 if(localStorage.token){
   store.dispatch(setCurrentUser(localStorage.token));
@@ -32,26 +34,29 @@ render((
   <Router>
     <div className='App'>
       <Header />
-      <Route exact path="/" component={Home}/>
-      <div className='Container'>
+
+      <div className='container'>
       {/* <Switch>
         <Route path="/login" component={Login}/>
       </Switch> */}
       {/* <Switch>
                 <PrivateRoute exact path="/landing" component={Landing} />
-      </Switch> */}
-      <Switch>
+     </Switch> */}
+     
+    <Switch>
+                <Route exact path="/" component={Home}/>
+
                 <PrivateRoute exact path="/assignments" component={Assignments} />
-      </Switch>
-      <Switch>
+
                 <PrivateRoute exact path="/contests" component={Contests} />
-      </Switch>
-      <Switch>
+    
                 <PrivateRoute exact path="/courses" component={Courses} />
-      </Switch>
-      <Switch>
+      
                 <PrivateRoute exact path="/profile" component={Profile} />
+      
+                <Route component={NotFound} />
       </Switch>
+      
       </div>
     <Footer />
     </div>
