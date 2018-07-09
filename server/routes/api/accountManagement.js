@@ -169,4 +169,40 @@ module.exports = (app) => {
         });
       });
     }); //end of getDetails endpoint
+
+  app.put('/api/account/:userID/basicInfo', verifyUser, function (req, res) {
+    // PUT http://localhost:8080/api/account/:userID/basicInfo
+    var user_id = req.params.userID;
+
+    //Verify that userID is present as a parameter
+    if (!user_id) {
+      return res.status(400).send({
+        success: false,
+        message: 'Error: userID parameter cannot be blank'
+      });
+    }
+
+    console.log("Request to update details of " + user_id);
+    var update = req.body
+
+    User.findOneAndUpdate(
+      {_id: user_id},
+      {basicInfo: Object.assign({},update)},
+      (err) => {
+
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+        else{
+          return res.status(200).send({
+            success: true,
+            message: "Details Updated!"
+          });
+        }
+      })
+      
+  })
 };
