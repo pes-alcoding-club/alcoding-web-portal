@@ -270,7 +270,7 @@ module.exports = (app) => {
 
     var upload = diskStorage(dir);
 
-    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser ,upload.single('inputFile'), fileUpload ,function (req, res) {
+    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser , upload.single('inputFile'),function (req, res, next) {
         if(!req.params.userID){
             return res.status(400).send({
                 success: false,
@@ -295,7 +295,7 @@ module.exports = (app) => {
             assignments: req.params.assignmentID
         }, function(err, courses){
             if(err){
-                console.log("hello");
+                // console.log("hello");
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
@@ -320,7 +320,7 @@ module.exports = (app) => {
                 }
             }, {new:true}, function(err, assignment){
                 if(err){
-                    console.log("aditya");
+                    // console.log("aditya");
                     return res.status(500).send({
                         success: false,
                         message: "Error: server error"
@@ -334,9 +334,10 @@ module.exports = (app) => {
             });
 
         })
-    })
+        next();
+    }, fileUpload)
 
-    app.post('/api/course/assignment/:userID'), verifyUser, function(req,res) {
+    app.post('/api/course/assignment/:userID', verifyUser, function(req,res) {
         if(!req.params.userID){
             return res.status(400).send({
                 success: false,
@@ -398,6 +399,6 @@ module.exports = (app) => {
                 });
             });
         })
-    }
+    })
 }
 
