@@ -1,14 +1,9 @@
 var Course = require('../../models/Assignments/Course');
 var Assignment = require('../../models/Assignments/Assignment');
-const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
-var diskStorage = require('../../middleware/fileStorage').diskStorage;
-var addDirectory = require('../../middleware/fileStorage').addDirectory;
-var fileUpload = require('../../middleware/fileStorage').fileUpload;
-var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
-var dir = process.cwd() + '/../temp';
-var keyName = "inputFile" //Change according to your key name for file
+var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;
+var fileDB = require('../../middleware/fileStorage').fileDB;
 
 module.exports = (app) => {
     app.get('/api/assignments/:userID/courses', function (req, res) {
@@ -257,7 +252,7 @@ module.exports = (app) => {
                                     message: "Error: server error"
                                 });
                             }
-                            console.log("Assignment " + assignment._id + "added to course " + course._id);
+                            console.log("Assignment " + assignment._id + " added to course " + course._id);
                             return res.status(200).send({
                                 success: true,
                                 message: "Assignment " + assignment._id + " added to DB"
@@ -268,74 +263,32 @@ module.exports = (app) => {
         })
     })
 
-    var upload = diskStorage(dir);
-
-    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser , upload.single('inputFile'),function (req, res, next) {
-        if(!req.params.userID){
-            return res.status(400).send({
-                success: false,
-                message: "Error: userID not in parameters. Please try again."
-            });
-        }
-        
-        if (!req.file) {
-            return res.status(400).send({
-                success: false,
-                message: "Error: File not recieved"
-            });
-        }
-        if (!req.params.assignmentID) {
-            return res.status(400).send({
-                success: false,
-                message: "Error: Enter assignment ID"
-            });
-        }
-        Course.find({
-            students: req.params.userID,
-            assignments: req.params.assignmentID
-        }, function(err, courses){
+    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, assignmentCheck, fileDB, function (req, res, next) {
+        Assignment.findOneAndUpdate({
+            _id: req.params.assignmentID,
+            isDeleted:false
+        }, {
+            $push:{
+                submissions: {
+                    'user':req.params.userID,
+                    'file':req.file._id
+                }
+            }
+        }, {new:true}, function(err, assignment){
             if(err){
-                // console.log("hello");
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
                 });
             }
-            if(courses.length==0){
-                return res.status().send({
-                    success:false,
-                    message:"Error: Given user hasn't signed up for this course"
-                });
-            }
-            console.log(courses[0]);
-            Assignment.findOneAndUpdate({
-                _id: req.params.assignmentID,
-                isDeleted:false
-            }, {
-                $push:{
-                    submissions: {
-                        'user':req.params.userID,
-                        'file':req.file._id
-                    }
-                }
-            }, {new:true}, function(err, assignment){
-                if(err){
-                    // console.log("aditya");
-                    return res.status(500).send({
-                        success: false,
-                        message: "Error: server error"
-                    });
-                }
-                console.log("User "+req.params.userID+" has successfully submitted the assignment");
-                return res.status(200).send({
-                    success:true,
-                    message:"User "+req.params.userID+" has successfully submitted the assignment"
-                })
+            console.log("User "+req.params.userID+" has successfully submitted the assignment");
+            console.log(assignment);
+            return res.status(200).send({
+                success:true,
+                message:"User "+req.params.userID+" has successfully submitted the assignment"
             });
-
-        })
-        next();
-    }, fileUpload)
+        });
+    });
 
     app.post('/api/course/assignment/:userID', verifyUser, function(req,res) {
         if(!req.params.userID){

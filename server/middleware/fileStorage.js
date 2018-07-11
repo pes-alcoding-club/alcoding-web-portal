@@ -2,15 +2,13 @@
 var multer = require('multer');
 const User = require('../models/User');
 const File = require('../models/Files');
+var Course = require('../models/Assignments/Course');
+var Assignment = require('../models/Assignments/Assignment');
+var connect = require('connect');
 var fs = require("fs");
 var path = require('path');
-
-// Adds the directory
-var addDirectory = function (dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-}
+var dir = process.cwd() + '/../temp';
+var keyName = "inputFile" //Change according to your key name for file
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -35,31 +33,6 @@ var fileUpload = function (req, res, next) {
                 success: false,
                 message: "Error: Server error"
             });
-        }
-        else if (files.length > 0) {
-            var foundFile = files[0];
-            File.findOneAndUpdate({
-                _id: foundFile._id
-            }, {
-                    $inc: { __v: 1 },
-                    $set: {
-                        encoding: req.file.encoding,
-                        mimetype: req.file.mimetype,
-                        size: req.file.size
-                    }
-                }, null, function (err, file) {
-                    if (err) {
-                        return res.status(500).send({
-                            success: false,
-                            message: 'Error: Server error'
-                        });
-                    }
-                    console.log("Version of file " + file._id + " is updated ");
-                });
-            return res.status(400).send({
-                success: true,
-                message: "File is already entered by user. Version updated"
-            })
         }
         else {
             var uploadFile = new File();
@@ -94,11 +67,6 @@ var fileUpload = function (req, res, next) {
                         }
                         else {
                             console.log("File added to user " + user._id);
-                            return res.status(200).send({
-                                success: true,
-                                message: "File uploaded and added to DB",
-                                data: file
-                            });
                         }
                     });
             });
@@ -106,6 +74,73 @@ var fileUpload = function (req, res, next) {
     })
     next();
 }
+
+var assignmentCheck = function (req, res, next) {
+    if(!req.params.userID){
+        return res.status(400).send({
+            success: false,
+            message: "Error: userID not in parameters. Please try again."
+        });
+    }
+    if (!req.file) {
+        return res.status(400).send({
+            success: false,
+            message: "Error: File not recieved"
+        });
+    }
+    if (!req.params.assignmentID) {
+        return res.status(400).send({
+            success: false,
+            message: "Error: Enter assignment ID"
+        });
+    }
+    Course.find({
+        students: req.params.userID,
+        assignments: req.params.assignmentID,
+    }, function(err, courses){
+        if(err){
+            // console.log("hello");
+            return res.status(500).send({
+                success: false,
+                message: "Error: server error"
+            });
+        }
+        if(courses.length==0){
+            return res.status().send({
+                success:false,
+                message:"Error: Given user hasn't signed up for this course"
+            });
+        }
+        // console.log(courses[0]);
+        Assignment.find({
+            _id: req.params.assignmentID,
+            isDeleted: false,
+            "submissions": {user: req.params.userID}
+        }, function(err, assignment){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(assignment){
+                return res.status(400).send({
+                    success: false,
+                    message: "Error: The student has already uploaded the assignment."
+                })
+            }
+        });
+    });
+    next();
+}
+
+var fileDB = (function() {
+    var chain = connect();
+    [diskStorage(dir).single(keyName), fileUpload].forEach(function(middleware) {
+      chain.use(middleware);
+    });
+    return chain;
+})();
 
 var retrieveFile = function (dir) {
     return function (req, res) {
@@ -133,10 +168,9 @@ var retrieveFile = function (dir) {
             });
             stream.pipe(res);
         });
-
     }
 }
 //TODO: Make file downloadable
 //TODO: Delete file endpoint
 
-module.exports = { diskStorage, addDirectory, fileUpload, retrieveFile };
+module.exports = { retrieveFile, fileDB, assignmentCheck };
