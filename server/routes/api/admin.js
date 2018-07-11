@@ -2,15 +2,9 @@ const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
 var fileDB = require('../../middleware/fileStorage').fileDB;
+var addDirectory = require('../../middleware/fileStorage').addDirectory;
 var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
 var dir = process.cwd() + '/../temp';
-
-// Adds the directory
-var addDirectory = function (dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-}
 
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
@@ -97,7 +91,7 @@ module.exports = (app) => {
         });
     }); // end of sign up endpoint
 
-    app.post('/api/admin/upload', requireRole("admin"), fileDB, function (req, res) {
+    app.post('/api/admin/upload', requireRole("admin"), addDirectory(dir), fileDB(dir), function (req, res) {
         if (!req.file) {
             return res.status(400).send({
                 success: false,

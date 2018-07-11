@@ -7,8 +7,14 @@ var Assignment = require('../models/Assignments/Assignment');
 var connect = require('connect');
 var fs = require("fs");
 var path = require('path');
-var dir = process.cwd() + '/../temp';
 var keyName = "inputFile" //Change according to your key name for file
+
+// Adds the directory
+var addDirectory = function (dir) {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+}
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -134,7 +140,7 @@ var assignmentCheck = function (req, res, next) {
     next();
 }
 
-var fileDB = (function() {
+var fileDB = (function(dir) {
     var chain = connect();
     [diskStorage(dir).single(keyName), fileUpload].forEach(function(middleware) {
       chain.use(middleware);
@@ -173,4 +179,4 @@ var retrieveFile = function (dir) {
 //TODO: Make file downloadable
 //TODO: Delete file endpoint
 
-module.exports = { retrieveFile, fileDB, assignmentCheck };
+module.exports = { retrieveFile, fileDB, assignmentCheck, addDirectory };
