@@ -7,90 +7,85 @@ var privateKey = readFileSync('server/sslcert/server.key', 'utf8'); //privatekey
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
+// TODO: Add CORS
 // TODO: Change logout to POST as it isn't idempotent
 
 module.exports = (app) => {
-  app.post('/api/account/signin', function (req, res) {
+    app.post('/api/account/signin', function (req, res) {
+      var password = '' + req.body.password;
+      var email = ('' + req.body.email).toLowerCase().trim();
+      console.log("Email: " + email + " attempting to signIn.");
 
-    var usn = req.body.usn;
-    var password = req.body.password;
-
-    console.log("USN: " + usn + " attempting to signIn.");
-
-    if (!usn) {
-      return res.status(400).send({
-        success: false,
-        message: 'Error: usn cannot be blank.'
-      });
-    }
-    if (!password) {
-      return res.status(400).send({
-        success: false,
-        message: 'Error: Password cannot be blank.'
-      });
-    }
-
-    // Process data
-    usn = ('' + usn).toUpperCase().trim();
-    password = '' + password;
-
-    // Search for user in db
-    User.find({
-      usn: usn,
-      isDeleted: false
-    }, (err, users) => {
-      if (err) {
-        return res.status(500).send({
+      if (!email) {
+        return res.status(400).send({
           success: false,
-          message: 'Error: Server Error.'
+          message: 'Error: Email cannot be blank.'
         });
       }
-      if (users.length != 1) {
-        return res.status(401).send({
+      if (!password) {
+        return res.status(400).send({
           success: false,
-          message: 'Error: Invalid'
+          message: 'Error: Password cannot be blank.'
         });
       }
 
-      const user = users[0];
-      if (!user.checkPassword(password)) {
-        return res.status(401).send({
-          success: false,
-          message: 'Error: Invalid credentials.'
-        });
-      }
-
-      // Otherwise correct user
-      payload = { user_id: user._id, role: user.role };
-      jwt.sign(payload, privateKey, { expiresIn: "2d" }, (err, token) => {
+      User.find({
+        email: email,
+        isDeleted: false
+      }, (err, users) => {
         if (err) {
-          console.log(err);
+          console.log('err 2:', err);
           return res.status(500).send({
             success: false,
             message: 'Error: Server Error.'
           });
         }
+        if (users.length != 1) {
+          return res.status(401).send({
+            success: false,
+            message: 'Error: Invalid'
+          });
+        }
 
-        newSession = new UserSession();
-        newSession.token = token;
-        newSession.save((err, session) => {
+        const user = users[0];
+        if (!user.checkPassword(password)) {
+          return res.status(401).send({
+            success: false,
+            message: 'Error: Invalid credentials.'
+          });
+        }
+
+        // Otherwise correct user
+        payload = { user_id: user._id, role: user.role };
+        jwt.sign(payload, privateKey, { expiresIn: "2d" }, (err, token) => {
           if (err) {
+            console.log(err);
             return res.status(500).send({
               success: false,
-              message: 'Error: Server error'
+              message: 'Error: Server Error.'
             });
           }
-          console.log("JWT generated.");
-          return res.status(200).send({
-            success: true,
-            message: 'Valid sign in',
-            user_id: payload.user_id,
-            token: token
+
+          newSession = new UserSession();
+          newSession.token = token;
+          newSession.save((err, session) => {
+            if (err) {
+              return res.status(500).send({
+                success: false,
+                message: 'Error: Server error'
+              });
+            }
+            console.log("JWT generated.");
+            return res.status(200).send({
+              success: true,
+              message: 'Valid sign in',
+              user_id: payload.user_id,
+              token: token
+            });
           });
         });
       });
-    });
-  }), //end of sign in endpoint
+    }), //end of sign in endpoint
 
     app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
       // GET http://localhost:8080/api/account/:userID/logout

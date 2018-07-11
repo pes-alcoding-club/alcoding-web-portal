@@ -7,16 +7,6 @@ const bcrypt = require('bcrypt');
 // Add a default for each so that it appears in the profile page.
 
 const UserSchema = new mongoose.Schema({
-  usn: {
-    type: String,
-    default: "",
-    required: true
-  },
-  password: {
-    type: String,
-    // required: true,
-    default: ""
-  },
   name: {
     firstName: {
       type: String,
@@ -27,20 +17,21 @@ const UserSchema = new mongoose.Schema({
       default: ""
     }
   },
-  basicInfo: {
-    // Contains mutable info
-    email: {
-      type: String,
-      default: ""
-    },
-    phone: {
-      type: String,
-      default: ""
-    },
-    dob: {
-      type: Date,
-      default: Date.now()
-    }
+  email: {
+    type: String,
+    default: ""
+  },
+  phone: {
+    type: String,
+    default: ""
+  },
+  dob: {
+    type: Date
+  },
+  password: {
+    type: String,
+    // required: true,
+    default: ""
   },
   role: {
     type: String,
