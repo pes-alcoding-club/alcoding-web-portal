@@ -1,4 +1,3 @@
-// middleware for multer storage
 var multer = require('multer');
 const User = require('../models/User');
 const File = require('../models/Files');
