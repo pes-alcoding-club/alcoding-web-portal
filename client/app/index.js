@@ -15,7 +15,7 @@ import Header from '../app/components/Header/Header';
 import Footer from '../app/components/Footer/Footer';
 import Home from '../app/components/Home/Home';
 import Profile from '../app/components/Pages/Profile/Profile';
-import Assignments from '../app/components/Pages/Assignments';
+import Assignments from '../app/components/Pages/Assignments/Assignments';
 import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses/Courses';
 import NotFound from './components/App/NotFound';
