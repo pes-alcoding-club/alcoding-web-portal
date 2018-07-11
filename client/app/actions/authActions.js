@@ -40,12 +40,13 @@ export const setCurrentUser = token => {
 export const logoutUser = () => dispatch => {
     var userID = localStorage.getItem('user_id')
     var token = localStorage.getItem('token')
-    axios.get('/api/account/:userID/logout',{
-        params : {
-            user_id : userID
-        }
+    axios.get('/api/account/'+ userID +'/logout',{
+        headers: {
+          'x-access-token': token,
+          'Content-Type': 'application/json'
+        },
     })
-
+    console.log(userID+" logged out.");
     //save data into local storage
     localStorage.removeItem('token', token);
     localStorage.removeItem('user_id', userID);

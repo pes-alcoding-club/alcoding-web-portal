@@ -14,13 +14,13 @@ import PrivateRoute from '../app/components/common/PrivateRoute';
 import Header from '../app/components/Header/Header';
 import Footer from '../app/components/Footer/Footer';
 import Home from '../app/components/Home/Home';
-import Profile from '../app/components/Pages/Profile';
-import Assignments from '../app/components/Pages/Assignments';
+import Profile from '../app/components/Pages/Profile/Profile';
+import Assignments from '../app/components/Pages/Assignments/Assignments';
 import Contests from '../app/components/Pages/Contests';
-import Courses from '../app/components/Pages/Courses';
 import Landing from '../app/components/Layout/Landing';
 import Login from '../app/components/Login/Login';
 import SignupForm from '../app/components/Admin/SignupForm';
+import Courses from '../app/components/Pages/Courses/Courses';
 
 import './styles/styles.scss';
 
@@ -29,7 +29,6 @@ if(localStorage.token){
 }else{
   store.dispatch(setCurrentUser({}));
 }
-
 render((
   <Provider store={store}>
   <Router>
