@@ -1,10 +1,14 @@
 const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
-var fileDB = require('../../middleware/fileStorage').fileDB;
+var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var addDirectory = require('../../middleware/fileStorage').addDirectory;
+var fileUpload = require('../../middleware/fileStorage').fileUpload;
 var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
 var dir = process.cwd() + '/../temp';
+var keyName = "inputFile" //Change according to your key name for file
+
+addDirectory(dir);
 
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
@@ -75,6 +79,7 @@ module.exports = (app) => {
                 }
                 newUser.role = role;
             }
+
             newUser.save((err, user) => {
                 if (err) {
                     return res.status(500).send({
@@ -91,18 +96,13 @@ module.exports = (app) => {
         });
     }); // end of sign up endpoint
 
-    app.post('/api/admin/upload', requireRole("admin"), addDirectory(dir), fileDB(dir), function (req, res) {
+    var upload = diskStorage(dir); 
+
+    app.post('/api/admin/upload', upload.single(keyName), requireRole("admin"), fileUpload ,function (req, res) {
         if (!req.file) {
             return res.status(400).send({
                 success: false,
                 message: "Error: File not recieved"
-            });
-        }
-        if(req.file){
-            return res.status(200).send({
-                success: true,
-                message: "File uploaded and added to DB",
-                data: req.file
             });
         }
     });
