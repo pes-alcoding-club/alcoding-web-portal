@@ -3,17 +3,10 @@ const User = require('../models/User');
 const File = require('../models/Files');
 var Course = require('../models/Assignments/Course');
 var Assignment = require('../models/Assignments/Assignment');
-var connect = require('connect');
+// var connect = require('connect');
 var fs = require("fs");
 var path = require('path');
 var keyName = "inputFile" //Change according to your key name for file
-
-// Adds the directory
-var addDirectory = function (dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-}
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -139,13 +132,14 @@ var assignmentCheck = function (req, res, next) {
     next();
 }
 
-var fileDB = (function(dir) {
-    var chain = connect();
-    [diskStorage(dir).single(keyName), fileUpload].forEach(function(middleware) {
-      chain.use(middleware);
-    });
-    return chain;
-})();
+// TODO: Connect Package Error
+// var fileDB = (function(dir) {
+//     var chain = connect();
+//     [diskStorage(dir).single(keyName), fileUpload].forEach(function(middleware) {
+//       chain.use(middleware);
+//     });
+//     return chain;
+// })();
 
 var retrieveFile = function (dir) {
     return function (req, res) {
@@ -178,4 +172,5 @@ var retrieveFile = function (dir) {
 //TODO: Make file downloadable
 //TODO: Delete file endpoint
 
-module.exports = { retrieveFile, fileDB, assignmentCheck, addDirectory };
+module.exports = { retrieveFile, diskStorage, fileUpload, assignmentCheck, addDirectory };
+module.exports = { retrieveFile, fileDB, assignmentCheck };

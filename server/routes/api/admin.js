@@ -1,10 +1,17 @@
 const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
-var fileDB = require('../../middleware/fileStorage').fileDB;
-var addDirectory = require('../../middleware/fileStorage').addDirectory;
+// var fileDB = require('../../middleware/fileStorage').fileDB;
+var diskStorage = require('../../middleware/fileStorage').diskStorage;
+var fileUpload = require('../../middleware/fileStorage').fileUpload;
 var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
+var fs = require("fs");
 var dir = process.cwd() + '/../temp';
+var keyName = "inputFile";
+
+if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+}
 
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
@@ -91,7 +98,7 @@ module.exports = (app) => {
         });
     }); // end of sign up endpoint
 
-    app.post('/api/admin/upload', requireRole("admin"), addDirectory(dir), fileDB(dir), function (req, res) {
+    app.post('/api/admin/upload', requireRole("admin"), diskStorage(dir).single(keyName), fileUpload, function (req, res) {
         if (!req.file) {
             return res.status(400).send({
                 success: false,

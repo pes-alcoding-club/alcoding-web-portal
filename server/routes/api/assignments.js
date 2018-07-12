@@ -3,7 +3,11 @@ var Assignment = require('../../models/Assignments/Assignment');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
 var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;
-var fileDB = require('../../middleware/fileStorage').fileDB;
+// var fileDB = require('../../middleware/fileStorage').fileDB;
+var diskStorage = require('../../middleware/fileStorage').diskStorage;
+var fileUpload = require('../../middleware/fileStorage').fileUpload;
+var dir = process.cwd() + '/../temp';
+var keyName = "inputFile";
 
 module.exports = (app) => {
     app.get('/api/assignments/:userID/courses', function (req, res) {
@@ -319,7 +323,7 @@ module.exports = (app) => {
         });
     })
 
-    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, assignmentCheck, fileDB, function (req, res, next) {
+    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, assignmentCheck, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
