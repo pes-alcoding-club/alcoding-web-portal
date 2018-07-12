@@ -44,33 +44,32 @@ module.exports = (app) => {
         });
     })
 
-    app.get('/api/assignments/:courseCode/assignments', function (req, res) {
-        var courseCode = req.params.courseCode;
-        if (!courseCode) {
+    app.get('/api/assignments/:courseID/assignments', function (req, res) {
+        var courseID = req.params.courseID;
+        if (!courseID) {
             return res.status(400).send({
                 success: false,
-                message: 'CourseCode not in parameters'
+                message: 'courseID not in parameters'
             });
         }
         Course.find({
-            code: courseCode,
+            _id: courseID,
             isDeleted: false
-        }, (err, courses) => {
+        }, (err, course) => {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: Server error."
                 });
             }
-            if (courses.length < 1) {
+            if (!course) {
                 return res.status(404).send({
                     success: false,
-                    message: 'Error: No courses found.'
+                    message: 'Error: No course found.'
                 });
             }
-            var course = courses[0];
             Assignment.find({
-                course: course._id,
+                course: courseID,
                 isDeleted: false
             }, (err, assignments) => {
                 if (err) {
@@ -80,7 +79,7 @@ module.exports = (app) => {
                     });
                 }
 
-                if (assignments.length < 1) {
+                if (assignments.length == 0) {
                     return res.status(404).send({
                         success: false,
                         message: 'Error: No assignments found for this course.'
@@ -97,36 +96,35 @@ module.exports = (app) => {
         })
     })
 
-    app.get('/api/assignments/:courseCode/:userID/assignments', function (req, res) {
-        var courseCode = req.params.courseCode;
+    app.get('/api/assignments/:courseID/:userID/assignments', function (req, res) {
+        var courseID = req.params.courseID;
         var userID = req.params.userID;
-        if (!courseCode || !userID) {
+        if (!courseID || !userID) {
             return res.status(400).send({
                 success: false,
-                message: 'CourseCode, UserID required.'
+                message: 'courseID, userID required.'
             });
         }
         Course.find({
-            code: courseCode,
+            _id: courseID,
             isDeleted: false
-        }, (err, courses) => {
+        }, (err, course) => {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: Server error."
                 });
             }
-            if (courses.length < 1) {
+            if (!course) {
                 return res.status(404).send({
                     success: false,
-                    message: 'Error: No courses found.'
+                    message: 'Error: No course found.'
                 });
             }
-            var course = courses[0];
             Assignment.find({
-                course: course._id,
+                course: courseID,
                 submissions: {
-                    "$not": { "$elemMatch": { user: user._id } },
+                    "$elemMatch": {"user": userID}
                 },
                 isDeleted: false
             }, (err, assignments) => {
@@ -137,10 +135,10 @@ module.exports = (app) => {
                     });
                 }
 
-                if (assignments.length < 1) {
+                if (assignments.length == 0) {
                     return res.status(404).send({
                         success: false,
-                        message: 'Error: No assignments found for this course by this user.'
+                        message: 'Error: No assignments submitted under this course by this user.'
                     });
                 }
 
