@@ -172,5 +172,5 @@ var retrieveFile = function (dir) {
 //TODO: Make file downloadable
 //TODO: Delete file endpoint
 
-module.exports = { retrieveFile, diskStorage, fileUpload, assignmentCheck, addDirectory };
-module.exports = { retrieveFile, fileDB, assignmentCheck };
+module.exports = { retrieveFile, diskStorage, fileUpload, assignmentCheck };
+// module.exports = { retrieveFile, fileDB, assignmentCheck };
