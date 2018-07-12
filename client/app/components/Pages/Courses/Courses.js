@@ -16,28 +16,29 @@ class Courses extends Component {
       role: "student",
       courses: [],
     };
+  };
     // functions
-  handleChangeName= (event) => {
+  handleChangeName(event) {
     this.setState({name: event.target.value});
-  };
+  }
 
-  handleChangeCode = (event) => {
+  handleChangeCode(event) {
     this.setState({code: event.target.value});
-  };
+  }
 
-  handleChangeDept = (event) => {
+  handleChangeDept(event) {
     this.setState({department: event.target.value});
-  };
+  }
 
-  handleChangeDescription = (event) => {
+  handleChangeDescription(event) {
     this.setState({description: event.target.value});
-  };
+  }
 
-  handleChangeURL = (event) => {
+  handleChangeURL(event) {
     this.setState({resourceUrl: event.target.value});
-  };
+  }
 
-  handleSubmit = (event) => {
+  handleSubmit(event) {
     event.preventDefault();
 
     const Courses = {
@@ -46,10 +47,9 @@ class Courses extends Component {
       department: this.state.department,
       description: this.state.description,
       resourceUrl: this.state.resourceUrl
-    };
+    }
 
-    axios.post("/api/course/${userID}/createCourse/", {Courses});
-  };
+    axios.post("/api/course/${userID}/createCourse", {Courses});
 }
 
   componentDidMount(){
@@ -111,31 +111,27 @@ class Courses extends Component {
   render(){
     let content;
     const profContent = (
-      <div>
-        {
         <form onSubmit={this.handleSubmit}>
          <label>
             Name of the Course:
-            <input type="text" name="name" onChange={this.handleChangeName}/>
+            <input type="text" name="name" onChange={this.handleChangeName}/><br></br>
           
             Code:
-            <input type="text" name="code" onChange={this.handleChangeCode}/>
+            <input type="text" name="code" onChange={this.handleChangeCode}/><br></br>
         
             Department:
-            <input type="text" name="department" onChange={this.handleChangeDept}/>
+            <input type="text" name="department" onChange={this.handleChangeDept}/><br></br>
          
             Description of Course:
-           <input type="text" name="description" onChange={this.handleChangeDescription}/>
+           <input type="text" name="description" onChange={this.handleChangeDescription}/><br></br>
         
             Resource URL:
-            <input type="text" name="resourseUrl" onChange={this.handleChangeURL}/>
-         </label>
+            <input type="text" name="resourseUrl" onChange={this.handleChangeURL}/><br></br>
+         </label><br></br>
          <button type="submit">
             Add Course
          </button>
         </form>
-        }
-      </div>
     );
     const studContent = (
     <div>
@@ -157,7 +153,7 @@ class Courses extends Component {
 
 
     return(
-      <div>{profContent}</div>
+      <div>{content}</div>
       
     )
   }
