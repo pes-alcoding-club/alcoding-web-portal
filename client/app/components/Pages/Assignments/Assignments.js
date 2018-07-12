@@ -14,14 +14,14 @@ class Assignments extends Component {
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     var self = this;
     var token = localStorage.getItem('token');
     var userID = localStorage.getItem('user_id');
 
-    if(!token || !userID){
+    if (!token || !userID) {
       console.log("Not logged in.");
-      <Redirect to="/" />
+      <Redirect to="/assignments" />
     }
     var apiPath = '/api/account/' + userID + '/details'
     axios.get(apiPath, {
@@ -45,7 +45,7 @@ class Assignments extends Component {
             console.log('Error2: ', error);
           });
 
-    var apiPath = '/api/assignments/'+ userID +'/courses'
+    var apiPath = '/api/assignments/' + userID + '/courses'
     axios.get(apiPath, {
       headers: {
           'x-access-token': token,
@@ -65,9 +65,8 @@ class Assignments extends Component {
       });
 
       var courses = data.courses.courses;
-      for (var i = 0; i < courses.length; i++){
-        var apiPath = '/api/assignments/'+ courses[i].code +'/'+ userID +'/assignmentsNotSubmitted';
-        // var apiPath = '/api/assignments/'+ courses[i].code +'/assignments'
+        for (var i = 0; i < courses.length; i++) {
+          var apiPath = '/api/assignments/' + courses[i]._id + '/' + userID + '/assignments';
         axios.get(apiPath, {
           headers: {
           'x-access-token': token,
@@ -79,7 +78,6 @@ class Assignments extends Component {
               console.log("Error1: " + response.data);
           }
           var data = response.data;
-          console.log(data);
           self.setState({ 
             assignments: self.state.assignments.concat(data.assignments.assignments)
           });
@@ -96,28 +94,28 @@ class Assignments extends Component {
 
   }
 
-  render(){
+  render() {
     let content;
     const profContent = (<div>Professor</div>);
 
     const studContent = (
     <div>
       {
-        this.state.assignments.map(function(each) {
-          return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} dueDate={each.duration.endDate} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl}/>
+          this.state.assignments.map(function (each) {
+            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} />
         })
       }
       <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
     </div>
     );
 
-    if(this.state.role=="professor"){
+    if (this.state.role == "professor") {
       content = profContent;
     }
-    else{
+    else {
       content = studContent;
     }
-    return(
+    return (
       <div>{content}</div>
       
     )
