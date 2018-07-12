@@ -96,6 +96,7 @@ module.exports = (app) => {
         })
     })
 
+    //Endpoint for Assignments to be submitted by User in a Course
     app.get('/api/assignments/:courseID/:userID/assignments', function (req, res) {
         var courseID = req.params.courseID;
         var userID = req.params.userID;
@@ -124,7 +125,7 @@ module.exports = (app) => {
             Assignment.find({
                 course: courseID,
                 submissions: {
-                    "$elemMatch": {"user": userID}
+                    "$not": {"$elemMatch": {"user": userID}}
                 },
                 isDeleted: false
             }, (err, assignments) => {
