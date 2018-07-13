@@ -1,5 +1,5 @@
-var Course = require('../../models/Assignments/Course');
-var Assignment = require('../../models/Assignments/Assignment');
+var Course = require('../../models/assignments/Course');
+var Assignment = require('../../models/assignments/Assignment');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
 var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;
@@ -135,18 +135,13 @@ module.exports = (app) => {
                         message: "Error: Server error."
                     });
                 }
-
-                if (assignments.length == 0) {
-                    return res.status(404).send({
-                        success: false,
-                        message: 'Error: No assignments submitted under this course by this user.'
-                    });
+                if(assignments){
+                    var assignments = {assignments}
                 }
-
                 return res.status(200).send({
                     success: true,
                     message: "Details successfully retrieved.",
-                    assignments: { assignments }
+                    assignments: assignments
                 });
             });
         })
@@ -322,7 +317,7 @@ module.exports = (app) => {
         });
     })
 
-    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, assignmentCheck, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
+    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
