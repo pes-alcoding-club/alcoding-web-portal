@@ -112,23 +112,17 @@ class Courses extends Component {
     let content;
     const profContent = (
         <form onSubmit={this.handleSubmit}>
-         <label>
-            Name of the Course:
-            <input type="text" name="name" onChange={this.handleChangeName}/><br></br>
-          
-            Code:
-            <input type="text" name="code" onChange={this.handleChangeCode}/><br></br>
-        
-            Department:
-            <input type="text" name="department" onChange={this.handleChangeDept}/><br></br>
-         
-            Description of Course:
-           <input type="text" name="description" onChange={this.handleChangeDescription}/><br></br>
-        
-            Resource URL:
-            <input type="text" name="resourceUrl" onChange={this.handleChangeURL}/><br></br>
-         </label><br></br>
-         <button type="submit">
+          <div class="form-group">
+            <label>
+              Enter Course Details - 
+              <br></br><input type="text" class="form-control" name="name" onChange={this.handleChangeName} placeholder="Name of Course"/>
+              <br></br><input type="text" class="form-control" name="code" onChange={this.handleChangeCode} placeholder="Course Code"/>
+              <br></br><input type="text" class="form-control" name="department" onChange={this.handleChangeDept} placeholder="Department"/>
+              <br></br><textarea class="form-control" name="description" onChange={this.handleChangeDescription} rows="3" placeholder="Description of Course"></textarea>
+              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resourse URL"/>
+            </label>
+           </div>
+         <button type="submit" class="btn btn-dark">
             Add Course
          </button>
         </form>

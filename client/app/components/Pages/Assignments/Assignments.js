@@ -27,7 +27,7 @@ class Assignments extends Component {
    this.setState({uniqueID: event.target.value});
   }
   
-  handleChangType(event) {
+  handleChangeType(event) {
     this.setState({type: event.target.value});
   }
   
@@ -137,25 +137,19 @@ class Assignments extends Component {
     let content;
     const profContent = (
       <form onSubmit={this.handleSubmit}>
-      <label>
-         Name of the Assignment:
-         <input type="text" name="name" onChange={this.handleChangeName}/><br></br>
-       
-         ID of Assignment:
-         <input type="text" name="uniqueID" onChange={this.handleChangeID}/><br></br>
-     
-         Type of Assignment:
-         <input type="text" name="type" onChange={this.handleChangeType}/><br></br>
-      
-         Details of Assignment:
-        <input type="text" name="details" onChange={this.handleChangeDetails}/><br></br>
-     
-         Resource URL:
-         <input type="text" name="resourceUrl" onChange={this.handleChangeURL}/><br></br>
-      </label><br></br>
-      <button type="submit">
-         Add Assignment
-      </button>
+      <div class="form-group">
+            <label>
+              Enter Assignment Details - 
+              <br></br><input type="text" class="form-control" name="name" onChange={this.handleChangeName} placeholder="Name of Assignment"/>
+              <br></br><input type="text" class="form-control" name="uniqueID" onChange={this.handleChangeID} placeholder="ID of Assignment"/>
+              <br></br><input type="text" class="form-control" name="type" onChange={this.handleChangeType} placeholder="Type of Assignment"/>
+              <br></br><textarea class="form-control" name="details" onChange={this.handleChangeDetails} rows="3" placeholder="Details"></textarea>
+              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resourse URL"/>
+            </label>
+           </div>
+         <button type="submit" class="btn btn-dark">
+            Add Assignment
+         </button>
      </form>
     );
 
