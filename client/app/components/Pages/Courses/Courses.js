@@ -119,7 +119,7 @@ class Courses extends Component {
               <br></br><input type="text" class="form-control" name="code" onChange={this.handleChangeCode} placeholder="Course Code"/>
               <br></br><input type="text" class="form-control" name="department" onChange={this.handleChangeDept} placeholder="Department"/>
               <br></br><textarea class="form-control" name="description" onChange={this.handleChangeDescription} rows="3" placeholder="Description of Course"></textarea>
-              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resourse URL"/>
+              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resource URL"/>
             </label>
            </div>
          <button type="submit" class="btn btn-dark">

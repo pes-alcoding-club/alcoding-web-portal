@@ -144,7 +144,7 @@ class Assignments extends Component {
               <br></br><input type="text" class="form-control" name="uniqueID" onChange={this.handleChangeID} placeholder="ID of Assignment"/>
               <br></br><input type="text" class="form-control" name="type" onChange={this.handleChangeType} placeholder="Type of Assignment"/>
               <br></br><textarea class="form-control" name="details" onChange={this.handleChangeDetails} rows="3" placeholder="Details"></textarea>
-              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resourse URL"/>
+              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resource URL"/>
             </label>
            </div>
          <button type="submit" class="btn btn-dark">
