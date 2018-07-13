@@ -12,7 +12,6 @@ class SignupForm extends Component {
 		event.preventDefault();
 		var fileObj = this.fileInput.current.files[0];
 		var token = 'Bearer ' + localStorage.getItem('token');
-
 		var configSignup = {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -20,48 +19,42 @@ class SignupForm extends Component {
 			}
 		};
 		var signUpUrl = '/api/admin/signup';
-		// var all_users=[];
-		if (fileObj) {
-			var reader = new FileReader();
-			reader.onload = function (file) {
-				var data = file.target.result.split('\n');
-				data.splice(-1, 1); //splice used to remove one last empty element that gets added due to the csv formatting
-				const NO_OF_MANDATORY_FIELDS = 4; //MODIFY ACCORDING TO NUMBER OF FIELDS REQUIRED FOR SIGNUP
-				var row, valid_count = 0;
-				var error_users=[];
-				for (var row_count = 0; row_count < data.length; row_count++) {
-					row = data[row_count];
-					var invalid = 0;
-					var attributes = row.split(',');
-					for (var count = 0; count < NO_OF_MANDATORY_FIELDS; count++) {
-						if (attributes[count] == "") { invalid = 1; }
-					};//to check cases where there are blank fields for each user
-					if (!invalid) {
-						valid_count++;
-						//TODO : IMPROVE THE WAY 'BODY' IS CONSTRUCTED
-						var body = "firstName=" + attributes[0];
-						body += '&email=' + attributes[1];
-						body += '&password=' + attributes[2];
-						body += '&usn=' + attributes[3];
-						// all_users.push(body);//append valid users to a list all_users
-						axios.post(signUpUrl, body, configSignup)
-							.then(function (response) {
-							    console.log(response);
-							 })
-							.catch(err =>
-								console.log(err)								
-							)
+		const NO_OF_MANDATORY_FIELDS = 4; //NUMBER OF FIELDS MANDATORY FOR SIGNUP.
+		var reader = new FileReader();
+		reader.onload = function (file) {
+			var data = file.target.result.split('\n');
+			var row, invalid, attributes,count;
+			for (var row_count = 0; row_count < data.length; row_count++) {
+				row = data[row_count];
+				invalid = 0;
+				attributes = row.split(',');
+				for (count = 0; count < NO_OF_MANDATORY_FIELDS; count++) {
+					if (attributes[count] == "") { invalid = 1; }
+				};//to check cases where there are blank fields for each user
+				if (!invalid) {
+					var body = "firstName=" + attributes[0];
+					body += '&email=' + attributes[1];
+					body += '&password=' + attributes[2];
+					body += '&usn=' + attributes[3];
 
-					}
-					else {
-						error_users.push(attributes[3]);
-					}
+					axios.post(signUpUrl, body, configSignup)
+						.then(function (response) {
+						    console.log(response.data);
+						 })
+						.catch(function (err) {
+						    console.log(err);
+						 })
+				}
+				else {
+					console.log("error at user: " + attributes);
 				}
 			}
+		}
+		
+		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
 		else { console.log('Please Upload a file!'); }
-		console.log(error_users + "NOT UPLOADDED");
 	}
 
 	render() {
