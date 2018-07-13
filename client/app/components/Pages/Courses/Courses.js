@@ -126,7 +126,7 @@ class Courses extends Component {
            <input type="text" name="description" onChange={this.handleChangeDescription}/><br></br>
         
             Resource URL:
-            <input type="text" name="resourseUrl" onChange={this.handleChangeURL}/><br></br>
+            <input type="text" name="resourceUrl" onChange={this.handleChangeURL}/><br></br>
          </label><br></br>
          <button type="submit">
             Add Course
