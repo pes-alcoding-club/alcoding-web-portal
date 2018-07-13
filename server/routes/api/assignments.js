@@ -317,7 +317,7 @@ module.exports = (app) => {
         });
     })
 
-    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, assignmentCheck, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
+    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
