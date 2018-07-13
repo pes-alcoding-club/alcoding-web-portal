@@ -8,11 +8,49 @@ class Courses extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      name: '',
+      code: '',
+      department: '',
+      description: '',
+      resourceUrl: '',
       role: "student",
       courses: [],
     };
+  };
     // functions
+  handleChangeName(event) {
+    this.setState({name: event.target.value});
   }
+
+  handleChangeCode(event) {
+    this.setState({code: event.target.value});
+  }
+
+  handleChangeDept(event) {
+    this.setState({department: event.target.value});
+  }
+
+  handleChangeDescription(event) {
+    this.setState({description: event.target.value});
+  }
+
+  handleChangeURL(event) {
+    this.setState({resourceUrl: event.target.value});
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+
+    const Courses = {
+      name: this.state.name,
+      code: this.state.code,
+      department: this.state.department,
+      description: this.state.description,
+      resourceUrl: this.state.resourceUrl
+    }
+
+    axios.post("/api/course/${userID}/createCourse", {Courses});
+}
 
   componentDidMount(){
     var self = this;
@@ -72,8 +110,29 @@ class Courses extends Component {
 
   render(){
     let content;
-    const profContent = (<div>Professor</div>);
-
+    const profContent = (
+        <form onSubmit={this.handleSubmit}>
+         <label>
+            Name of the Course:
+            <input type="text" name="name" onChange={this.handleChangeName}/><br></br>
+          
+            Code:
+            <input type="text" name="code" onChange={this.handleChangeCode}/><br></br>
+        
+            Department:
+            <input type="text" name="department" onChange={this.handleChangeDept}/><br></br>
+         
+            Description of Course:
+           <input type="text" name="description" onChange={this.handleChangeDescription}/><br></br>
+        
+            Resource URL:
+            <input type="text" name="resourceUrl" onChange={this.handleChangeURL}/><br></br>
+         </label><br></br>
+         <button type="submit">
+            Add Course
+         </button>
+        </form>
+    );
     const studContent = (
     <div>
       {
