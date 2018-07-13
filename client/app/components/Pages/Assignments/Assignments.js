@@ -8,49 +8,10 @@ class Assignments extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      uniqueID: '',
-      type: '',
-      details: '',
-      resourceUrl: '',
-      course: [],
+      courses: [],
       role: "student",
       assignments: [],
     };
-  };
-
-  handleChangeName(event) {
-    this.setState({name: event.target.value});
-  }
-  
-  handleChangeID(event) {
-   this.setState({uniqueID: event.target.value});
-  }
-  
-  handleChangType(event) {
-    this.setState({type: event.target.value});
-  }
-  
-  handleChangeDetails(event) {
-    this.setState({details: event.target.value});
-  }
-  
-  handleChangeURL(event) {
-    this.setState({resourceUrl: event.target.value});
-  }
-  
-  handleSubmit(event) {
-    event.preventDefault();
-  
-    const Assignments = {
-      name: this.state.name,
-      uniqueID: this.state.uniqueID,
-      type: this.state.type,
-      details: this.state.details,
-      resourceUrl: this.state.resourceUrl
-    }
-  
-    axios.post("/api/assignment/${userID}/createAssignment", {Assignments});
   }
 
   componentDidMount() {
@@ -135,29 +96,7 @@ class Assignments extends Component {
 
   render() {
     let content;
-    const profContent = (
-      <form onSubmit={this.handleSubmit}>
-      <label>
-         Name of the Assignment:
-         <input type="text" name="name" onChange={this.handleChangeName}/><br></br>
-       
-         ID of Assignment:
-         <input type="text" name="uniqueID" onChange={this.handleChangeID}/><br></br>
-     
-         Type of Assignment:
-         <input type="text" name="type" onChange={this.handleChangeType}/><br></br>
-      
-         Details of Assignment:
-        <input type="text" name="details" onChange={this.handleChangeDetails}/><br></br>
-     
-         Resource URL:
-         <input type="text" name="resourceUrl" onChange={this.handleChangeURL}/><br></br>
-      </label><br></br>
-      <button type="submit">
-         Add Assignment
-      </button>
-     </form>
-    );
+    const profContent = (<div>Professor</div>);
 
     const studContent = (
     <div>
