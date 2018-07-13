@@ -1,5 +1,5 @@
-var Course = require('../../models/Assignments/Course');
-var Assignment = require('../../models/Assignments/Assignment');
+var Course = require('../../models/assignments/Course');
+var Assignment = require('../../models/assignments/Assignment');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
 var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;

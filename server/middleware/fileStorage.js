@@ -1,8 +1,8 @@
 var multer = require('multer');
 const User = require('../models/User');
 const File = require('../models/Files');
-var Course = require('../models/Assignments/Course');
-var Assignment = require('../models/Assignments/Assignment');
+var Course = require('../models/assignments/Course');
+var Assignment = require('../models/assignments/Assignment');
 // var connect = require('connect');
 var fs = require("fs");
 var path = require('path');
