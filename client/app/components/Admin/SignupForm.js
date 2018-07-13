@@ -28,6 +28,7 @@ class SignupForm extends Component {
 				data.splice(-1, 1); //splice used to remove one last empty element that gets added due to the csv formatting
 				const NO_OF_MANDATORY_FIELDS = 4; //MODIFY ACCORDING TO NUMBER OF FIELDS REQUIRED FOR SIGNUP
 				var row, valid_count = 0;
+				var error_users=[];
 				for (var row_count = 0; row_count < data.length; row_count++) {
 					row = data[row_count];
 					var invalid = 0;
@@ -44,31 +45,23 @@ class SignupForm extends Component {
 						body += '&usn=' + attributes[3];
 						// all_users.push(body);//append valid users to a list all_users
 						axios.post(signUpUrl, body, configSignup)
-							.then(function(res){
-								if(res.status==200){
-									console.log("User in line "+row_count+" is signed up.")
-								}
-								else if(res.status==409){
-									console.log("User in line "+row_count+" is already present in DB.")
-								}
-							})
+							.then(function (response) {
+							    console.log(response);
+							 })
 							.catch(err =>
-								console.log(err)
+								console.log(err)								
 							)
+
 					}
 					else {
-						console.log("Line " + row_count + " is invalid");
+						error_users.push(attributes[3]);
 					}
 				}
-				var total_rows = (++row);
-				if (total_rows == valid_count) {
-					console.log("All users in the CSV file are valid ")
-				}
-				else { console.log("all users in csv files are not valid!"); }
 			}
 			reader.readAsText(fileObj, "UTF-8");
 		}
 		else { console.log('Please Upload a file!'); }
+		console.log(error_users + "NOT UPLOADDED");
 	}
 
 	render() {
