@@ -18,7 +18,7 @@ class Assignments extends Component {
     var userID = localStorage.getItem('user_id');
     if (!token || !userID) {
       console.log("Not logged in.");
-      <Redirect to="/assignments" />
+      <Redirect to="/" />
     }
     var apiPath = '/api/account/' + userID + '/details'
     axios.get(apiPath, {
