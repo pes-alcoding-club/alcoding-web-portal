@@ -135,18 +135,13 @@ module.exports = (app) => {
                         message: "Error: Server error."
                     });
                 }
-
-                if (assignments.length == 0) {
-                    return res.status(404).send({
-                        success: false,
-                        message: 'Error: No assignments submitted under this course by this user.'
-                    });
+                if(assignments){
+                    var assignments = {assignments}
                 }
-
                 return res.status(200).send({
                     success: true,
                     message: "Details successfully retrieved.",
-                    assignments: { assignments }
+                    assignments: assignments
                 });
             });
         })
