@@ -15,6 +15,8 @@ class Profile extends React.Component {
             basicInfo: {}
         };
         this.updateValue = this.updateValue.bind(this);
+        this.onConfirm = this.onConfirm.bind(this);
+
     }
 
 
@@ -39,8 +41,8 @@ class Profile extends React.Component {
                 }
                 var data = response.data;
                 // TODO: Update dob with calendar
-                self.setState({ 
-                    usn: data.user.usn, 
+                self.setState({
+                    usn: data.user.usn,
                     name: data.user.name.firstName + " " + data.user.name.lastName,
                     basicInfo: data.user.basicInfo
                 });
@@ -60,28 +62,39 @@ class Profile extends React.Component {
     }
 
     onConfirm() {
-        // Not tested as endpoint is not ready yet.
-        console.log("Calling PUT /api/account/:userID/basicInfo");
-        // var apiPath = '/api/account/' + userID + '/basicInfo'
-        // axios.put(apiPath, {
-        //     headers: {
-        //         'x-access-token': token,
-        //         'Content-Type': 'application/json'
-        //     },
-        //     basicInfo: this.state.basicInfo
-        // })
-        //     .then(function (response) {
-        //         if (!response.data.success) {
-        //             // TODO: throw appropriate error and redirect
-        //             console.log("Error: " + response.data);
-        //             return;
-        //         }
-        //         // TODO: redirect to this page(profile)
-        //     })
-        //     .catch(function (error) {
-        //         // TODO: Try again after sometime? 
-        //         console.log('error is ', error);
-        //     });
+        var token = localStorage.getItem('token')
+        var userID = localStorage.getItem('user_id')
+        var apiPath = '/api/account/' + userID + '/basicInfo'
+
+        var basicInfoUpdated = Object.assign({}, this.state.basicInfo)
+        console.log(basicInfoUpdated)
+
+
+         axios.put(
+             apiPath,
+             basicInfoUpdated,
+             {
+             headers: {
+                 'x-access-token': token,
+                 'Content-Type': 'application/json'
+             } 
+         })
+             .then(function (response) {
+                 if (!response.data.success) {
+                     // TODO: throw appropriate error and redirect
+                     console.log("Error: " + response.data);
+                     return;
+                 }
+                 else{
+                 // TODO: redirect to this page(profile)
+                 console.log(response.data);
+                 alert('Details Updated!');
+                 }
+             })
+             .catch(function (error) {
+                 // TODO: Try again after sometime? 
+                 console.log('error is ', error);
+             });
     }
 
     render() {
@@ -90,11 +103,11 @@ class Profile extends React.Component {
         return (
             <div className="container">
                 <div className="jumbotron">
-                    <h2>Profile</h2>
+                    <p className='display-2'>Profile</p>
                     <StaticBox field="USN" val={this.state.usn} />
-                    
+
                     <StaticBox field="Name" val={this.state.name} />
-                    <hr className="my-2"/>
+                    <hr className="my-2" />
                     {
                         Object.keys(this.state.basicInfo).map((oneKey, i) => {
                             return (
@@ -102,7 +115,7 @@ class Profile extends React.Component {
                             )
                         })
                     }
-                    <button onClick={this.onConfirm} type="button" className="btn btn-primary">Confirm</button>
+                    <button onClick={this.onConfirm} type="button" className="btn btn-dark">Confirm</button>
                     {/* <div><pre>{JSON.stringify(this.state, null, 2)}</pre></div> */}
                 </div>
             </div>

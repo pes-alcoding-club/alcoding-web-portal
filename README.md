@@ -1,8 +1,8 @@
 # Data Analysis Project
 This project is being developed for the Alcoding Club of PES University, Bangalore.
-It involves the creation of a Web Application that handles various user requests and is essentially a portal for all students belonging to the department.
-This project is currently being developed using MERN stack. Since it is a WIP, updates to this and other files shall be made regularly.
-Implementation details, features shall be enlisted in the near future. Stay tuned.
+It is a Web Application that acts as a portal for all students belonging to the Computer Science Department, in which students can view their coding contest rankings and submit assignments for the courses they have enrolled.
+This project is currently being developed using the MERN stack. 
+Implementation details, features shall be enlisted in the near future. 
 
 
 ## Requirements

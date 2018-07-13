@@ -27,7 +27,7 @@ class MutableBox extends React.Component {
     renderNormal() {
         return (
             <form className="form-inline">
-                <div className="form-group mx-2">
+                <div className="form-group mx-2 font-weight-bold">
                     <label htmlFor="staticTxt" className="sr-only">{this.props.field}</label>
                     <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.field} />
                 </div>
@@ -35,7 +35,7 @@ class MutableBox extends React.Component {
                     <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.val} />
                 </div>
                 
-                <button onClick={this.edit} type="button" className="btn btn-primary mb-2">Edit</button>
+                <button onClick={this.edit} type="button" className="btn btn-dark mb-2">Edit</button>
             </form>
         );
     }
@@ -52,7 +52,7 @@ class MutableBox extends React.Component {
                     <label htmlFor="input" className="sr-only">{this.props.val}</label>
                     <input ref="newText" type="text" className="form-control" id="input" placeholder={this.props.val} />
                 </div>
-                <button onClick={this.save} type="button" className="btn btn-primary mb-2">Save</button>
+                <button onClick={this.save} type="button" className="btn btn-dark mb-2">Change</button>
             </form>
         );
     }

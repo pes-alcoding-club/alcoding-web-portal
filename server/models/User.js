@@ -42,16 +42,6 @@ const UserSchema = new mongoose.Schema({
       default: Date.now()
     }
   },
-  timestamp: {
-    createdAt: {
-      type: Date,
-      default: Date.now()
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now()
-    }
-  },
   role: {
     type: String,
     default: "student"
@@ -61,7 +51,7 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-}, { strict: false });
+}, { strict: false, timestamps:true });
 
 // const saltRounds = 10;
 // UserSchema.methods = {
