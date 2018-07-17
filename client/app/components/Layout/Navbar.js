@@ -84,6 +84,10 @@ class Navbar extends Component {
     this.props.logoutUser();
 
   }
+
+  reload(){
+    window.location.reload()
+  }
   render() {
     const {
       signInUsn,
@@ -95,17 +99,17 @@ class Navbar extends Component {
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link className="nav-link" to="/courses">
+            <Link className="nav-link" to="/courses" onClick={this.reload}>
               Courses
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/assignments">
+            <Link className="nav-link" to="/assignments" onClick={this.reload}>
               Assignments
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/contests">
+            <Link className="nav-link" to="/contests" onClick={this.reload}>
               Contests
             </Link>
           </li>
@@ -115,7 +119,7 @@ class Navbar extends Component {
           {this.props.auth.userName.firstName}
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/profile">
+            <Link className="nav-link" to="/profile" onClick={this.reload}>
               Profile
             </Link>
           </li>
@@ -169,7 +173,7 @@ class Navbar extends Component {
     return (
       <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
 
-        <Link className="navbar-brand" to="/">
+        <Link className="navbar-brand" to="/" onClick={this.reload}>
           The Alcoding Club
         </Link>
         <button
@@ -199,3 +203,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { loginUser, logoutUser, getName })(Navbar);
+
