@@ -3,7 +3,6 @@ import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import AssignmentCard from './AssignmentCard';
-
 class Assignments extends Component {
   constructor(props) {
     super(props);
@@ -57,10 +56,9 @@ class Assignments extends Component {
     var self = this;
     var token = localStorage.getItem('token');
     var userID = localStorage.getItem('user_id');
-
     if (!token || !userID) {
       console.log("Not logged in.");
-      <Redirect to="/assignments" />
+      <Redirect to="/" />
     }
     var apiPath = '/api/account/' + userID + '/details'
     axios.get(apiPath, {
@@ -83,7 +81,6 @@ class Assignments extends Component {
           .catch(function (error) {
             console.log('Error2: ', error);
           });
-
     var apiPath = '/api/assignments/' + userID + '/courses'
     axios.get(apiPath, {
       headers: {
@@ -102,10 +99,9 @@ class Assignments extends Component {
       self.setState({ 
         courses: data.courses.courses
       });
-
       var courses = data.courses.courses;
         for (var i = 0; i < courses.length; i++) {
-          var apiPath = '/api/assignments/' + courses[i]._id + '/' + userID + '/assignments';
+          var apiPath = '/api/assignments/' + courses[i]._id + '/' + userID + '/new';
         axios.get(apiPath, {
           headers: {
           'x-access-token': token,
@@ -120,19 +116,14 @@ class Assignments extends Component {
           self.setState({ 
             assignments: self.state.assignments.concat(data.assignments.assignments)
           });
+          console.log(response.data);
         })
         .catch(function (error) { 
           console.log('Error2: ', error);
         });
       }// End of for loop
-
     })
-    .catch(function (error) { 
-      console.log('Error2: ', error);
-    });
-
   }
-
   render() {
     let content;
     const profContent = (
@@ -157,13 +148,12 @@ class Assignments extends Component {
     <div>
       {
           this.state.assignments.map(function (each) {
-            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} />
+            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} assignmentID = {each._id} submissions = {each.submissions}/>
         })
       }
       <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
     </div>
     );
-
     if (this.state.role == "professor") {
       content = profContent;
     }
@@ -176,5 +166,4 @@ class Assignments extends Component {
     )
   }
 }
-
 export default Assignments;
