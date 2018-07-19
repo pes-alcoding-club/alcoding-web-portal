@@ -10,7 +10,7 @@ var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
 module.exports = (app) => {
-    app.get('/api/assignments/:userID/courses', function (req, res) {
+    app.get('/api/assignments/:userID/courses', verifyUser, function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
                 success: false,
@@ -18,10 +18,11 @@ module.exports = (app) => {
             });
         }
 
-        Course.find({
-            students: req.params.userID,
-            isDeleted: false
-        }, (err, courses) => {
+        var search = { isDeleted: false };
+        if(req.role == 'student') search.students = req.user_id;
+        else if(req.role == 'prof') search.professors = req.user_id;
+
+        Course.find(search, (err, courses) => {
             if (err) {
                 return res.status(500).send({
                     success: false,
@@ -96,8 +97,8 @@ module.exports = (app) => {
         })
     })
 
-    //Endpoint for Assignments to be submitted by User in a Course
-    app.get('/api/assignments/:courseID/:userID/assignments', function (req, res) {
+    //Endpoint for viewing Assignments to be submitted by User in a Course
+    app.get('/api/assignments/:courseID/:userID/new', function (req, res) {
         var courseID = req.params.courseID;
         var userID = req.params.userID;
         if (!courseID || !userID) {
@@ -147,7 +148,7 @@ module.exports = (app) => {
         })
     })
 
-    app.post('/api/course/:userID/createCourse', requireRole("admin"), function (req, res) {
+    app.post('/api/courses/:userID/createCourse', requireRole('prof'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
                 success: false,
@@ -223,7 +224,7 @@ module.exports = (app) => {
         })
     })
 
-    app.post('/api/assignment/:userID/createAssignment', function (req, res) {
+    app.post('/api/assignments/:userID/createAssignment', requireRole('prof'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
                 success: false,
@@ -317,7 +318,7 @@ module.exports = (app) => {
         });
     })
 
-    app.post('/api/assignment/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
+    app.post('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
