@@ -46,7 +46,7 @@ class AssignmentCard extends Component {
       }
     }
 
-    var apiPath = 'api/assignment/' + userID + '/' + assignmentID + '/upload'
+    var apiPath = 'api/assignments/' + userID + '/' + assignmentID + '/upload'
     axios.post(apiPath, inputData, config)
       .then(res => {
         console.log(res.data)
