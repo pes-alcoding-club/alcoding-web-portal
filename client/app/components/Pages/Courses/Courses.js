@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SplitterLayout from 'react-splitter-layout';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -107,25 +108,31 @@ class Courses extends Component {
     });
 
   }
+  
 
   render(){
     let content;
     const profContent = (
-        <form onSubmit={this.handleSubmit}>
-          <div class="form-group">
-            <label>
-              Enter Course Details - 
-              <br></br><input type="text" class="form-control" name="name" onChange={this.handleChangeName} placeholder="Name of Course"/>
-              <br></br><input type="text" class="form-control" name="code" onChange={this.handleChangeCode} placeholder="Course Code"/>
-              <br></br><input type="text" class="form-control" name="department" onChange={this.handleChangeDept} placeholder="Department"/>
-              <br></br><textarea class="form-control" name="description" onChange={this.handleChangeDescription} rows="3" placeholder="Description of Course"></textarea>
-              <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resource URL"/>
-            </label>
-           </div>
-         <button type="submit" class="btn btn-dark">
+      <SplitterLayout>
+        <div>Pane 1</div>
+        <div>
+         <form onSubmit={this.handleSubmit}>
+            <div class="form-group-center">
+              <label>
+                Enter Course Details - 
+                <br></br><input type="text" class="form-control" name="name" onChange={this.handleChangeName} placeholder="Name of Course"/>
+                <br></br><input type="text" class="form-control" name="code" onChange={this.handleChangeCode} placeholder="Course Code"/>
+                <br></br><input type="text" class="form-control" name="department" onChange={this.handleChangeDept} placeholder="Department"/>
+                <br></br><textarea class="form-control" name="description" onChange={this.handleChangeDescription} rows="3" placeholder="Description of Course"></textarea>
+                <br></br><input type="text" class="form-control" name="resourceUrl" onChange={this.handleChangeURL} placeholder="Resource URL"/>
+              </label>
+            </div>
+          <button type="submit" class="btn btn-dark">
             Add Course
-         </button>
+          </button>
         </form>
+        </div>
+      </SplitterLayout>
     );
     const studContent = (
     <div>
@@ -147,7 +154,7 @@ class Courses extends Component {
 
 
     return(
-      <div>{content}</div>
+      <div>{profContent}</div>
       
     )
   }
