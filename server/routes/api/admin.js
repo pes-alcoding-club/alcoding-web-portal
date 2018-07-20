@@ -16,13 +16,10 @@ if (!fs.existsSync(dir)) {
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
 
-        // TODO: Change Email to usn
-
         var usn = req.body.usn;
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var email = req.body.email;
-        var password = req.body.password;
         var role = req.body.role;
 
         if (!firstName) {
@@ -37,17 +34,10 @@ module.exports = (app) => {
                 message: 'Error: usn cannot be blank.'
             });
         }
-        if (!password) {
-            return res.status(400).send({
-                success: false,
-                message: 'Error: Password cannot be blank.'
-            });
-        }
 
         // Process data
         usn = ('' + usn).toUpperCase().trim();
         email = ('' + email).toLowerCase().trim();
-        password = '' + password;
 
         // Deduplication flow
         User.find({
@@ -71,7 +61,7 @@ module.exports = (app) => {
             newUser.name.firstName = firstName;
             if (lastName) { newUser.name.lastName = lastName; }
             if (email) { newUser.basicInfo.email = email; }
-            newUser.password = newUser.generateHash(password);
+            newUser.password = newUser.generateHash(usn);
         
             if (role) {
                 if (role == "admin") {

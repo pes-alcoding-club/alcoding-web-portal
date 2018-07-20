@@ -20,7 +20,8 @@ const UserSchema = new mongoose.Schema({
   name: {
     firstName: {
       type: String,
-      default: ""
+      default: "",
+      required: true
     },
     lastName: {
       type: String,
