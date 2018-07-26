@@ -42,8 +42,8 @@ class CoursesAdd extends Component {
         var userID = localStorage.getItem('user_id');
         var token = localStorage.getItem('token')
 
-        ///api/courses/:userID/courses
-        var apiPath = 'api/courses/' + userID + '/courses'
+        ///api/assignments/:userID/courses
+        var apiPath = 'api/assignments/' + userID + '/courses'
         axios.get(apiPath, {
             headers: {
                 'x-access-token': token,
