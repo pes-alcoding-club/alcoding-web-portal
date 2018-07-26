@@ -17,7 +17,7 @@ class CoursesAdd extends Component {
             credits: '',
             hours: '',
             isCore: '',
-            assignments: [],
+            courses: [],
             show: false
         };
         this.onAdd = this.onAdd.bind(this);
@@ -197,7 +197,7 @@ class CoursesAdd extends Component {
                         <label>End Date</label>
                         <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} />
                         <label>Number of Hours</label>
-                        <input type="date" className="form-control" placeholder="Hours" value={this.state.hours} onChange={this.handleHoursChange} />
+                        <input type="number" className="form-control" placeholder="Hours" value={this.state.hours} onChange={this.handleHoursChange} />
                     </div>
                     <div className="form-group">
                         <h6>Resources</h6>
@@ -211,7 +211,7 @@ class CoursesAdd extends Component {
         const CourseContent = (
             <div>
                 {
-                    this.state.course.map(function (each) {
+                    this.state.courses.map(function (each) {
                         return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='prof' />
                     })
                 }
