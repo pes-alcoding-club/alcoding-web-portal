@@ -55,7 +55,7 @@ class AssignmentCard extends Component {
             showUpload: false
           })
         }
-        else {
+        else{
           alert('Assignment failed to upload!')
         }
       })
@@ -70,23 +70,7 @@ class AssignmentCard extends Component {
         <button className="btn btn-dark" onClick={this.onSubmit}> Submit </button>
       </div>
     );
-    let content;
-    const profContent = (
-      <div id="AssignmentCard">
-        <div className="card bg-light mx-auto">
-          <div className="card-title"><h3><i>{this.props.uniqueID}</i>: <strong>{this.props.name}</strong></h3></div>
-          <div className="card-body text-left">
-            Description: {this.props.details}<br />
-            Type: {this.props.type}<br />
-            Due Date: {this.props.dueDate}<br />
-            Maximum Marks: {this.props.maxMarks}<br />
-            Resource URL: <a href={'//' + this.props.resourceUrl}>{this.props.resourceUrl}</a><br /><br />
-          </div>
-        </div>
-        <br />
-      </div>
-    );
-    const studContent = (
+    return (
       <div id="AssignmentCard">
         <div className="card bg-light mx-auto">
           <div className="card-title"><h3><i>{this.props.uniqueID}</i>: <strong>{this.props.name}</strong></h3></div>
@@ -102,16 +86,6 @@ class AssignmentCard extends Component {
         <br />
       </div>
     );
-    if (this.props.role == "professor") {
-      content = profContent;
-    }
-    else {
-      content = studContent;
-    }
-    return (
-      <div>{content}</div>
-
-    )
   }
 }
 
