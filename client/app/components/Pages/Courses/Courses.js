@@ -192,27 +192,27 @@ class CoursesAdd extends Component {
     const click = (
       <div>
         <form>
-          <div className="form-group mx-auto">
+          <div className="form-group text-left">
             <h6>Course Name</h6>
-            <input type="text" className="form-control " placeholder="Name" value={this.state.name} onChange={this.handleNameChange} />
+            <input type="text" className="form-control" placeholder="Name" value={this.state.name} onChange={this.handleNameChange} />
           </div>
-          <div className="form-group">
+          <div className="form-group text-left">
             <h6>Code</h6>
             <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} />
           </div>
-          <div className="form-group">
+          <div className="form-group text-left">
             <h6>Department</h6>
             <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} />
           </div>
-          <div className="form-group">
+          <div className="form-group text-left">
             <h6>Course Description</h6>
             <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
           </div>
-          <div className="form-group">
+          <div className="form-group text-left">
             <h6>Credits</h6>
             <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} />
           </div>
-          <div className="form-group">
+          <div className="form-group text-left">
             <h6>Duration</h6>
             <label>Start Date</label>
             <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} />
@@ -221,7 +221,7 @@ class CoursesAdd extends Component {
             <label>Number of Hours</label>
             <input type="number" className="form-control" placeholder="Hours" value={this.state.hours} onChange={this.handleHoursChange} />
           </div>
-          <div className="form-group">
+          <div className="form-group text-left">
             <h6>Resources</h6>
             <input type="url" className="form-control" placeholder="URLs" value={this.state.resourcesUrl} onChange={this.handleURLChange} />
           </div>
@@ -245,11 +245,11 @@ class CoursesAdd extends Component {
           </div>
         </div>
         <div className='col-sm-5'>
-          <div className='card bg-light mx-auto'>
-            <div className='card-body align-left '>
-              {this.state.show ? click : <button type="button" className="btn btn-dark w-20 mx-1" onClick={this.showForm}>Add Course</button>}
-              {this.state.show ? <button type="submit" className="btn btn-dark mx-1 w-20 " onClick={this.onAdd}>Submit</button> : null}
-              {this.state.show ? <button type="close" className="btn w-20" onClick={this.closeForm}>Close</button> : null}
+          <div className='card bg-light text-center'>
+            <div className='card-body'>
+              {this.state.show ? click : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button>}
+              {this.state.show ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
+              {this.state.show ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
 
             </div>
           </div>
