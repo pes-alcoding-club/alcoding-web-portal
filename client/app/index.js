@@ -20,7 +20,7 @@ import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses/Courses';
 import NotFound from './components/App/NotFound';
 import SignupForm from '../app/components/Admin/SignupForm';
-
+import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
 
 import './styles/styles.scss';
 
@@ -57,6 +57,8 @@ render((
 
             <PrivateRoute exact path="/admin" component={SignupForm} />
 
+            <PrivateRoute exact path="/courses/:courseID" component={AssignmentAdd}  />
+            
             <Route component={NotFound} />
           </Switch>
 
