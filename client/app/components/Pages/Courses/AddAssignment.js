@@ -205,14 +205,14 @@ class AssignmentAdd extends Component {
                 </div>
                 <hr />
                 <div className='row'>
-                    <div className='col-sm-6'>
+                    <div className='col-sm-7'>
                         <h1 className='text-center'>
                             Assignments for this course
                         </h1>
                         <hr />
                         {content}
                     </div>
-                    <div className='col-sm-6'>
+                    <div className='col-sm-5'>
                         <div className='card text-center bg-light'>
                             <div className='card-body '>
                                 {this.state.show ? click : <button type="button" className="btn btn-dark w-20 mx-3" onClick={this.showForm}>Add Assignment</button>}
