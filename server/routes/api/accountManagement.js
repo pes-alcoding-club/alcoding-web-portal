@@ -92,41 +92,108 @@ module.exports = (app) => {
     });
   }), //end of sign in endpoint
 
-    app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
-      // GET http://localhost:8080/api/account/:userID/logout
+    app.post('/api/account/:userID/password', verifyUser, function (req, res) {
       var user_id = req.params.userID;
-
+      var oldPassword = req.body.oldPassword;
+      var newPassword = req.body.newPassword;
+      
       if (!user_id) {
         return res.status(400).send({
           success: false,
-          message: 'Error: UserID parameter cannot be blank'
+          message: 'Error: userID not entered in parameters'
+        });
+      }
+      if (!oldPassword) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: old Password not entered in body'
+        });
+      }
+      if (!newPassword) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: new Password not entered in body'
         });
       }
 
-      UserSession.findOneAndRemove({
-        token: req.token
-      }, (err, session) => {
+      User.find({
+        _id: user_id,
+        isDeleted: false
+      }, function (err, users) {
         if (err) {
           return res.status(500).send({
             success: false,
-            message: "Error: Server error"
+            message: 'Error: Server Error.'
           });
         }
-        if (!session) {
+        if (!users) {
           return res.status(400).send({
             success: false,
-            message: "Error: Invalid."
-          });
+            message: 'User does not exist in DB.'
+          })
         }
+        var user = users[0];
+        if (user.checkPassword(oldPassword, user.password)) {
+          newPassword = user.generateHash(newPassword);
+          User.findByIdAndUpdate({ _id: user_id }, { $set: { password: newPassword } }, null, function (err) {
+            if (err) {
+              return res.status(500).send({
+                success: false,
+                message: 'Error: Server Error.'
+              });
+            }
+            else {
+              return res.status(200).send({
+                success: true,
+                message: 'User password changed',
+              });
+            }
+          })
+        }
+        else{
+          return res.status(400).send({
+            success: false,
+            message: "User has entered wrong password"
+          })
+        }
+      })
+    })
 
-        return res.status(200).send({
-          success: true,
-          message: 'User has been logged out'
-        });
+  app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
+    // GET http://localhost:8080/api/account/:userID/logout
+    var user_id = req.params.userID;
+
+    if (!user_id) {
+      return res.status(400).send({
+        success: false,
+        message: 'Error: UserID parameter cannot be blank'
       });
-    }), //end of logout endpoint
+    }
 
-    app.get('/api/account/:userID/details', verifyUser, function (req, res) {
+    UserSession.findOneAndRemove({
+      token: req.token
+    }, (err, session) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: "Error: Server error"
+        });
+      }
+      if (!session) {
+        return res.status(400).send({
+          success: false,
+          message: "Error: Invalid."
+        });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: 'User has been logged out'
+      });
+    });
+  }), //end of logout endpoint
+
+    app.get('/api/account/:userID/details', function (req, res) {
       // GET http://localhost:8080/api/account/:userID/details
       var user_id = req.params.userID;
 
@@ -160,6 +227,7 @@ module.exports = (app) => {
         delete user.password;
         delete user.isDeleted;
         delete user.__v;
+        delete user.files;
 
         // Return a response with user data
         return res.status(200).send({
@@ -186,8 +254,8 @@ module.exports = (app) => {
     var update = req.body
 
     User.findOneAndUpdate(
-      {_id: user_id},
-      {basicInfo: Object.assign({},update)},
+      { _id: user_id },
+      { basicInfo: Object.assign({}, update) },
       (err) => {
 
         if (err) {
@@ -196,13 +264,13 @@ module.exports = (app) => {
             message: "Error: Server error"
           });
         }
-        else{
+        else {
           return res.status(200).send({
             success: true,
             message: "Details Updated!"
           });
         }
       })
-      
+
   })
 };

@@ -102,7 +102,7 @@ class AssignmentCard extends Component {
         <br />
       </div>
     );
-    if (this.props.role == "professor") {
+    if (this.props.role == "prof") {
       content = profContent;
     }
     else {

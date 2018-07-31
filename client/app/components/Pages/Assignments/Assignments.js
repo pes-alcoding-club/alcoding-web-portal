@@ -90,7 +90,7 @@ class Assignments extends Component {
       <div>
         {
           this.state.assignments.map(function (each) {
-            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} submissions={each.submissions} role='professor' />
+            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} submissions={each.submissions} role='prof' />
           })
         }
         <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
@@ -106,7 +106,7 @@ class Assignments extends Component {
         <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
       </div>
     );
-    if (this.state.role == "professor") {
+    if (this.state.role == "prof") {
       content = profContent;
     }
     else {

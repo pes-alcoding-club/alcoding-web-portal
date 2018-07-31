@@ -141,10 +141,10 @@ var assignmentCheck = function (req, res, next) {
 //     return chain;
 // })();
 
-var retrieveFile = function (dir) {
-    return function (req, res) {
+var downloadFile = function(dir) {
+    return function(req,res,next){
         File.find({
-            _id: req.params.fileid
+            _id: req.params.fileID
         }, function (err, files) {
             if (err) {
                 return res.status(500).send({
@@ -152,25 +152,28 @@ var retrieveFile = function (dir) {
                     message: "Error: server error"
                 });
             }
-            else if (files.length == 0) {
+            if (files.length == 0) {
                 return res.status(404).send({
                     success: false,
-                    message: "Error: No file found with this name"
+                    message: "Error: No file found with this id"
                 });
             }
             var file = files[0];
             var filePath = path.join(dir, file.originalname);
-            var stream = fs.createReadStream(filePath);
-            stream.on('error', function (error) {
-                res.writeHead(404, 'Not Found');
-                res.end();
-            });
-            stream.pipe(res);
+            res.download(filePath, file._id.toString()+'.'+file.originalname.split('.')[1], function(err){
+                if(err){
+                    return res.status(500).send({
+                        success: false,
+                        message: "Error: server error"
+                    });
+                }
+            })
         });
     }
 }
+
 //TODO: Make file downloadable
 //TODO: Delete file endpoint
 
-module.exports = { retrieveFile, diskStorage, fileUpload, assignmentCheck };
-// module.exports = { retrieveFile, fileDB, assignmentCheck };
+module.exports = { diskStorage, fileUpload, assignmentCheck, downloadFile };
+// module.exports = { fileDB, assignmentCheck, downloadFile };
