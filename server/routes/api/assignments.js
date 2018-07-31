@@ -320,6 +320,7 @@ module.exports = (app) => {
     })
 
     app.post('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
+        console.log(req.file);
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
@@ -338,7 +339,7 @@ module.exports = (app) => {
                     });
                 }
                 console.log("User " + req.params.userID + " has successfully submitted the assignment");
-                console.log(assignment);
+                // console.log(assignment);
                 return res.status(200).send({
                     success: true,
                     message: "User " + req.params.userID + " has successfully submitted the assignment"
@@ -380,5 +381,30 @@ module.exports = (app) => {
     })
 
     app.get('/api/assignments/:fileID/download', requireRole('prof'), downloadFile(dir));
+
+    app.get('/api/assignments/:assignmentID/details', function(req,res){
+        Assignment.find({
+            _id:req.params.assignmentID
+        }, function(err,assignments){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(!assignments){
+                return res.status(404).send({
+                    success: false,
+                    message: 'Error: No such assignment found'
+                });
+            }
+            var assignment = assignments[0];
+            return res.status(200).send({
+                success:true,
+                message:"Assignment Details successfully retrieved",
+                data:{assignment}
+            })
+        })
+    })
 }
 

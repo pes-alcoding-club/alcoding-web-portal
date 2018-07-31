@@ -51,7 +51,7 @@ var fileUpload = function (req, res, next) {
                     });
                 }
                 console.log(file._id + " Added to DB.");
-
+                req.file._id = file._id;
                 User.findOneAndUpdate({
                     _id: req.user_id
                 }, {
