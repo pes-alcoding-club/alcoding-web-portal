@@ -344,5 +344,39 @@ module.exports = (app) => {
                 });
             });
     })
+
+    app.get('/api/assignments/:assignmentID/submissions', requireRole('prof'), function(req,res){
+        Assignment.find({
+            _id:req.params.assignmentID
+        }, function(err, assignments){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(!assignments){
+                return res.status(404).send({
+                    success: false,
+                    message: 'Error: No such assignment found'
+                });
+            }
+            var assignment = assignments[0];
+            if(assignment.submissions.length){
+                return res.status(200).send({
+                    success:true,
+                    message: "Assignment submissions successfully retrieved",
+                    data: {assignment}
+                })
+            }
+            else{
+                return res.status(404).send({
+                    success: false,
+                    message: 'Error: No submissions for this assignment'
+                });
+            }
+        })
+    })
+
 }
 
