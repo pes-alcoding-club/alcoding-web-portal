@@ -193,7 +193,7 @@ module.exports = (app) => {
     });
   }), //end of logout endpoint
 
-    app.get('/api/account/:userID/details', verifyUser, function (req, res) {
+    app.get('/api/account/:userID/details', function (req, res) {
       // GET http://localhost:8080/api/account/:userID/details
       var user_id = req.params.userID;
 
@@ -227,6 +227,7 @@ module.exports = (app) => {
         delete user.password;
         delete user.isDeleted;
         delete user.__v;
+        delete user.files;
 
         // Return a response with user data
         return res.status(200).send({
