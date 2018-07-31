@@ -6,6 +6,7 @@ var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;
 // var fileDB = require('../../middleware/fileStorage').fileDB;
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
+var downloadFile = require('../../middleware/fileStorage').downloadFile;
 var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
@@ -378,5 +379,6 @@ module.exports = (app) => {
         })
     })
 
+    app.get('/api/assignments/:fileID/download', requireRole('prof'), downloadFile(dir));
 }
 
