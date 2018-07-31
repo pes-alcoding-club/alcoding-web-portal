@@ -6,6 +6,7 @@ var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;
 // var fileDB = require('../../middleware/fileStorage').fileDB;
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
+var downloadFile = require('../../middleware/fileStorage').downloadFile;
 var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
@@ -344,5 +345,40 @@ module.exports = (app) => {
                 });
             });
     })
+
+    app.get('/api/assignments/:assignmentID/submissions', requireRole('prof'), function(req,res){
+        Assignment.find({
+            _id:req.params.assignmentID
+        }, function(err, assignments){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(!assignments){
+                return res.status(404).send({
+                    success: false,
+                    message: 'Error: No such assignment found'
+                });
+            }
+            var assignment = assignments[0];
+            if(assignment.submissions.length){
+                return res.status(200).send({
+                    success:true,
+                    message: "Assignment submissions successfully retrieved",
+                    data: {assignment}
+                })
+            }
+            else{
+                return res.status(404).send({
+                    success: false,
+                    message: 'Error: No submissions for this assignment'
+                });
+            }
+        })
+    })
+
+    app.get('/api/assignments/:fileID/download', requireRole('prof'), downloadFile(dir));
 }
 
