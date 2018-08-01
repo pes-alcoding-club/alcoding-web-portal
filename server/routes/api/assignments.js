@@ -384,7 +384,8 @@ module.exports = (app) => {
 
     app.get('/api/assignments/:assignmentID/details', function(req,res){
         Assignment.find({
-            _id:req.params.assignmentID
+            _id:req.params.assignmentID,
+            isDeleted:false
         }, function(err,assignments){
             if(err){
                 return res.status(500).send({
@@ -398,7 +399,8 @@ module.exports = (app) => {
                     message: 'Error: No such assignment found'
                 });
             }
-            var assignment = assignments[0];
+            var assignment = assignments[0].toObject();
+            delete assignment.submissions;
             return res.status(200).send({
                 success:true,
                 message:"Assignment Details successfully retrieved",
