@@ -9,10 +9,6 @@ var fs = require("fs");
 var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
-if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-}
-
 module.exports = (app) => {
     app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
 
