@@ -4,6 +4,7 @@ var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
 var assignmentCheck = require('../../middleware/fileStorage').assignmentCheck;
 // var fileDB = require('../../middleware/fileStorage').fileDB;
+const File = require('../../models/Files');
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
 var downloadFile = require('../../middleware/fileStorage').downloadFile;
@@ -319,8 +320,7 @@ module.exports = (app) => {
         });
     })
 
-    app.post('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
-        console.log(req.file);
+    app.all('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
@@ -328,22 +328,57 @@ module.exports = (app) => {
                 $push: {
                     submissions: {
                         'user': req.params.userID,
-                        'file': req.file._id
                     }
                 }
-            }, { new: true }, function (err, assignment) {
+            }, { new: true }, function(err, assignment) {
                 if (err) {
                     return res.status(500).send({
                         success: false,
                         message: "Error: server error"
                     });
                 }
-                console.log("User " + req.params.userID + " has successfully submitted the assignment");
-                // console.log(assignment);
-                return res.status(200).send({
-                    success: true,
-                    message: "User " + req.params.userID + " has successfully submitted the assignment"
-                });
+                var submissions = [];
+                for(var i=0; i<assignment.submissions.length; i++){
+                    var submission = assignment.submissions[i];
+                    if(submission.user!=req.params.userID){
+                        submissions.push(submission);
+                    }
+                }
+                File.find({
+                    user_id: req.user_id,
+                    originalname: req.file.originalname
+                }, function(err, files){
+                    if (err) {
+                        return res.status(500).send({
+                            success: false,
+                            message: "Error: Server error"
+                        });
+                    }
+                    req.fileID = files[files.length-1]._id; //Get Latest file submitted by user
+                    var object = {"user":req.user_id, "file":req.fileID};
+                    submissions.push(object);
+                    
+                    Assignment.findOneAndUpdate({
+                        _id: req.params.assignmentID,
+                        isDeleted: false,
+                    },{
+                        "$set":{
+                            submissions:submissions
+                        }
+                    },null, function(err, assignment){
+                        if (err) {
+                            return res.status(500).send({
+                                success: false,
+                                message: "Error: Server error"
+                            });
+                        }
+                        console.log("User " + req.params.userID + " has successfully submitted the assignment");
+                        return res.status(200).send({
+                            success: true,
+                            message: "User " + req.params.userID + " has successfully submitted the assignment"
+                        });
+                    })
+                })
             });
     })
 
