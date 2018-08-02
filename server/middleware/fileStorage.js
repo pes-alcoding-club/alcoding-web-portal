@@ -11,11 +11,18 @@ var keyName = "inputFile" //Change according to your key name for file
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
         destination: function (req, file, cb) {
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }            
             cb(null, dir);
         },
         filename: function (req, file, cb) {
             cb(null, file.originalname);
-        }
+        },
+        onError: function (err, next) {
+            console.log('error', err);
+            next(err);
+        },
         //TODO: Make better cryptic naming convention for files
     });
     return multer({ storage: storage });
@@ -34,7 +41,7 @@ var fileUpload = function (req, res, next) {
         }
         else {
             var uploadFile = new File();
-
+            
             uploadFile.originalname = req.file.originalname;
             uploadFile.encoding = req.file.encoding;
             uploadFile.mimetype = req.file.mimetype;
@@ -51,7 +58,7 @@ var fileUpload = function (req, res, next) {
                     });
                 }
                 console.log(file._id + " Added to DB.");
-                req.file._id = file._id;
+                req.fileID = file._id;
                 User.findOneAndUpdate({
                     _id: req.user_id
                 }, {
@@ -132,14 +139,20 @@ var assignmentCheck = function (req, res, next) {
     next();
 }
 
-// TODO: Connect Package Error
-// var fileDB = (function(dir) {
-//     var chain = connect();
-//     [diskStorage(dir).single(keyName), fileUpload].forEach(function(middleware) {
-//       chain.use(middleware);
-//     });
-//     return chain;
-// })();
+// var fileDB = function(middleware) {
+//     if (!middleware.length) {
+//         return function(_req, _res, next) { next(); };
+//     }
+//     var head = middleware[0];
+//     var tail = middleware.slice(1);
+
+//     return function(req, res, next) {
+//         head(req, res, function(err) {
+//             if (err) return next(err);
+//             compose(tail)(req, res, next);
+//         });
+//     };
+// }
 
 var downloadFile = function(dir) {
     return function(req,res,next){
