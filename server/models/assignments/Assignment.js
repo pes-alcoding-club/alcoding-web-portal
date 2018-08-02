@@ -48,7 +48,7 @@ const AssignmentSchema = new mongoose.Schema({
     },
     marksObtained: {
       type: Number,
-      default: 0
+      default: -1
     }
   }],
   POC: { // Point Of Contact
