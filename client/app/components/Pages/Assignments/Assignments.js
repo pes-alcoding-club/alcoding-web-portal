@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
-import { connect } from 'react-redux';
 import AssignmentCard from './AssignmentCard';
 class Assignments extends Component {
   constructor(props) {
@@ -9,17 +8,14 @@ class Assignments extends Component {
     this.state = {
       courses: [],
       role: "student",
-      assignments: [],
+      assignments: []
     };
   }
   componentDidMount() {
     var self = this;
     var token = localStorage.getItem('token');
     var userID = localStorage.getItem('user_id');
-    if (!token || !userID) {
-      console.log("Not logged in.");
-      <Redirect to="/" />
-    }
+    
     var apiPath = '/api/account/' + userID + '/details'
     axios.get(apiPath, {
       headers: {
@@ -90,7 +86,7 @@ class Assignments extends Component {
       <div>
         {
           this.state.assignments.map(function (each) {
-            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} submissions={each.submissions} role='prof' />
+            return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} assignmentID={each._id} submissions={each.submissions} role='prof' />
           })
         }
         <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
