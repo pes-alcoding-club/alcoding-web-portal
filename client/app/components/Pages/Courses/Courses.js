@@ -47,7 +47,6 @@ class CoursesAdd extends Component {
     axios.get(apiPath, {
       headers: {
         'x-access-token': token,
-        'Content-Type': 'application/json'
       }
     })
       .then(function (response) {

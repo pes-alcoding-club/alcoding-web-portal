@@ -7,7 +7,6 @@ class CourseCard extends Component {
     this.state = {
       courseID: ''
     };
-    this.viewCourse = this.viewCourse.bind(this);
   }
   componentDidMount() {
     this.setState({
@@ -15,10 +14,6 @@ class CourseCard extends Component {
     })
   }
 
-  viewCourse() {
-    console.log('ID:' + this.props.courseID);
-    <Redirect to={'courses/' + this.props.courseID} />
-  }
 
   render() {
     let content;

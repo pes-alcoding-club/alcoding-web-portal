@@ -21,8 +21,11 @@ import Courses from '../app/components/Pages/Courses/Courses';
 import NotFound from './components/App/NotFound';
 import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
+import viewSubmissions from './components/Pages/Assignments/viewSubmissions';
+import viewAssignment from './components/Pages/Assignments/viewAssignment';
 
 import './styles/styles.scss';
+
 
 
 if (localStorage.token) {
@@ -58,6 +61,10 @@ render((
             <PrivateRoute exact path="/admin" component={SignupForm} />
 
             <PrivateRoute exact path="/courses/:courseID" component={AssignmentAdd}  />
+
+            <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions}  />
+
+            <Route exact path="/assignments/:assignmentID" component={viewAssignment}  />
             
             <Route component={NotFound} />
           </Switch>

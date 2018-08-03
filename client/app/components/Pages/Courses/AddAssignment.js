@@ -39,7 +39,6 @@ class AssignmentAdd extends Component {
         axios.get(`http://localhost:8080/api/assignments/${params.courseID}/assignments`, {
             headers: {
                 'x-access-token': token,
-                'Content-Type': 'multipart/form-data'
             }
         }).then(function (response) {
             if (!response.data.success) {
@@ -105,7 +104,6 @@ class AssignmentAdd extends Component {
         var token = localStorage.getItem('token');
         const { match: { params } } = this.props;
 
-        var apiPath = 'api/assignments/' + userID + '/createAssignment';
         var config = {
             headers: {
                 'x-access-token': token,
