@@ -16,7 +16,7 @@ class viewSubmissions extends Component {
 
         ///api/assignments/:assignmentID/submissions
         var token = localStorage.getItem('token')
-        axios.get(`http://localhost:8080/api/assignments/${this.props.location.state.assignmentID}/submissions`, {
+        axios.get(`/api/assignments/${this.props.location.state.assignmentID}/submissions`, {
             headers: {
                 'x-access-token': token,
             }
