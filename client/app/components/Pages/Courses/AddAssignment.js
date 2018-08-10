@@ -36,7 +36,7 @@ class AssignmentAdd extends Component {
 
         var token = localStorage.getItem('token')
         ///api/assignments/:courseID/assignments
-        axios.get(`http://localhost:8080/api/assignments/${params.courseID}/assignments`, {
+        axios.get(`/api/assignments/${params.courseID}/assignments`, {
             headers: {
                 'x-access-token': token,
             }
@@ -122,7 +122,7 @@ class AssignmentAdd extends Component {
         data.duration = duration;
         data = JSON.stringify(data)
         console.log(data)
-        axios.post(`http://localhost:8080/api/assignments/${userID}/createAssignment`, data, config)
+        axios.post(`/api/assignments/${userID}/createAssignment`, data, config)
             .then(res => {
                 console.log(res.data);
                 this.reload();

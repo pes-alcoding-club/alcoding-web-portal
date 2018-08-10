@@ -13,7 +13,7 @@ class SubmissionsCard extends Component {
         ///api/assignments/:fileID/download
         console.log(this.props.fileID)
         var token = localStorage.getItem('token')
-        axios.get(`http://localhost:8080/api/assignments/${this.props.fileID}/download`, {
+        axios.get(`/api/assignments/${this.props.fileID}/download`, {
             headers: {
                 'x-access-token': token,
             }
