@@ -19,7 +19,7 @@ class SignupForm extends Component {
 			}
 		};
 		var signUpUrl = '/api/admin/signup';
-		const NO_OF_MANDATORY_FIELDS = 4; //NUMBER OF FIELDS MANDATORY FOR SIGNUP.
+		const NO_OF_MANDATORY_FIELDS = 3; //NUMBER OF FIELDS MANDATORY FOR SIGNUP.
 		var reader = new FileReader();
 		reader.onload = function (file) {
 			var data = file.target.result.split('\n');
@@ -34,8 +34,7 @@ class SignupForm extends Component {
 				if (!invalid) {
 					var body = "firstName=" + attributes[0];
 					body += '&email=' + attributes[1];
-					body += '&password=' + attributes[2];
-					body += '&usn=' + attributes[3];
+					body += '&usn=' + attributes[2];
 
 					axios.post(signUpUrl, body, configSignup)
 						.then(function (response) {
