@@ -77,10 +77,14 @@ class AssignmentCard extends Component {
 
   render() {
     const toUpload = (
-      <div>
-        <input type="file" className="btn btn-default pl-0" placeholder="Upload File" onChange={this.onChange} />
-        <br />
+      <div className="row">
+        <div className="custom-file col-sm">
+          <input type="file" className="custom-file-input" id="validatedCustomFile" onChange={this.onChange}/>
+          <label className="custom-file-label" for="validatedCustomFile">Choose file</label>
+        </div>
+        <div className="col-sm">
         <button className="btn btn-dark" onClick={this.onSubmit}> Submit </button>
+        </div>
       </div>
     );
     let content;
