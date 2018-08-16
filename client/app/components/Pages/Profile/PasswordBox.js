@@ -65,8 +65,8 @@ class PasswordBox extends Component {
         if (this.state.newPassword != this.state.confirmNewPassword) {
             alert("Passwords do not match.");
         }
-        else if (this.state.oldPassword != this.state.newPassword) {
-            alert("New Passwrod cannot be same as old password.");
+        else if (this.state.oldPassword == this.state.newPassword) {
+            alert("New Password cannot be same as old password.");
         }
         else {
             axios.post(`api/account/${userID}/password`, body, {
