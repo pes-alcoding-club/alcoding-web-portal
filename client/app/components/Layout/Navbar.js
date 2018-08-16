@@ -212,3 +212,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { loginUser, logoutUser, getName })(Navbar);
+
