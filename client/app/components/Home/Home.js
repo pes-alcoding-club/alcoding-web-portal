@@ -18,20 +18,20 @@ class Home extends Component {
         <div className="card-deck">
           <div className="card bg-light">
             <div className="card-body text-center">
-            <h4 class="card-title">About Us</h4>
-            <p class="card-text">{staticText.aboutUs}</p>
+            <h4 className="card-title">About Us</h4>
+            <p className="card-text">{staticText.aboutUs}</p>
             </div>
           </div>
           <div className="card bg-light">
             <div className="card-body text-center">
-            <h4 class="card-title">Latest News</h4>
-            <p class="card-text">{staticText.latestNews}</p>
+            <h4 className="card-title">Latest News</h4>
+            <p className="card-text">{staticText.latestNews}</p>
             </div>
           </div>
           <div className="card bg-light">
             <div className="card-body text-center">
-            <h4 class="card-title">Announcements</h4>
-            <p class="card-text">{staticText.announcements}</p>
+            <h4 className="card-title">Announcements</h4>
+            <p className="card-text">{staticText.announcements}</p>
             </div>
           </div>
         </div>

@@ -7,38 +7,38 @@ const bcrypt = require('bcrypt');
 // Add a default for each so that it appears in the profile page.
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    firstName: {
-      type: String,
-      default: ""
-    },
-    lastName: {
-      type: String,
-      default: ""
-    }
-  },
-  email: {
+  usn: {
     type: String,
-    default: ""
-  },
-  phone: {
-    type: String,
-    default: ""
-  },
-  dob: {
-    type: Date
+    default: "",
+    required: true
   },
   password: {
     type: String,
     // required: true,
     default: ""
   },
-  timestamp: {
-    createdAt: {
-      type: Date,
-      default: Date.now()
+  name: {
+    firstName: {
+      type: String,
+      default: "",
+      required: true
     },
-    updatedAt: {
+    lastName: {
+      type: String,
+      default: ""
+    }
+  },
+  basicInfo: {
+    // Contains mutable info
+    email: {
+      type: String,
+      default: ""
+    },
+    phone: {
+      type: String,
+      default: ""
+    },
+    dob: {
       type: Date,
       default: Date.now()
     }
@@ -52,7 +52,7 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-}, {strict:false});
+}, { strict: false, timestamps:true });
 
 // const saltRounds = 10;
 // UserSchema.methods = {
