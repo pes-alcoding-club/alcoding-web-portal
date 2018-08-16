@@ -85,8 +85,8 @@ class Navbar extends Component {
 
   }
 
-  reload() {
-    window.location.reload()
+  reload(){
+  window.location.reload()
   }
   render() {
     const {
@@ -203,3 +203,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { loginUser, logoutUser, getName })(Navbar);
+
