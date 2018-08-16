@@ -121,8 +121,9 @@ class Profile extends React.Component {
                     <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" fieldName="Phone" val={this.state.basicInfo["phone"]} />
                     <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
                     <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
-
-
+                    
+                    <PasswordBox/>
+                    
                     <button onClick={this.onConfirm} type="button" className="btn btn-dark">Confirm Changes</button>
 
                     {/* <div><pre>{JSON.stringify(this.state, null, 2)}</pre></div> */}

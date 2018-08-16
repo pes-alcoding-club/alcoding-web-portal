@@ -54,10 +54,10 @@ class MutableBox extends React.Component {
             <form className="form-inline">
                 <div className="form-group mx-2 font-weight-bold">
                     <label htmlFor="staticTxt" className="sr-only">{this.props.field}</label>
-                    <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.fieldName} />
+                    <input type="text" readOnly className="form-control-plaintext" id={this.props.fieldName} value={this.props.fieldName} />
                 </div>
                 <div className="form-group mx-2  mb-2 ">
-                    <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={fieldValue} />
+                    <input type="text" readOnly className="form-control-plaintext" id={fieldValue} value={fieldValue} />
                 </div>
 
                 <button onClick={this.edit} type="button" className="btn btn-dark mb-2">Edit</button>
@@ -73,9 +73,9 @@ class MutableBox extends React.Component {
         }
         return (
             <form className="form-inline">
-                <div className="form-group mb-2 mx-2">
+                <div className="form-group mb-2 mx-2 font-weight-bold">
                     <label htmlFor="staticTxt" className="sr-only">field</label>
-                    <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.fieldName} />
+                    <input type="text" readOnly className="form-control-plaintext" id={this.props.fieldName} value={this.props.fieldName} />
                 </div>
                 <div className="form-group mx-2 mb-2">
                     <label htmlFor="input" className="sr-only">{this.props.val}</label>
