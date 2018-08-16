@@ -23,12 +23,12 @@ class Navbar extends Component {
       this.setState({
         bool: true
       })
-      if(this.state.bool){
-      this.props.getName()
-      this.setState({
-        bool: false
-      });
-    }
+      if (this.state.bool) {
+        this.props.getName()
+        this.setState({
+          bool: false
+        });
+      }
       <Redirect to="/" />
       //this.props.history.push('/landing');
     }
@@ -40,7 +40,7 @@ class Navbar extends Component {
       this.setState({
         bool: true
       })
-      if(this.state.bool){
+      if (this.state.bool) {
         nextProps.getName()
         this.setState({
           bool: false
@@ -50,7 +50,7 @@ class Navbar extends Component {
       //this.props.history.push('/landing');
     }
 
-   
+
   }
 
   onTextboxChangeSignInPassword(event) {
@@ -86,13 +86,13 @@ class Navbar extends Component {
   }
 
   reload(){
-    window.location.reload()
+  window.location.reload()
   }
   render() {
     const {
       signInUsn,
       signInPassword,
-      
+
     } = this.state;
     const { isAuthenticated, user, userName } = this.props.auth;
     const authLinks = (
@@ -115,8 +115,8 @@ class Navbar extends Component {
           </li>
         </ul>
         <ul className="navbar-nav">
-        <li className="nav-item text-light pt-2 pr-2">
-          {this.props.auth.userName.firstName}
+          <li className="nav-item text-light pt-2 pr-2">
+            {this.props.auth.userName.firstName}
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/profile" onClick={this.reload}>
