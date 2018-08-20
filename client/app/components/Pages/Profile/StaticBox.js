@@ -6,16 +6,11 @@ class StaticBox extends React.Component {
     }
     render() {
         return (
-            <form className="form-inline">
-                <div className="form-group mb-2 mx-2 font-weight-bold">
-                    <label htmlFor="staticTxt" className="sr-only ">{this.props.field}</label>
-                    <input type="text" readOnly className="form-control-plaintext" id={this.props.field} value={this.props.field} />
-                </div>
-                
-                <div className="form-group mb-2 mx-2">
-                    <input type="text" readOnly className="form-control-plaintext" id={this.props.val} value={this.props.val} />
-                </div>
-            </form>
+            <div className="form-inline">
+                <h2>{this.props.field}:</h2>
+                <p className="font-weight-bold ml-4 mt-2">{this.props.val}</p>
+                <br/>
+            </div>
         );
     }
 }
