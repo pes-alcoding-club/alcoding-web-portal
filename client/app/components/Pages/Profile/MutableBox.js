@@ -51,13 +51,13 @@ class MutableBox extends React.Component {
         // }
 
         return (
-            <form className="form-inline">
-                <div className="form-group mx-2 font-weight-bold">
-                    <label htmlFor="staticTxt" className="sr-only">{this.props.field}</label>
-                    <input type="text" readOnly className="form-control-plaintext" id={this.props.fieldName} value={this.props.fieldName} />
-                </div>
-                <div className="form-group mx-2  mb-2 ">
-                    <input type="text" readOnly className="form-control-plaintext" id={fieldValue} value={fieldValue} />
+            <div>
+                <div className="form-inline">
+                    <h4 className="container ">{this.props.field}:</h4>
+                    <p className="ml-4 mt-2" id={fieldValue}>{fieldValue}</p>
+
+                    <button onClick={this.edit} type="button" className="btn btn-dark ml-auto">Edit</button>
+
                 </div>
                 <hr />
             </div>
@@ -72,14 +72,13 @@ class MutableBox extends React.Component {
             inputType = "date";
         }
         return (
-            <form className="form-inline">
-                <div className="form-group mb-2 mx-2 font-weight-bold">
-                    <label htmlFor="staticTxt" className="sr-only">field</label>
-                    <input type="text" readOnly className="form-control-plaintext" id={this.props.fieldName} value={this.props.fieldName} />
-                </div>
-                <div className="form-group mx-2 mb-2">
-                    <label htmlFor="input" className="sr-only">{this.props.val}</label>
-                    <input ref="newText" type={inputType} className="form-control" id="input" placeholder={this.props.val} />
+            <div>
+                <div className="form-inline">
+                    <h4 className="container">{this.props.field}:</h4>
+                    <input ref="newText" type={inputType} className="form-control ml-4 mt-1 mb-2" id="input" placeholder={this.props.val} />
+
+                    <button onClick={this.save} type="button" className="btn btn-dark ml-auto">Save</button>
+
                 </div>
                 <hr />
 
