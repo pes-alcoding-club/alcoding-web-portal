@@ -5,11 +5,13 @@ class PasswordBox extends Component {
     constructor() {
         super();
         this.state = {
+            changePw: false,
             oldPassword: "",
             newPassword: "",
             confirmNewPassword: ""
         };
-
+        this.updatePassword = this.updatePassword.bind(this);
+        this.cancel = this.cancel.bind(this);
         this.changeOldPassword = this.changeOldPassword.bind(this);
         this.changeNewPassword = this.changeNewPassword.bind(this);
         this.changeConfirmNewPassword = this.changeConfirmNewPassword.bind(this);
@@ -38,8 +40,16 @@ class PasswordBox extends Component {
         });
 
     }
-
-
+    updatePassword() {
+        this.setState({
+            changePw: true
+        })
+    }
+    cancel() {
+        this.setState({
+            changePw: false
+        })
+    }
     confirmPasswordChange() {
         //api call to change password comes here
         var userID = localStorage.getItem("user_id");
@@ -75,65 +85,65 @@ class PasswordBox extends Component {
                 })
         }
     }
+    renderPasswordBox() {
+
+        return (
+            <div className="card card-body bg-light mb-2">
+                <h4>Change Password</h4>
+                <form className="form mx-1">
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            className="form-control mx-2 mb-3"
+                            placeholder="Old Password"
+                            required="required"
+                            value={this.state.oldPassword}
+                            onChange={this.changeOldPassword}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            className="form-control mx-2 mb-3"
+                            placeholder="New Password"
+                            required="required"
+                            value={this.state.newPassword}
+                            onChange={this.changeNewPassword}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            className="form-control mx-2 mb-3"
+                            placeholder="Confirm Password"
+                            required="required"
+                            value={this.state.confirmNewPassword}
+                            onChange={this.changeConfirmNewPassword}
+                        />
+                    </div>
+
+                    <button onClick={this.confirmPasswordChange} type="button" className="btn btn-dark mb-2">Confirm Password Change</button>
+                    <button onClick={this.cancel} type="button" className="btn btn-danger ml-2 mb-2">Cancel</button>
+
+                </form>
+            </div>
+        )
+    }
+
+    renderNoBox() {
+        return (
+            <div>
+                <button onClick={this.updatePassword} type="button" className="btn btn-Light mb-2">Change Password</button> <br />
+            </div>
+        );
+    }
 
     render() {
-        return(
-            <div>
-                <button type="button" className="btn btn-info ml-0 mb-2" data-toggle="modal" data-target="#myModal">Change Password</button>
-
-                <div id="myModal" className="modal fade" role="dialog">
-                    <div className="modal-dialog">
-
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h4 className="modal-title">Change Password</h4>
-                                <button type="button" className="close" data-dismiss="modal">&times;</button>
-
-                            </div>
-                            <div className="modal-body">
-                                <form className="form mx-1">
-                                    <div className="form-group">
-                                        <input
-                                            type="password"
-                                            className="form-control mx-2 mb-3"
-                                            placeholder="Old Password"
-                                            required="required"
-                                            value={this.state.oldPassword}
-                                            onChange={this.changeOldPassword}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <input
-                                            type="password"
-                                            className="form-control mx-2 mb-3"
-                                            placeholder="New Password"
-                                            required="required"
-                                            value={this.state.newPassword}
-                                            onChange={this.changeNewPassword}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <input
-                                            type="password"
-                                            className="form-control mx-2 mb-3"
-                                            placeholder="Confirm Password"
-                                            required="required"
-                                            value={this.state.confirmNewPassword}
-                                            onChange={this.changeConfirmNewPassword}
-                                        />
-                                    </div>
-                                </form>
-                                <div className="modal-footer">
-                                    <button onClick={this.confirmPasswordChange} type="button" className="btn btn-dark mb-2">Confirm Password Change</button>
-                                    <button type="button" className="btn btn-default mb-2" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                </div>
-        )
+        if (this.state.changePw) {
+            return this.renderPasswordBox();
+        }
+        else
+            return this.renderNoBox();
     }
 }
 
