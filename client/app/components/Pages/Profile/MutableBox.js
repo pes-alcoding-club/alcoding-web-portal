@@ -60,7 +60,7 @@ class MutableBox extends React.Component {
                     <input type="text" readOnly className="form-control-plaintext" id={fieldValue} value={fieldValue} />
                 </div>
                 <hr />
-            </div>
+            </form>
         )
 
     }
@@ -82,8 +82,7 @@ class MutableBox extends React.Component {
                     <input ref="newText" type={inputType} className="form-control" id="input" placeholder={this.props.val} />
                 </div>
                 <hr />
-
-            </div>
+            </form>
         );
     }
 
