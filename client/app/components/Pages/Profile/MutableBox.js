@@ -59,10 +59,10 @@ class MutableBox extends React.Component {
                 <div className="form-group mx-2  mb-2 ">
                     <input type="text" readOnly className="form-control-plaintext" id={fieldValue} value={fieldValue} />
                 </div>
+                <hr />
+            </div>
+        )
 
-                <button onClick={this.edit} type="button" className="btn btn-dark mb-2">Edit</button>
-            </form>
-        );
     }
 
 
@@ -81,8 +81,9 @@ class MutableBox extends React.Component {
                     <label htmlFor="input" className="sr-only">{this.props.val}</label>
                     <input ref="newText" type={inputType} className="form-control" id="input" placeholder={this.props.val} />
                 </div>
-                <button onClick={this.save} type="button" className="btn btn-dark mb-2">Save</button>
-            </form>
+                <hr />
+
+            </div>
         );
     }
 

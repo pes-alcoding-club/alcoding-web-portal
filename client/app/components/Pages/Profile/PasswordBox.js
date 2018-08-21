@@ -5,7 +5,6 @@ class PasswordBox extends Component {
     constructor() {
         super();
         this.state = {
-
             changePw: false,
             oldPassword: "",
             newPassword: "",
@@ -41,7 +40,6 @@ class PasswordBox extends Component {
         });
 
     }
-
     updatePassword() {
         this.setState({
             changePw: true
@@ -52,7 +50,6 @@ class PasswordBox extends Component {
             changePw: false
         })
     }
-
     confirmPasswordChange() {
         //api call to change password comes here
         var userID = localStorage.getItem("user_id");
