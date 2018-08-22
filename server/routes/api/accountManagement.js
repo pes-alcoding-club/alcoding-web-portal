@@ -133,7 +133,7 @@ module.exports = (app) => {
           })
         }
         var user = users[0];
-        if (user.checkPassword(oldPassword)) {
+        if (user.checkPassword(oldPassword, user.password)) {
           newPassword = user.generateHash(newPassword);
           User.findByIdAndUpdate({ _id: user_id }, { $set: { password: newPassword } }, null, function (err) {
             if (err) {
