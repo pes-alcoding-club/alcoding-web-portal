@@ -1,346 +1,127 @@
-const Contender = require('../../models/contests/Contender');
-const Contest = require('../../models/contests/Contest')
-
 const User = require('../../models/User');
-
-var requireRole = require('../middleware/Token').requireRole;
-var verifyUser = require('../middleware/Token').verifyUser;
-
-function toObject(arr) {
-  var rv = {};
-  for (var i = 0; i < arr.length; ++i)
-    if (arr[i] !== undefined) rv[i] = arr[i];
-  return rv;
-}
+const File = require('../../models/Files');
+var requireRole = require('../../middleware/Token').requireRole;
+// var fileDB = require('../../middleware/fileStorage').fileDB;
+var diskStorage = require('../../middleware/fileStorage').diskStorage;
+var fileUpload = require('../../middleware/fileStorage').fileUpload;
+var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
+var fs = require("fs");
+var dir = process.cwd() + '/../temp';
+var keyName = "inputFile";
 
 module.exports = (app) => {
-  app.post('/api/contests/handle', verifyUser, function (req, res) {
-    var email = req.body.email;
-    var platform = req.body.platform;
-    var handle = req.body.handle;
-
-    if (!email || !platform || !handle) {
-      return res.status(400).send({
-        success: false,
-        message: 'Error: Email of user, Platform and Handle fields required.'
-      });
-    }
-
+  app.get('/api/contests/globalRankList', function (req, res) {
     User.find({
-      email: email,
-      isDeleted: false,
+      isDeleted: false
     }, (err, users) => {
       if (err) {
         return res.status(500).send({
           success: false,
-          message: "Error: Server error"
+          message: "Error: Server error."
         });
       }
-      if (users.length != 1) {
+      if (!users) {
         return res.status(404).send({
           success: false,
-          message: 'Error: User not found.'
+          message: 'No users'
         });
       }
-      var user = users[0];
-      newHandle = { "platform": platform, "handle": handle };
-      Contender.findOneAndUpdate({
-        user: user._id
-      }, { $push: { handles: newHandle } }, (err, updatedContender) => {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: "Error: Server update error"
-            });
-          }
-        });
-
+      var userContenderDetails = [];
+      for (var user of users) {
+        var name = user.name.firstName + " " + user.name.lastName;
+        pushObject = Object.assign({ usn: user.usn, name }, user.contender.toObject());
+        pushObject.rating = Math.round(pushObject.rating);
+        pushObject.best = Math.round(pushObject.best);
+        userContenderDetails.push(pushObject);
+      }
       return res.status(200).send({
         success: true,
-        message: 'Handle Added succesfully',
+        message: "globalRankList retrieved.",
+        globalRankList: { userContenderDetails }
       });
+
     })
-  }), // Works
+  })
 
-    app.post('/api/contests/updateContender', requireRole("admin"), function (req, res) {
-      var email = req.body.email;
-      var contestName = req.body.contestName;
-      var score = req.body.score;
-      var rank = req.body.rank;
-      var currentRank = req.body.currentRank;
+  app.post('/api/contests/updateContenders', requireRole("admin"), function (req, res) {
 
-      if (!email) {
-        return res.status(400).send({
-          success: false,
-          message: 'Error: Email field is required'
-        });
-      }
+    var usn = req.body.usn;
+    var name = req.body.name;
+    var email = req.body.email;
+    var codejam = req.body.codejam;
+    var rating = req.body.rating;
+    var volatility = req.body.volatility;
+    var timesPlayed = req.body.timesPlayed;
+    var lastFive = req.body.lastFive;
+    var best = req.body.best;
+    var hackerearth = req.body.hackerearth;
 
-      User.find({
-        email: email
-      }, (err, users) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error"
-          });
-        }
-
-        if (users.length != 1) {
-          return res.status(404).send({
-            success: false,
-            message: 'Error: User not found.'
-          });
-        }
-        var user = users[0].toObject();
-
-        Contest.find({
-          name: contestName
-        }, (err, contests) => {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: "Error: Server error"
-            });
-          }
-
-          if (contests.length != 1) {
-            return res.status(404).send({
-              success: false,
-              message: 'Error: Contest not found.'
-            });
-          }
-          var contest = contests[0].toObject();
-          newHistory = { "contest": contest, "score": score, "rank": rank };
-          Contender.findOneAndUpdate({ user: user }, { $push: { history: newHistory } });
-          Contender.findOneAndUpdate({ user: user }, { currentRank: currentRank });
-
-          return res.status(200).send({
-            success: true,
-            message: 'Contender Updated',
-          });
-        })
-      });
-    }),
-
-
-    app.post('/api/contests/contest', requireRole("admin"), function (req, res) {
-      var name = req.body.name;
-      var url = req.body.url;
-      var platform = req.body.platform;
-      var ranksUrl = req.body.ranksUrl;
-      var date = req.body.date;
-      var maxScore = req.body.maxScore;
-
-      if (!name || !url || !platform || !ranksUrl || !date) {
-        return res.status(400).send({
-          success: false,
-          message: 'Error: Name, URL, Platform, RanksURL, Date are required fields.'
-        });
-      }
-      newContest = new Contest();
-      newContest.name = name;
-      newContest.url = url;
-      newContest.platform = platform;
-      newContest.ranksUrl = ranksUrl;
-      newContest.maxScore = maxScore;
-      newContest.date = date;
-      newContest.save((err) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: 'Error: Server error'
-          });
-        }
-        return res.status(200).send({
-          success: true,
-          message: 'New contest created',
-        });
-      });
-    }), // Works
-
-    app.post('/api/contests/contender', requireRole("admin"), function (req, res) {
-      var email = req.body.email;
-      var currentRank = req.body.currentRank;
-
-      if (!email || !currentRank) {
-        return res.status(400).send({
-          success: false,
-          message: 'Error: Current Rank and Email of user required.'
-        });
-      }
-
-      User.find({
-        email: email,
-        isDeleted: false,
-      }, (err, users) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error"
-          });
-        }
-        if (users.length != 1) {
-          return res.status(404).send({
-            success: false,
-            message: 'Error: User not found.'
-          });
-        }
-        var user = users[0];
-
-        Contender.find({
-          user: user._id,
-          isDeleted: false
-        }, (err, previousContenders) => {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: "Error: Server find error"
-            });
-          }
-          else if (previousContenders.length > 0) {
-            return res.status(409).send({
-              success: false,
-              message: 'Error: Contender already exists.'
-            });
-          }
-          newContender = new Contender();
-          newContender.user = user._id;
-          newContender.currentRank = currentRank;
-          newContender.save((err) => {
-            if (err) {
-              return res.status(500).send({
-                success: false,
-                message: 'Error: Server error'
-              });
-            }
-            return res.status(200).send({
-              success: true,
-              message: 'New contender created',
-            });
-          });
-        })
-      })
-    }), // Completion of post methods and works
-
-    app.get('/api/contests/leaderboard', function (req, res) {
-      var limitTo = req.body.limitTo;
-      if (!limitTo) {
-        limitTo = 100;
-      }
-      console.log("Request to access leaderbaord.");
-      Contender.
-        find({
-          isDeleted: false,
-          currentRank: { $ne: -1 },
-        }).
-        limit(limitTo).
-        sort({ currentRank: 1 }).
-        exec(function (err, contenders) {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: "Error: Server error"
-            });
-          }
-          var leaderboard = { data: [] };
-          var thisContender;
-          var firstName;
-          var user;
-          for (var i = 0; i < contenders.length; i++) {
-            thisContender = contenders[i];
-            User.find({
-              _id: thisContender.user,
-              isDeleted: false
-            }, (err, users) => {
-              if (err) {
-                return res.status(500).send({
-                  success: false,
-                  message: "Error: Server find error"
-                });
-              }
-
-              if (users.length != 1) {
-                return res.status(404).send({
-                  success: false,
-                  message: 'Error: User not found.'
-                });
-              }
-              user = users[0];
-              firstName = user.name.firstName;
-              rankHolder = {
-                rank: thisContender.currentRank,
-                user: firstName,
-              };
-              leaderboard.data.push(rankHolder);
-              console.log(leaderboard);
-            })
-          }
-          return res.status(200).send({
-            success: true,
-            message: "Leaderboard successfully retrieved",
-            leaderboard: leaderboard // Fix data send
-          });
-        });
-    });
-
-  app.get('/api/contests/:userID/contender', verifyUser, function (req, res) {
-    var user_id = req.params.userID;
-
-    //Verify that userID is present as a parameter
-    if (!user_id) {
+    if (!usn) {
       return res.status(400).send({
         success: false,
-        message: 'Error: userID parameter cannot be blank'
+        message: 'Error: First name cannot be blank.'
       });
     }
 
-    console.log("Request to access contender details of " + user_id);
-    // Search for the user in the User model with his user_id
+    // Process data
+    usn = ('' + usn).toUpperCase().trim();
+
+    // Deduplication flow
     User.find({
-      _id: user_id
-    }, (err, users) => {
+      usn: usn
+    }, (err, previousUsers) => {
       if (err) {
         return res.status(500).send({
           success: false,
-          message: "Error: Server error"
+          message: 'Error: Server find error'
         });
-      }
-
-      if (users.length != 1) {
-        return res.status(404).send({
-          success: false,
-          message: 'Error: User not found.'
-        });
-      }
-      var user = users[0].toObject();
-      Contender.find({
-        user: user._id,
-        isDeleted: false
-      }, (err, contenders) => {
-        if (err) {
-          return res.status(500).send({
-            success: false,
-            message: "Error: Server error"
-          });
-        }
-
-        if (contenders.length != 1) {
-          return res.status(404).send({
-            success: false,
-            message: 'Error: Contender not found.'
-          });
-        }
-        var contender = contenders[0].toObject();
-        delete contender.user;
-        delete contender.isDeleted;
-
+      } else if (previousUsers.length > 0) { //Update
+        previousUsers[0].contender.handles["codejam"] = codejam;
+        previousUsers[0].contender.handles["hackerearth"] = hackerearth;
+        previousUsers[0].contender.rating = rating;
+        previousUsers[0].contender.volatility = volatility;
+        previousUsers[0].contender.timesPlayed = timesPlayed;
+        previousUsers[0].contender.lastFive = lastFive;
+        previousUsers[0].contender.best = best;
         return res.status(200).send({
           success: true,
-          message: "Details successfully retrieved",
-          contender: contender
+          message: 'Updated Contender'
         });
-      })
+      }
+      else {
+        //New user
+        const newUser = new User();
+
+        newUser.usn = usn;
+        if (name) { newUser.name.firstName = name.split(" ")[0]; newUser.name.lastName = name.split(" ")[1]; }
+        if (email) { newUser.basicInfo.email = email; }
+        newUser.password = newUser.generateHash(usn);
+        newUser.role = "student";
+
+        newUser.contender.handles["codejam"] = codejam;
+        newUser.contender.handles["hackerearth"] = hackerearth;
+        newUser.contender.rating = rating;
+        newUser.contender.volatility = volatility;
+        newUser.contender.timesPlayed = timesPlayed;
+        newUser.contender.lastFive = lastFive;
+        newUser.contender.best = best;
+
+        newUser.save((err, user) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({
+              success: false,
+              message: 'Server error'
+            });
+          }
+          console.log(newUser._id + " added to DB.")
+          return res.status(200).send({
+            success: true,
+            message: 'Signed Up'
+          });
+        });
+      }
+
     });
   });
-};
+}

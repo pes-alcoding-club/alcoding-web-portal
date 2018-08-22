@@ -43,6 +43,30 @@ const UserSchema = new mongoose.Schema({
       default: Date.now()
     }
   },
+  contender: {
+    // Contains mutable info
+    handles: [{codejam: String, hackerearth: String, codechef: String, hackerrank: String, interviewbit: String, codeforces: String, hackercup: String, kickstart: String}],
+    rating: {
+      type: Number,
+      default: -1
+    },
+    volatility: {
+      type: Number,
+      default: -1
+    },
+    timesPlayed: {
+      type: Number,
+      default: -1
+    },
+    lastFive: {
+      type: Number,
+      default: -1
+    },
+    best: {
+      type: Number,
+      default: -1
+    },
+  },
   role: {
     type: String,
     default: "student"
