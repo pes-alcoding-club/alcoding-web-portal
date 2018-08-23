@@ -12,6 +12,8 @@ class MutableBox extends React.Component {
 
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
+        this.cancel = this.cancel.bind(this);
+
     }
 
     edit() {
@@ -30,6 +32,10 @@ class MutableBox extends React.Component {
         this.props.changeEditingStatus(-1);
         currentState.isEditing = false;
         this.setState(currentState);
+    }
+
+    cancel(){
+        this.setState({ isEditing: false });
     }
 
     renderNormal() {
@@ -65,6 +71,8 @@ class MutableBox extends React.Component {
                 <div className="form-inline">
                     <input ref="newText" type={inputType} className="form-control ml-3" id="input" placeholder={this.props.val} />
                     <button type="submit" onClick={this.save} className="btn btn-dark ml-auto">Save</button>
+                    <button type="submit" onClick={this.cancel} className="btn btn-danger ml-1">Cancel</button>
+
                 </div>
             </div>
         );

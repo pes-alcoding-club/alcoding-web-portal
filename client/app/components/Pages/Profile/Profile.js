@@ -112,16 +112,18 @@ class Profile extends React.Component {
 
         return (
             <div className="container col-md-8">
-                <div className="jumbotron center pt-3 bg-light">
+                <div className="jumbotron center pt-3 pb-2 bg-light">
                     <div className="container">
                         <div className='display-4 mb-3'>Profile</div>
-                        
+
                         <StaticBox fieldName="Name" val={this.state.name} />
                         <StaticBox fieldName="USN" val={this.state.usn} />
 
                         <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
+                        <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" inputType="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
+                        <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" inputType="date" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
                         <hr />
 
