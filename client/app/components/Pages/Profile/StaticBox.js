@@ -8,9 +8,7 @@ class StaticBox extends React.Component {
         var fieldValue = this.props.val;
         return (
             <div>
-                <div className="form-inline">
-                    <h5>{this.props.fieldName}: {fieldValue}</h5>
-                </div>
+                <div className="lead" ><b>{this.props.fieldName}:</b> {fieldValue}</div>
             </div>
         );
     }

@@ -24,12 +24,6 @@ class MutableBox extends React.Component {
         var currentState = Object.assign({}, this.state);
 
         if (inp) {
-
-            // var phoneno = /^\d{10}$/;
-            // if (!(inp.match(phoneno))) {
-            //     alert("Enter a valid 10 digit phone number.");
-            //     return;
-            // }
             currentState.hasChanged = true;
             this.props.updateFieldValue(this.props.field, inp);
         }
@@ -52,9 +46,9 @@ class MutableBox extends React.Component {
 
         return (
             <div>
-                <h5>{this.props.fieldName}:</h5>
+                <div className="lead" ><b>{this.props.fieldName}:</b></div>
                 <div className="form-inline">
-                    <p className="ml-4 mt-2 mb-1" id={fieldValue}>{fieldValue}</p>
+                    <div className="lead ml-4" >{fieldValue}</div>
                     <button onClick={this.edit} type="button" className="btn btn-dark ml-auto">Edit</button>
                 </div>
             </div>
@@ -64,16 +58,13 @@ class MutableBox extends React.Component {
 
 
     renderEditing() {
-        var inputType = "text";
-        if (this.props.field == "dob") {
-            inputType = "date";
-        }
+        var inputType = this.props.inputType;
         return (
             <div>
-                <h5>{this.props.fieldName}:</h5>
+                <div className="lead" ><b>{this.props.fieldName}:</b></div>
                 <div className="form-inline">
-                    <input ref="newText" type={inputType} className="form-control ml-3 mt-1" id="input" placeholder={this.props.val} />
-                    <button type="submit" onClick={this.save}  className="btn btn-dark ml-auto">Save</button>
+                    <input ref="newText" type={inputType} className="form-control ml-3" id="input" placeholder={this.props.val} />
+                    <button type="submit" onClick={this.save} className="btn btn-dark ml-auto">Save</button>
                 </div>
             </div>
         );
