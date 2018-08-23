@@ -111,7 +111,7 @@ class Profile extends React.Component {
         const { isAuthenticated, user } = this.props.auth;
 
         return (
-            <div className="container w-75">
+            <div className="container col-md-8">
                 <div className="jumbotron center pt-3 bg-light">
                     <div className="container">
                         <div className='display-4 mb-3'>Profile</div>
@@ -120,11 +120,9 @@ class Profile extends React.Component {
                         <StaticBox fieldName="USN" val={this.state.usn} />
 
                         <hr />
-                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" fieldName="Phone" val={this.state.basicInfo["phone"]} />
-                        <hr />
-                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
-                        <hr />
-                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" inputType="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" inputType="date" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
                         <hr />
 
                         <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
