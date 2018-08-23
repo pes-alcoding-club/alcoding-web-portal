@@ -112,35 +112,34 @@ class Profile extends React.Component {
 
         return (
             <div className="jumbotron pt-3 bg-light">
-                <div className='display-2 mb-3'>Profile</div>
-                <StaticBox field="USN" val={this.state.usn} />
+                <div className="container-fluid">
+                    <div className='display-4 mb-3'>Profile</div>
 
-                <StaticBox field="Name" val={this.state.name} />
-                <hr />
-                <div className="container">
+                    <StaticBox fieldName="Name" val={this.state.name} />
+                    <StaticBox fieldName="USN" val={this.state.usn} />
+
+                    <hr />
                     <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" fieldName="Phone" val={this.state.basicInfo["phone"]} />
+                    <hr />
                     <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
+                    <hr />
                     <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
+                    <hr />
+
+                    <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
+                    <PasswordBox />
                 </div>
+            </div>
 
-                <div className="form">
-                        <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
-                        <PasswordBox />
-
-                    </div>
-                    {/* <div><pre>{JSON.stringify(this.state, null, 2)}</pre></div> */}
-
-               </div>
-
-                );
-            }
-        }
+        );
+    }
+}
 
 
 const mapStateToProps = state => ({
-                    auth: state.auth,
-            errors: state.errors
-        });
-        
+    auth: state.auth,
+    errors: state.errors
+});
+
 
 export default connect(mapStateToProps)(Profile);
