@@ -52,14 +52,11 @@ class MutableBox extends React.Component {
 
         return (
             <div>
+                <h5>{this.props.fieldName}:</h5>
                 <div className="form-inline">
-                    <h4 className="container ">{this.props.field}:</h4>
-                    <p className="ml-4 mt-2" id={fieldValue}>{fieldValue}</p>
-
+                    <p className="ml-4 mt-2 mb-1" id={fieldValue}>{fieldValue}</p>
                     <button onClick={this.edit} type="button" className="btn btn-dark ml-auto">Edit</button>
-
                 </div>
-                <hr />
             </div>
         )
 
@@ -73,15 +70,11 @@ class MutableBox extends React.Component {
         }
         return (
             <div>
+                <h5>{this.props.fieldName}:</h5>
                 <div className="form-inline">
-                    <h4 className="container">{this.props.field}:</h4>
-                    <input ref="newText" type={inputType} className="form-control ml-4 mt-1 mb-2" id="input" placeholder={this.props.val} />
-
-                    <button onClick={this.save} type="button" className="btn btn-dark ml-auto">Save</button>
-
+                    <input ref="newText" type={inputType} className="form-control ml-3 mt-1" id="input" placeholder={this.props.val} />
+                    <button type="submit" onClick={this.save}  className="btn btn-dark ml-auto">Save</button>
                 </div>
-                <hr />
-
             </div>
         );
     }

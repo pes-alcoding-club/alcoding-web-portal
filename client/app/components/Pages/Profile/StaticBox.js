@@ -5,11 +5,12 @@ class StaticBox extends React.Component {
         super(props);
     }
     render() {
+        var fieldValue = this.props.val;
         return (
-            <div className="form-inline">
-                <h2>{this.props.field}:</h2>
-                <p className="font-weight-bold ml-4 mt-2">{this.props.val}</p>
-                <br/>
+            <div>
+                <div className="form-inline">
+                    <h5>{this.props.fieldName}: {fieldValue}</h5>
+                </div>
             </div>
         );
     }

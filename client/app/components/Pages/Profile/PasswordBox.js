@@ -82,7 +82,7 @@ class PasswordBox extends Component {
                 <button type="button" className="btn btn-info ml-0 mb-2" data-toggle="modal" data-target="#myModal">Change Password</button>
 
                 <div id="myModal" className="modal fade" role="dialog">
-                    <div className="modal-dialog">
+                    <div className="modal-dialog modal-dialog-centered">
 
                         <div className="modal-content">
                             <div className="modal-header">
