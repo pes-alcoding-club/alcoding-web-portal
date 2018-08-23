@@ -111,26 +111,27 @@ class Profile extends React.Component {
         const { isAuthenticated, user } = this.props.auth;
 
         return (
-            <div className="jumbotron pt-3 bg-light">
-                <div className="container-fluid">
-                    <div className='display-4 mb-3'>Profile</div>
+            <div className="container w-75">
+                <div className="jumbotron center pt-3 bg-light">
+                    <div className="container">
+                        <div className='display-4 mb-3'>Profile</div>
+                        
+                        <StaticBox fieldName="Name" val={this.state.name} />
+                        <StaticBox fieldName="USN" val={this.state.usn} />
 
-                    <StaticBox fieldName="Name" val={this.state.name} />
-                    <StaticBox fieldName="USN" val={this.state.usn} />
+                        <hr />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" fieldName="Phone" val={this.state.basicInfo["phone"]} />
+                        <hr />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
+                        <hr />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
+                        <hr />
 
-                    <hr />
-                    <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" fieldName="Phone" val={this.state.basicInfo["phone"]} />
-                    <hr />
-                    <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
-                    <hr />
-                    <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
-                    <hr />
-
-                    <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
-                    <PasswordBox />
+                        <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
+                        <PasswordBox />
+                    </div>
                 </div>
             </div>
-
         );
     }
 }
