@@ -98,7 +98,7 @@ var downloadFile = function(dir) {
             var filePath = path.join(dir, file.originalname);
             var fileName = file._id.toString()+'.'+file.originalname.split('.')[1];
             fs.createReadStream(filePath).pipe(fs.createWriteStream(fileName));
-            fs.rename(fileName, homedir+'/Downloads/'+fileName, function(err){
+            fs.rename(fileName, path.join(path.join(homedir,'Downloads'), fileName), function(err){
                 if (err) throw err
                 console.log('Successfully downloaded file '+file._id);
             });
