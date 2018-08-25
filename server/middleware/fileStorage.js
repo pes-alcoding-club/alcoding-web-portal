@@ -3,6 +3,7 @@ const User = require('../models/User');
 const File = require('../models/Files');
 var fs = require("fs");
 var path = require('path');
+var homedir = require('os').homedir();
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -95,14 +96,12 @@ var downloadFile = function(dir) {
             }
             var file = files[0];
             var filePath = path.join(dir, file.originalname);
-            res.download(filePath, file._id.toString()+'.'+file.originalname.split('.')[1], function(err){
-                if(err){
-                    return res.status(500).send({
-                        success: false,
-                        message: "Error: server error"
-                    });
-                }
-            })
+            var fileName = file._id.toString()+'.'+file.originalname.split('.')[1];
+            fs.createReadStream(filePath).pipe(fs.createWriteStream(fileName));
+            fs.rename(fileName, homedir+'/Downloads/'+fileName, function(err){
+                if (err) throw err
+                console.log('Successfully downloaded file '+file._id);
+            });
         });
     }
 }
