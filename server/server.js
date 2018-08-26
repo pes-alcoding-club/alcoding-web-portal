@@ -75,11 +75,7 @@ else {
   });
 }
 
-<<<<<<< HEAD
-var credentials = {key: privateKey, cert: certificate};
-=======
 var credentials = { key: privateKey, cert: certificate };
->>>>>>> master
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(8443);
 
