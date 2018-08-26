@@ -1,6 +1,4 @@
-
 import { SET_CURRENT_USER, GET_DETAILS } from '../actions/types';
-import { GET_ERRORS } from '../actions/types';
 
 import axios from 'axios';
 import qs from 'qs';

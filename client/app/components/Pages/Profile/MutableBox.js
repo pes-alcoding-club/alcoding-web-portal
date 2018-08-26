@@ -12,6 +12,8 @@ class MutableBox extends React.Component {
 
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
+        this.cancel = this.cancel.bind(this);
+
     }
 
     edit() {
@@ -24,18 +26,16 @@ class MutableBox extends React.Component {
         var currentState = Object.assign({}, this.state);
 
         if (inp) {
-
-            // var phoneno = /^\d{10}$/;
-            // if (!(inp.match(phoneno))) {
-            //     alert("Enter a valid 10 digit phone number.");
-            //     return;
-            // }
             currentState.hasChanged = true;
             this.props.updateFieldValue(this.props.field, inp);
         }
         this.props.changeEditingStatus(-1);
         currentState.isEditing = false;
         this.setState(currentState);
+    }
+
+    cancel(){
+        this.setState({ isEditing: false });
     }
 
     renderNormal() {
@@ -51,38 +51,30 @@ class MutableBox extends React.Component {
         // }
 
         return (
-            <form className="form-inline">
-                <div className="form-group mx-2 font-weight-bold">
-                    <label htmlFor="staticTxt" className="sr-only">{this.props.field}</label>
-                    <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.fieldName} />
+            <div>
+                <div className="lead" ><b>{this.props.fieldName}:</b></div>
+                <div className="form-inline">
+                    <div className="lead ml-4" >{fieldValue}</div>
+                    <button onClick={this.edit} type="button" className="btn btn-dark ml-auto">Edit</button>
                 </div>
-                <div className="form-group mx-2  mb-2 ">
-                    <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={fieldValue} />
-                </div>
+            </div>
+        )
 
-                <button onClick={this.edit} type="button" className="btn btn-dark mb-2">Edit</button>
-            </form>
-        );
     }
 
 
     renderEditing() {
-        var inputType = "text";
-        if (this.props.field == "dob") {
-            inputType = "date";
-        }
+        var inputType = this.props.inputType;
         return (
-            <form className="form-inline">
-                <div className="form-group mb-2 mx-2">
-                    <label htmlFor="staticTxt" className="sr-only">field</label>
-                    <input type="text" readOnly className="form-control-plaintext" id="staticTxt" value={this.props.fieldName} />
+            <div>
+                <div className="lead" ><b>{this.props.fieldName}:</b></div>
+                <div className="form-inline">
+                    <input ref="newText" type={inputType} className="form-control ml-3" id="input" placeholder={this.props.val} />
+                    <button type="submit" onClick={this.save} className="btn btn-dark ml-auto">Save</button>
+                    <button type="submit" onClick={this.cancel} className="btn btn-danger ml-1">Cancel</button>
+
                 </div>
-                <div className="form-group mx-2 mb-2">
-                    <label htmlFor="input" className="sr-only">{this.props.val}</label>
-                    <input ref="newText" type={inputType} className="form-control" id="input" placeholder={this.props.val} />
-                </div>
-                <button onClick={this.save} type="button" className="btn btn-dark mb-2">Save</button>
-            </form>
+            </div>
         );
     }
 

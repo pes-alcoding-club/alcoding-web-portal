@@ -18,6 +18,7 @@ class Navbar extends Component {
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
   };
 
+
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
       this.setState({
@@ -85,8 +86,9 @@ class Navbar extends Component {
 
   }
 
-  reload(){
-  window.location.reload()
+  reload() {
+    // this.forceUpdate();   
+    // window.location.reload();
   }
   render() {
     const {
@@ -94,7 +96,7 @@ class Navbar extends Component {
       signInPassword,
 
     } = this.state;
-    const { isAuthenticated, user, userName } = this.props.auth;
+    const { isAuthenticated } = this.props.auth;
     const authLinks = (
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav mr-auto">
@@ -115,6 +117,7 @@ class Navbar extends Component {
           </li>
         </ul>
         <ul className="navbar-nav">
+
           <li className="nav-item text-light pt-2 pr-2">
             {this.props.auth.userName.firstName}
           </li>
@@ -138,34 +141,40 @@ class Navbar extends Component {
     const guestLinks = (
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav ml-auto">
-          <form className="form-inline">
-            <li className="nav-item">
-              <div className="form-group  mr-sm-2">
-                <input
-                  className="form-control"
-                  placeholder="USN"
-                  required="required"
-                  value={signInUsn}
-                  onChange={this.onTextboxChangeSignInUsn}
-                />
-              </div>
-            </li>
-            <li className="nav-item">
-              <div className="form-group">
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Password"
-                  required="required"
-                  value={signInPassword}
-                  onChange={this.onTextboxChangeSignInPassword}
-                />
-              </div>
-            </li>
-            <li className="nav-item">
-              <button type="submit" className="btn btn-pill btn-dark" onClick={this.onSignIn}>Log in</button>
-            </li>
-          </form>
+          <li className="nav-item">
+            <div className="dropdown">
+              <button className="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown"> Login </button>
+              <ul className="dropdown-menu dropdown-menu-right w-auto">
+                <li>
+                  <form className="form-inline mx-1">
+                    <div className="form-group">
+                      <input
+                        className="form-control mx-2 mt-3 mb-3"
+                        placeholder="USN"
+                        required="required"
+                        value={signInUsn}
+                        onChange={this.onTextboxChangeSignInUsn}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="password"
+                        className="form-control mx-2 mb-3"
+                        placeholder="Password"
+                        required="required"
+                        value={signInPassword}
+                        onChange={this.onTextboxChangeSignInPassword}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <button className="btn btn-dark mx-2 mb-4" onClick={this.onSignIn}>Log in</button>
+                    </div>
+                  </form>
+
+
+                </li>
+              </ul>
+            </div></li>
         </ul>
       </div>
     );
