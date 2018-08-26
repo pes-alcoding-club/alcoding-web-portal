@@ -23,6 +23,7 @@ import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
 import viewSubmissions from './components/Pages/Assignments/viewSubmissions';
 import viewAssignment from './components/Pages/Assignments/viewAssignment';
+import downloadFile from './components/Pages/Assignments/downloadFIle';
 
 import './styles/styles.scss';
 
@@ -65,6 +66,8 @@ render((
             <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions}  />
 
             <Route exact path="/assignments/:assignmentID" component={viewAssignment}  />
+
+            <PrivateRoute exact path="/download/:fileID" component={downloadFile} />
             
             <Route component={NotFound} />
           </Switch>
