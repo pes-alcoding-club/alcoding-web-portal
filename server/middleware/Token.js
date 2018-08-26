@@ -18,7 +18,7 @@ var verifyToken = function (req, res, next) {
   jwt.verify(token, privateKey, function (err, decoded) {
     if (err) {
       if (err.name == "TokenExpiredError") {
-        console.log("Deleting token from db.")
+        console.log("Deleting token from db. Token doesn't exist");
         // delete token from UserSession
         UserSession.findOneAndRemove({
           token: token
