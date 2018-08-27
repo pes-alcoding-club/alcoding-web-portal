@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 
-export default class Profile_Page extends Component {
+export default class Assignments extends Component {
   render() {
     return (
       <div>
-        Profile Page
+        Assignments page
       </div>
     )
   }

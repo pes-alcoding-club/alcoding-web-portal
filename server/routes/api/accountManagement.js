@@ -287,8 +287,8 @@ module.exports = (app) => {
           user: user
         });
       });
-    }); //end of getDetails endpoint
-
+    }); //end of getDetails endpoint 
+  
   app.put('/api/account/:userID/basicInfo', verifyUser, function (req, res) {
     // PUT http://localhost:8080/api/account/:userID/basicInfo
     var user_id = req.params.userID;
@@ -324,112 +324,5 @@ module.exports = (app) => {
         }
       })
 
-  })
-
-  app.post('/api/account/forgotPassword', function (req, res) {
-    if (!req.body.USN) {
-      return res.status(400).send({
-        success: false,
-        message: 'Error: SRN not sent in body'
-      });
-    }
-    User.findOneAndUpdate({
-      usn: req.body.USN
-    }, {
-      $set: {
-        password: ""
-      }
-    }, null, function (err, user) {
-      if (err) {
-        return res.status(500).send({
-          success: false,
-          message: "Error: Server error"
-        });
-      }
-      if (!user) {
-        return res.status(404).send({
-          success: false,
-          message: "User not found in DB"
-        })
-      }
-      if (!user.basicInfo.email) {
-        return res.status(404).send({
-          success: false,
-          message: "User email not found in DB"
-        })
-      }
-      var email = user.basicInfo.email;
-      payload = {
-        user_id: user._id,
-        role: user.role
-      };
-
-      jwt.sign(payload, privateKey, {
-        expiresIn: "1d"
-      }, (err, token) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).send({
-            success: false,
-            message: 'Error: Server Error.'
-          });
-        }
-
-        newSession = new UserSession();
-        newSession.token = token;
-        newSession.save((err, session) => {
-          if (err) {
-            return res.status(500).send({
-              success: false,
-              message: 'Error: Server error'
-            });
-          }
-          console.log("JWT generated for forgot password.");
-          var link = 'http://localhost:8080/reset/'+ user._id.toString() + '/' + token;
-          fs.readFile(path.join(process.cwd(), 'server/mailTemplates/forgotPassword.txt'), 'utf8', function (err, data) {
-            if (err) {
-              return res.status(500).send({
-                success: false,
-                message: 'Error: Server error'
-              });
-            }
-            var emaildata = data.toString();
-            emaildata = emaildata.replace("{username}", user.name.firstName);
-            emaildata = emaildata.replace("{link}", link);
-
-            var transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                user: 'alcodingofficial@gmail.com',
-                pass: 'Alcoding2018'
-              }
-            });
-
-            var mailOptions = {
-              from: 'alcodingofficial@gmail.com',
-              to: email,
-              subject: 'Password Reset Link for Alcoding account',
-              text: emaildata
-            };
-
-            transporter.sendMail(mailOptions, function (error, info) {
-              if (error) {
-                console.log(error);
-                return res.status(500).send({
-                  success: false,
-                  message: "Error: Server error"
-                });
-              } else {
-                console.log('Email for password reset sent: ' + info.response);
-                return res.status(200).send({
-                  success: true,
-                  message: "Email sent to " + email
-                })
-              }
-            });
-          })
-        });
-      });
-    })
   })
 };
