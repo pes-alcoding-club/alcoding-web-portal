@@ -111,24 +111,26 @@ class Profile extends React.Component {
         const { isAuthenticated, user } = this.props.auth;
 
         return (
-            <div className="container">
-                <div className="jumbotron">
-                    <p className='display-2'>Profile</p>
-                    <StaticBox field="USN" val={this.state.usn} />
+            <div className="container col-md-8">
+                <div className="jumbotron center pt-3 pb-2 bg-light">
+                    <div className="container">
+                        <div className='display-4 mb-3'>Profile</div>
 
-                    <StaticBox field="Name" val={this.state.name} />
-                    <hr className="my-2" />
-                    <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" fieldName="Phone" val={this.state.basicInfo["phone"]} />
-                    <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
-                    <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
+                        <StaticBox fieldName="Name" val={this.state.name} />
+                        <StaticBox fieldName="USN" val={this.state.usn} />
 
+                        <hr />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
+                        <hr />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" inputType="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
+                        <hr />
+                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" inputType="date" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
+                        <hr />
 
-                    <button onClick={this.onConfirm} type="button" className="btn btn-dark">Confirm Changes</button>
-
-                    {/* <div><pre>{JSON.stringify(this.state, null, 2)}</pre></div> */}
-
+                        <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
+                        <PasswordBox />
+                    </div>
                 </div>
-
             </div>
         );
     }
@@ -139,5 +141,6 @@ const mapStateToProps = state => ({
     auth: state.auth,
     errors: state.errors
 });
+
 
 export default connect(mapStateToProps)(Profile);
