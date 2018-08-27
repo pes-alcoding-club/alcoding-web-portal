@@ -365,7 +365,7 @@ module.exports = (app) => {
       };
 
       jwt.sign(payload, privateKey, {
-        expiresIn: "1d"
+        expiresIn: "1h"
       }, (err, token) => {
         if (err) {
           console.log(err);
@@ -408,7 +408,7 @@ module.exports = (app) => {
             var mailOptions = {
               from: 'alcodingofficial@gmail.com',
               to: email,
-              subject: 'Password Reset Link for Alcoding account',
+              subject: 'Password Reset Link for Alcoding Account',
               text: emaildata
             };
 
