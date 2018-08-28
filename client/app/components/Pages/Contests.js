@@ -6,12 +6,12 @@ import ReactTable from "react-table";
 
 
 class Contests extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       usn: "",
-      name: "",
-      contenderInfo: {},
+      name: {},
+      contender: {},
       globalRankList: []
     };
   }
@@ -19,8 +19,32 @@ class Contests extends React.Component {
 
   componentDidMount() {
     var self = this;
-    var token = localStorage.getItem('token')
-    var userID = localStorage.getItem('user_id')
+    var token = localStorage.getItem('token');
+    var userID = localStorage.getItem('user_id');
+
+    var apiPath = '/api/contests/'+ userID +'/contenderInfo';
+    axios.get(apiPath, {
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(function (response) {
+        if (!response.data.success) {
+          console.log("Error: " + response.data);
+          return;
+        }
+        var data = response.data.contenderDetails;
+        console.log(data);
+        self.setState({
+          name: data.name,
+          contender: data.contender
+        });
+
+      })
+      .catch(function (error) {
+        console.log('Error: ', error);
+      });
 
     var apiPath = '/api/contests/globalRankList';
     axios.get(apiPath, {
@@ -92,24 +116,38 @@ class Contests extends React.Component {
 
     return (
       <div>
+          <div className="container">
+                <div className="jumbotron pt-3 pb-2 bg-light">
+                    <div className="container">
+                        <div className='display-4 mb-3'>Contender Details</div>
+                        Name: {this.state.name.firstName} {this.state.name.lastName}<br />
+                        <hr />
+                        Rating: {Math.round(this.state.contender.rating)}&nbsp;&nbsp;&nbsp;
+                        <strong>Best: {Math.round(this.state.contender.best)}&nbsp;&nbsp;&nbsp;</strong>
+                        Contests: {this.state.contender.timesPlayed}&nbsp;&nbsp;&nbsp;
+                        <br />
+                        <hr />
+                        <div className='display-4 mb-3'>Global Rank List</div>
+                        <br />
+                        <ReactTable
+                          data={data}
+                          columns={columns}
+                          defaultSorted={[
+                            {
+                              id: "rating",
+                              desc: true
+                            }
+                          ]}
+                          defaultPageSize={10}
+                          index=""
+                          viewIndex=""
+                          className="-striped -highlight"
+                        />
+                        <br />
+                    </div>
+                </div>
+            </div>
         <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css"></link>
-        <h3>Global Rank List</h3>
-        <br />
-        <ReactTable
-          data={data}
-          columns={columns}
-          defaultSorted={[
-            {
-              id: "rating",
-              desc: true
-            }
-          ]}
-          defaultPageSize={10}
-          index=""
-          viewIndex=""
-          className="-striped -highlight"
-        />
-        <br />
       </div>
     );
   }
