@@ -23,7 +23,10 @@ import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
 import viewSubmissions from './components/Pages/Assignments/viewSubmissions';
 import viewAssignment from './components/Pages/Assignments/viewAssignment';
-import downloadFile from './components/Pages/Assignments/downloadFIle';
+import ForgotPassword from './components/Layout/ForgotPassword';
+import ChangePassword from './components/Layout/ChangePassword';
+import downloadFile from './components/Pages/Assignments/downloadFile';
+
 
 import './styles/styles.scss';
 
@@ -61,14 +64,18 @@ render((
 
             <PrivateRoute exact path="/admin" component={SignupForm} />
 
-            <PrivateRoute exact path="/courses/:courseID" component={AssignmentAdd}  />
+            <PrivateRoute exact path="/courses/:courseID" component={AssignmentAdd} />
 
-            <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions}  />
+            <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
 
-            <Route exact path="/assignments/:assignmentID" component={viewAssignment}  />
+            <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
 
             <PrivateRoute exact path="/download/:fileID" component={downloadFile} />
-            
+
+            <Route exact path="/forgotpassword" component={ForgotPassword} />
+
+            <Route exact path="/reset/:token/:userID" component={ChangePassword} />
+
             <Route component={NotFound} />
           </Switch>
 

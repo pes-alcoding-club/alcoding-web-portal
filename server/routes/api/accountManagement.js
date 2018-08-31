@@ -170,43 +170,56 @@ module.exports = (app) => {
       })
     })
 
-  app.post('/api/account/:userID/newPassword', verifyUser, function(req,res){
-    if(!req.params.userID){
+  app.post('/api/account/:userID/newPassword', verifyUser, function (req, res) {
+    var newPassword = req.body.newPassword;
+    if (!req.params.userID) {
       return res.status(400).send({
         success: false,
         message: 'Error: userID not entered in parameters'
       });
     }
-    if (!req.body.newPassword) {
+    if (!newPassword) {
       return res.status(400).send({
         success: false,
         message: 'Error: new Password not entered in body'
       });
     }
-    User.findOneAndUpdate({
-      _id:req.params.userID,
-      password:""
-    },{
-      $set:{
-        password: req.body.newPassword
-      }
-    },null, function(err, user){
-      if(err){
+    User.findOne({
+      _id: req.params.userID,
+      password: ""
+    }, function (err, user) {
+      if (err) {
         return res.status(500).send({
           success: false,
           message: "Error: Server error"
         });
       }
-      if(!user){
+      if (!user) {
         return res.status(404).send({
           success: false,
           message: "Error: User not found in DB"
         });
       }
-      return res.status(200).send({
-        success:true,
-        message: 'User password changed'
-      })
+      newPassword = user.generateHash(newPassword);
+      User.findOneAndUpdate({
+        _id: req.params.userID,
+        password: ""
+      }, {
+        $set: {
+          password: newPassword
+        }
+      }, null, function (err, user) {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "User password changes successfully"
+        })
+      });
     })
   })
 
@@ -385,7 +398,7 @@ module.exports = (app) => {
             });
           }
           console.log("JWT generated for forgot password.");
-          var link = 'http://localhost:8080/reset/'+ user._id.toString() + '/' + token;
+          var link = 'http://localhost:8080/reset/' + token + '/' + user._id.toString();
           fs.readFile(path.join(process.cwd(), 'server/mailTemplates/forgotPassword.txt'), 'utf8', function (err, data) {
             if (err) {
               return res.status(500).send({
