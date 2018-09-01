@@ -26,7 +26,7 @@ class ChangePassword extends Component {
         
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', userID);
-
+        
     }
     
 
