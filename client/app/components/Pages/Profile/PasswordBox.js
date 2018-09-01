@@ -56,7 +56,7 @@ class PasswordBox extends Component {
             alert("New Password cannot be same as old password.");
         }
         else {
-            axios.post(`api/account/${userID}/password`, body, {
+            axios.post(`api/account/${userID}/changePassword`, body, {
                 headers: {
                     'x-access-token': token,
                     'Content-Type': 'application/json'
