@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import axios from 'axios';
-import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 
 //import StaticBox from './StaticBox.js';
 
@@ -12,7 +12,7 @@ class ChangePassword extends Component {
         super();
         this.state = {
             newPassword: "",
-            confirmNewPassword: ""
+            confirmNewPassword: "",
         };
 
         this.changeNewPassword = this.changeNewPassword.bind(this);
@@ -23,12 +23,12 @@ class ChangePassword extends Component {
         const { match: { params } } = this.props;
         var userID = params.userID;
         var token = params.token;
-        
+
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', userID);
-        
+
     }
-    
+
 
     changeNewPassword(event) {
         event.preventDefault();
@@ -50,7 +50,7 @@ class ChangePassword extends Component {
     confirmPasswordChange() {
         var user_ID = localStorage.getItem("user_id");
         var token = localStorage.getItem('token');
-        
+
         var body = {
             userID: user_ID,
             newPassword: this.state.newPassword
@@ -59,7 +59,7 @@ class ChangePassword extends Component {
         if (this.state.newPassword != this.state.confirmNewPassword) {
             alert("Passwords do not match.");
         }
-        
+
         else {
             // api call needs to be updated, token needs to be deleted on successful password change
             axios.post(`http://localhost:8080/api/account/${user_ID}/newPassword`, body, {
@@ -71,9 +71,12 @@ class ChangePassword extends Component {
 
                 if (res.data.success) {
                     console.log(res.data);
-                    alert("Password change successfull!");
-                    //localStorage.removeItem(token);
-                    window.location.reload();
+                    localStorage.removeItem('token', token);
+                    alert(res.data.message);
+                    this.props.history.push('/');
+                    // localStorage.removeItem('user_id', userID);
+                    
+
                 }
             })
                 .catch(err => {
@@ -82,7 +85,7 @@ class ChangePassword extends Component {
                 })
         }
     }
-    
+
 
     render() {
 
@@ -101,7 +104,7 @@ class ChangePassword extends Component {
                             </div>
                             <div className="modal-body">
                                 <form className="form mx-1">
-                                    
+
                                     <div className="form-group">
                                         <input
                                             type="password"
@@ -124,7 +127,7 @@ class ChangePassword extends Component {
                                     </div>
                                 </form>
                                 <div className="modal-footer">
-                                    <button onClick={this.confirmPasswordChange} type="button" className="btn btn-dark mb-2">Confirm Password Change</button>
+                                    <button onClick={this.confirmPasswordChange} type="button" className="btn btn-dark mb-2" data-dismiss="modal">Confirm Password Change</button>
                                     <button type="button" className="btn btn-default mb-2" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -132,7 +135,7 @@ class ChangePassword extends Component {
 
                     </div>
                 </div>
-                </div>
+            </div>
         );
     }
 }
