@@ -23,17 +23,23 @@ const port = process.env.PORT || 8080;
 // ================================================================================================
 
 // Set up Mongoose
-mongoose.connect(isDev ? config.db_dev : config.db);
+mongoose.connect(isDev ? config.db_dev : config.db).then(() => {
+  console.log("Connected to Database");
+}).catch((err) => {
+  console.log("Not Connected to Database ERROR! ", err);
+});
 mongoose.Promise = global.Promise;
 
 // ExpressJS
 var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.urlencoded({
+  extended: true
+})); // support encoded bodies
 
 // CORS provision
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
@@ -65,8 +71,7 @@ if (isDev) {
 
   app.use(webpackHotMiddleware(compiler));
   app.use(express.static(path.resolve(__dirname, '../dist')));
-}
-else {
+} else {
   // Production Server
   app.use(express.static(path.resolve(__dirname, '../dist')));
   app.get('*', function (req, res) {
@@ -75,7 +80,10 @@ else {
   });
 }
 
-var credentials = { key: privateKey, cert: certificate };
+var credentials = {
+  key: privateKey,
+  cert: certificate
+};
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(8443);
 
