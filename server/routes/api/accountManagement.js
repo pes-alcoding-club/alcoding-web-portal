@@ -385,7 +385,7 @@ module.exports = (app) => {
             });
           }
           console.log("JWT generated for forgot password.");
-          var link = 'http://localhost:8080/reset/'+ user._id.toString() + '/' + token;
+          var link = 'http://localhost:8080/reset/'+ token + '/' + user._id.toString();
           fs.readFile(path.join(process.cwd(), 'server/mailTemplates/forgotPassword.txt'), 'utf8', function (err, data) {
             if (err) {
               return res.status(500).send({
