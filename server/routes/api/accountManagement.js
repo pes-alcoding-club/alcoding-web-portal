@@ -300,7 +300,7 @@ module.exports = (app) => {
           user: user
         });
       });
-    }); //end of getDetails endpoint
+    }); //end of getDetails endpoint 
 
   app.put('/api/account/:userID/basicInfo', verifyUser, function (req, res) {
     // PUT http://localhost:8080/api/account/:userID/basicInfo
