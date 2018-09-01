@@ -61,8 +61,8 @@ class ChangePassword extends Component {
         }
 
         else {
-            // api call needs to be updated, token needs to be deleted on successful password change
-            axios.post(`http://localhost:8080/api/account/${user_ID}/newPassword`, body, {
+            // api call needs to be updated
+            axios.post(`/api/account/${user_ID}/newPassword`, body, {
                 headers: {
                     'x-access-token': token,
                     'Content-Type': 'application/json'
