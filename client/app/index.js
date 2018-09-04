@@ -23,7 +23,7 @@ import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
 import viewSubmissions from './components/Pages/Assignments/viewSubmissions';
 import viewAssignment from './components/Pages/Assignments/viewAssignment';
-import downloadFile from './components/Pages/Assignments/downloadFIle';
+import downloadFile from './components/Pages/Assignments/downloadFile';
 
 import './styles/styles.scss';
 
