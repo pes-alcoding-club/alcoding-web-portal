@@ -19,7 +19,7 @@ class downloadFile extends Component {
         .then(res => console.log(res.data))
         .catch(err => console.log(err))
 
-        // window.close();
+        window.close();
     }
     render() {
         return (

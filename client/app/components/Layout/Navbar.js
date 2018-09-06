@@ -10,9 +10,11 @@ class Navbar extends Component {
     this.state = {
       signInUsn: "",
       signInpassword: "",
+      loginShow: true,
       bool: true
     };
 
+    this.forgotpw = this.forgotpw.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
     this.onTextboxChangeSignInUsn = this.onTextboxChangeSignInUsn.bind(this);
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
@@ -84,6 +86,12 @@ class Navbar extends Component {
     event.preventDefault();
     this.props.logoutUser();
 
+  }
+  forgotpw() {
+    this.setState({
+      loginShow: false
+    });
+    window.location.reload();
   }
 
   reload() {
@@ -159,12 +167,15 @@ class Navbar extends Component {
                     <div className="form-group">
                       <input
                         type="password"
-                        className="form-control mx-2 mb-3"
+                        className="form-control mx-2 mb-0"
                         placeholder="Password"
                         required="required"
                         value={signInPassword}
                         onChange={this.onTextboxChangeSignInPassword}
                       />
+                    </div>
+                    <div className="form-group">
+                      <Link to="/forgotpassword" className="mt-0 ml-2 mb-3 mr-3" onClick={this.forgotpw}>Forgot Password?</Link>
                     </div>
                     <div className="form-group">
                       <button className="btn btn-dark mx-2 mb-4" onClick={this.onSignIn}>Log in</button>

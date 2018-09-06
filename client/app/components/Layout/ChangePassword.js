@@ -1,26 +1,23 @@
-import React, { Component } from 'react'
-import axios from 'axios';
+import React, { Component } from 'react';
 
-class PasswordBox extends Component {
+import axios from 'axios';
+import { Link, Redirect } from 'react-router-dom';
+
+//import StaticBox from './StaticBox.js';
+
+import PasswordBox from '../Pages/Profile/PasswordBox';
+
+class ChangePassword extends Component {
     constructor() {
         super();
         this.state = {
-            oldPassword: "",
             newPassword: "",
-            confirmNewPassword: ""
+            confirmNewPassword: "",
         };
 
-        this.changeOldPassword = this.changeOldPassword.bind(this);
         this.changeNewPassword = this.changeNewPassword.bind(this);
         this.changeConfirmNewPassword = this.changeConfirmNewPassword.bind(this);
         this.confirmPasswordChange = this.confirmPasswordChange.bind(this);
-    }
-    changeOldPassword(event) {
-        event.preventDefault();
-        this.setState({
-            oldPassword: event.target.value,
-        });
-
     }
 
     changeNewPassword(event) {
@@ -39,34 +36,35 @@ class PasswordBox extends Component {
 
     }
 
-
     confirmPasswordChange() {
-        //api call to change password comes here
-        var userID = localStorage.getItem("user_id");
-        var token = localStorage.getItem('token');
+        const { match: { params } } = this.props;
+        var user_ID = params.userID;
+        var token = params.token;
+
         var body = {
-            oldPassword: this.state.oldPassword,
+            userID: user_ID,
             newPassword: this.state.newPassword
         }
-        //api/account/:userID/password
+        //api/account/:userID/newPassword
         if (this.state.newPassword != this.state.confirmNewPassword) {
             alert("Passwords do not match.");
         }
-        else if (this.state.oldPassword == this.state.newPassword) {
-            alert("New Password cannot be same as old password.");
-        }
+
         else {
-            axios.post(`api/account/${userID}/changePassword`, body, {
+            // api call needs to be updated
+            axios.post(`/api/account/${user_ID}/newPassword`, body, {
                 headers: {
                     'x-access-token': token,
                     'Content-Type': 'application/json'
                 }
             }).then(res => {
 
+                <Redirect to="/"/>
+
                 if (res.data.success) {
                     console.log(res.data);
-                    alert("Password change successfull!")
-                    window.location.reload();
+                    this.props.history.push('/');
+                    alert(res.data.message);
                 }
             })
                 .catch(err => {
@@ -76,8 +74,10 @@ class PasswordBox extends Component {
         }
     }
 
+
     render() {
-        return(
+
+        return (
             <div>
                 <button type="button" className="btn btn-info ml-0 mb-2" data-toggle="modal" data-target="#myModal">Change Password</button>
 
@@ -92,16 +92,7 @@ class PasswordBox extends Component {
                             </div>
                             <div className="modal-body">
                                 <form className="form mx-1">
-                                    <div className="form-group">
-                                        <input
-                                            type="password"
-                                            className="form-control mx-2 mb-3"
-                                            placeholder="Old Password"
-                                            required="required"
-                                            value={this.state.oldPassword}
-                                            onChange={this.changeOldPassword}
-                                        />
-                                    </div>
+
                                     <div className="form-group">
                                         <input
                                             type="password"
@@ -124,7 +115,7 @@ class PasswordBox extends Component {
                                     </div>
                                 </form>
                                 <div className="modal-footer">
-                                    <button onClick={this.confirmPasswordChange} type="button" className="btn btn-dark mb-2">Confirm Password Change</button>
+                                    <button onClick={this.confirmPasswordChange} type="button" className="btn btn-dark mb-2" data-dismiss="modal">Confirm Password Change</button>
                                     <button type="button" className="btn btn-default mb-2" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -132,9 +123,9 @@ class PasswordBox extends Component {
 
                     </div>
                 </div>
-                </div>
-        )
+            </div>
+        );
     }
 }
 
-export default PasswordBox;
+export default ChangePassword;

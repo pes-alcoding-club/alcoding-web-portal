@@ -10,6 +10,51 @@ var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
 module.exports = (app) => {
+  app.get('/api/contests/:userID/contenderInfo', function (req, res) {
+    var userID = req.params.userID;
+    if (!userID) {
+      return res.status(400).send({
+        success: false,
+        message: 'Error: userID not in parameters.'
+      });
+    }
+
+    User.find({
+      _id: userID,
+      isDeleted: false
+    }, (err, users) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: "Error: Server error."
+        });
+      }
+      if (!users) {
+        return res.status(404).send({
+          success: false,
+          message: 'No users'
+        });
+      }
+      if (users.length != 1) {
+        return res.status(404).send({
+          success: false,
+          message: 'More than one user'
+        });
+      }
+      var user = users[0].toObject();
+      delete user.password;
+      delete user.role;
+      delete user.files;
+
+      return res.status(200).send({
+        success: true,
+        message: "Individual contender details retrieved.",
+        contenderDetails: user
+      });
+
+    })
+  })
+
   app.get('/api/contests/globalRankList', function (req, res) {
     User.find({
       isDeleted: false
@@ -76,8 +121,8 @@ module.exports = (app) => {
           message: 'Error: Server find error'
         });
       } else if (previousUsers.length > 0) { //Update
-        previousUsers[0].contender.handles["codejam"] = codejam;
-        previousUsers[0].contender.handles["hackerearth"] = hackerearth;
+        previousUsers[0].contender.handles.codejam = codejam;
+        previousUsers[0].contender.handles.hackerearth = hackerearth;
         previousUsers[0].contender.rating = rating;
         previousUsers[0].contender.volatility = volatility;
         previousUsers[0].contender.timesPlayed = timesPlayed;
