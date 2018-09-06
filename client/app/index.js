@@ -26,8 +26,6 @@ import viewAssignment from './components/Pages/Assignments/viewAssignment';
 import ForgotPassword from './components/Layout/ForgotPassword';
 import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
-
-
 import './styles/styles.scss';
 
 
