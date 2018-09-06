@@ -19,16 +19,6 @@ class ChangePassword extends Component {
         this.changeConfirmNewPassword = this.changeConfirmNewPassword.bind(this);
         this.confirmPasswordChange = this.confirmPasswordChange.bind(this);
     }
-    componentDidMount() {
-        const { match: { params } } = this.props;
-        var userID = params.userID;
-        var token = params.token;
-
-        localStorage.setItem('token', token);
-        localStorage.setItem('user_id', userID);
-
-    }
-
 
     changeNewPassword(event) {
         event.preventDefault();
@@ -46,10 +36,10 @@ class ChangePassword extends Component {
 
     }
 
-
     confirmPasswordChange() {
-        var user_ID = localStorage.getItem("user_id");
-        var token = localStorage.getItem('token');
+        const { match: { params } } = this.props;
+        var user_ID = params.userID;
+        var token = params.token;
 
         var body = {
             userID: user_ID,
@@ -69,14 +59,12 @@ class ChangePassword extends Component {
                 }
             }).then(res => {
 
+                <Redirect to="/"/>
+
                 if (res.data.success) {
                     console.log(res.data);
-                    localStorage.removeItem('token', token);
-                    alert(res.data.message);
                     this.props.history.push('/');
-                    // localStorage.removeItem('user_id', userID);
-                    
-
+                    alert(res.data.message);
                 }
             })
                 .catch(err => {
