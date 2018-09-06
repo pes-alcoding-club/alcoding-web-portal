@@ -184,43 +184,36 @@ module.exports = (app) => {
         message: 'Error: new Password not entered in body'
       });
     }
-    User.findOne({
-      _id: req.params.userID,
-      password: ""
-    }, function (err, user) {
+    const user = new User();
+    newPassword = user.generateHash(newPassword);
+    User.findOneAndUpdate({
+      _id: req.params.userID
+    }, {
+      $set: {
+        password: newPassword
+      }
+    }, null, function (err, user) {
       if (err) {
         return res.status(500).send({
           success: false,
           message: "Error: Server error"
         });
       }
-      if (!user) {
-        return res.status(404).send({
-          success: false,
-          message: "Error: User not found in DB"
-        });
-      }
-      newPassword = user.generateHash(newPassword);
-      User.findOneAndUpdate({
-        _id: req.params.userID,
-        password: ""
-      }, {
-        $set: {
-          password: newPassword
-        }
-      }, null, function (err, user) {
+      UserSession.findOneAndRemove({
+        token: req.token
+      }, (err) => {
         if (err) {
           return res.status(500).send({
             success: false,
             message: "Error: Server error"
           });
         }
-        return res.status(200).send({
-          success: true,
-          message: "User password changes successfully"
-        })
       });
-    })
+      return res.status(200).send({
+        success: true,
+        message: "User password changes successfully"
+      })
+    });
   })
 
   app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
@@ -346,13 +339,9 @@ module.exports = (app) => {
         message: 'Error: SRN not sent in body'
       });
     }
-    User.findOneAndUpdate({
+    User.findOne({
       usn: req.body.USN
-    }, {
-      $set: {
-        password: ""
-      }
-    }, null, function (err, user) {
+    }, function (err, user) {
       if (err) {
         return res.status(500).send({
           success: false,
