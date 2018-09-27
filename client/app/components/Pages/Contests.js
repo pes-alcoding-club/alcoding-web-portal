@@ -3,6 +3,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 
 import ReactTable from "react-table";
+import Iframe from 'react-iframe';
 
 
 class Contests extends React.Component {
@@ -144,6 +145,11 @@ class Contests extends React.Component {
                           className="-striped -highlight"
                         />
                         <br />
+                        <div className='display-4 mb-3'>Calender</div>
+                        <Iframe url="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=7tldkuuq0qmf9onobqoprgfup4%40group.calendar.google.com&amp;color=%238D6F47&amp;ctz=Asia%2FCalcutta"
+                            width="1000px"
+                            height="600px"
+                            position="relative"/>
                     </div>
                 </div>
             </div>
