@@ -9,9 +9,9 @@ class Home extends Component {
 
   render() {
     const staticText = {
-      aboutUs: "The Alcoding Club is part of the Computer Science & Engineering Department of PES University. It was formed in 2014 under the supervision of Prof. Channa Bankapur.",
-      latestNews: "2 July 2018: The meeting to kick off the club was successfully conducted in B-Block, G201, the headquaters.",
-      announcements: "Important: All further meetings stand cancelled until further intimation."
+      aboutUs: "ALCODING Club - a club of ALgorithms and CODING enthusiasts in the department of Computer Science & Engineering, PES University. It is founded and led by Prof. Channa Bankapur to encourage and keep up the coding culture in the campus.",
+      latestNews: "1 October 2018: Release of the Alcoding Club Platform which will enable students of the department to view Global Rankings, upcoming contests and any messages.",
+      announcements: "The ACM International Collegiate Programming Contest (ACM ICPC) is the largest collegiate programming contest being organized all over the world every year. The ACM ICPC is an activity of the ACM that provides college students with an opportunity to demonstrate and sharpen their problem-solving and computing skills. The contest is considered as the \"Olympiad of Computer Programming\".  For more information about ACM ICPC, visit https://icpc.baylor.edu"
     }
 
     return (

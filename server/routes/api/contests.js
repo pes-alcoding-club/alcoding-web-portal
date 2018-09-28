@@ -89,7 +89,6 @@ module.exports = (app) => {
   })
 
   app.post('/api/contests/updateContenders', requireRole("admin"), function (req, res) {
-
     var usn = req.body.usn;
     var name = req.body.name;
     var email = req.body.email;
@@ -113,24 +112,35 @@ module.exports = (app) => {
 
     // Deduplication flow
     User.find({
-      usn: usn
+      usn: usn,
+      isDeleted: false
     }, (err, previousUsers) => {
       if (err) {
         return res.status(500).send({
           success: false,
           message: 'Error: Server find error'
         });
-      } else if (previousUsers.length > 0) { //Update
-        previousUsers[0].contender.handles.codejam = codejam;
-        previousUsers[0].contender.handles.hackerearth = hackerearth;
+      }
+      else if (previousUsers.length > 0) { //Update
+        // previousUsers[0].contender.handles.codejam = codejam;
+        // previousUsers[0].contender.handles.hackerearth = hackerearth;
         previousUsers[0].contender.rating = rating;
         previousUsers[0].contender.volatility = volatility;
         previousUsers[0].contender.timesPlayed = timesPlayed;
         previousUsers[0].contender.lastFive = lastFive;
         previousUsers[0].contender.best = best;
-        return res.status(200).send({
-          success: true,
-          message: 'Updated Contender'
+        previousUsers[0].save((err, user) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({
+              success: false,
+              message: 'Server error'
+            });
+          }
+          return res.status(200).send({
+            success: true,
+            message: 'Contender Updated'
+          });
         });
       }
       else {
@@ -143,8 +153,8 @@ module.exports = (app) => {
         newUser.password = newUser.generateHash(usn);
         newUser.role = "student";
 
-        newUser.contender.handles["codejam"] = codejam;
-        newUser.contender.handles["hackerearth"] = hackerearth;
+        // newUser.contender.handles.codejam = codejam;
+        // newUser.contender.handles.hackerearth = hackerearth;
         newUser.contender.rating = rating;
         newUser.contender.volatility = volatility;
         newUser.contender.timesPlayed = timesPlayed;

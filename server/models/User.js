@@ -45,7 +45,6 @@ const UserSchema = new mongoose.Schema({
   },
   contender: {
     // Contains mutable info
-    handles: {codejam: String, hackerearth: String, codechef: String, hackerrank: String, interviewbit: String, codeforces: String, hackercup: String, kickstart: String},
     rating: {
       type: Number,
       default: -1
