@@ -36,7 +36,6 @@ class Contests extends React.Component {
           return;
         }
         var data = response.data.contenderDetails;
-        console.log(data);
         self.setState({
           name: data.name,
           contender: data.contender
@@ -63,7 +62,6 @@ class Contests extends React.Component {
         data.sort(function(a, b){
           return b.rating-a.rating;
         });
-        console.log(data);
         self.setState({
           globalRankList: data
         });
@@ -121,6 +119,7 @@ class Contests extends React.Component {
                 <div className="jumbotron pt-3 pb-2 bg-light">
                     <div className="container">
                         <div className='display-4 mb-3'>Contender Details</div>
+                        <p>Your rating shall be updated after every rated contest. If you have not taken part in any contests, you will see a -1 indicating the same.</p>
                         Name: {this.state.name.firstName} {this.state.name.lastName}<br />
                         <hr />
                         Rating: {Math.round(this.state.contender.rating)}&nbsp;&nbsp;&nbsp;
@@ -146,6 +145,7 @@ class Contests extends React.Component {
                         />
                         <br />
                         <div className='display-4 mb-3'>Calender</div>
+                       <p>This calender is curated by Varun Vora. To add this calender to your Google calender, click on the Google icon on the bottom right corner.</p>
                         <Iframe url="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=7tldkuuq0qmf9onobqoprgfup4%40group.calendar.google.com&amp;color=%238D6F47&amp;ctz=Asia%2FCalcutta"
                             width="1000px"
                             height="600px"

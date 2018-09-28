@@ -57,7 +57,7 @@ module.exports = (app) => {
 
   app.get('/api/contests/globalRankList', function (req, res) {
     User.find({
-      isDeleted: false
+      isDeleted: false,
     }, (err, users) => {
       if (err) {
         return res.status(500).send({
@@ -77,7 +77,10 @@ module.exports = (app) => {
         pushObject = Object.assign({ usn: user.usn, name }, user.contender.toObject());
         pushObject.rating = Math.round(pushObject.rating);
         pushObject.best = Math.round(pushObject.best);
-        userContenderDetails.push(pushObject);
+        if(pushObject.rating!=-1)
+          userContenderDetails.push(pushObject);
+        else
+          continue;
       }
       return res.status(200).send({
         success: true,
