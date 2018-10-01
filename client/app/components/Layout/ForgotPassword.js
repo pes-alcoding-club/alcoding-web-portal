@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import axios from "axios";
+import { Link, Redirect } from 'react-router-dom';
 
 export default class ForgotPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            signInUsn: ""
+            signInUsn: "",
+            isLoading: false
         };
         this.onTextboxChangeSignInUsn = this.onTextboxChangeSignInUsn.bind(this);
         this.sendEmail = this.sendEmail.bind(this);
 
     }
+
 
     onTextboxChangeSignInUsn(event) {
         event.preventDefault();
@@ -21,19 +24,27 @@ export default class ForgotPassword extends Component {
     }
 
     sendEmail() {
+        this.setState({
+            isLoading: true
+        });
         // /api/account/forgotPassword
         var config = {
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             }
-          }
-        var data = {USN: this.state.signInUsn}
-        axios.post("/api/account/forgotPassword",data, config)
-        .then(res=> {
-            console.log(res);
-            alert(res.data.message);
-        })
-        .catch(err=> console.log(err))
+        }
+        var data = { USN: this.state.signInUsn }
+        axios.post("/api/account/forgotPassword", data, config)
+            .then(res => {
+                console.log(res);
+                alert(res.data.message);
+                <Redirect to="/" />
+            })
+            .catch(err => {
+                alert("Unable to send email.")
+                console.log(err);
+                window.location.reload();
+            })
 
     }
 
@@ -52,7 +63,7 @@ export default class ForgotPassword extends Component {
                     />
                 </div>
                 <div className="card-footer">
-                    <button className="btn btn-danger" onClick={this.sendEmail}>Send Email</button>
+                    {!this.state.isLoading ? <button className="btn btn-danger" onClick={this.sendEmail}>Send Email</button> : <p className="text-info">Loading, Please Wait.</p>}
                 </div>
             </div>
         )
