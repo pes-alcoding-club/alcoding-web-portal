@@ -387,7 +387,7 @@ module.exports = (app) => {
             });
           }
           console.log("JWT generated for forgot password.");
-          var link = 'http://localhost:8080/reset/' + token + '/' + user._id.toString();
+          var link = 'http://172.16.173.215/reset/' + token + '/' + user._id.toString();
           fs.readFile(path.join(process.cwd(), 'server/mailTemplates/forgotPassword.txt'), 'utf8', function (err, data) {
             if (err) {
               return res.status(500).send({
@@ -402,8 +402,8 @@ module.exports = (app) => {
             var transporter = nodemailer.createTransport({
               service: 'gmail',
               auth: {
-                user: 'alcodingofficial@gmail.com',
-                pass: 'Alcoding2018'
+                user: '',
+                pass: ''
               }
             });
 
