@@ -140,6 +140,7 @@ module.exports = (app) => {
           })
         }
         var user = users[0];
+        var toemail = user.basicInfo.email;
         if (user.checkPassword(oldPassword, user.password)) {
           newPassword = user.generateHash(newPassword);
           User.findByIdAndUpdate({
@@ -155,10 +156,58 @@ module.exports = (app) => {
                 message: 'Error: Server Error.'
               });
             } else {
-              return res.status(200).send({
-                success: true,
-                message: 'User password changed',
-              });
+              fs.readFile(path.join(process.cwd(), 'server/mailTemplates/changedPassword.txt'), 'utf8', function (err, data) {
+                if (err) {
+                  return res.status(500).send({
+                    success: false,
+                    message: 'Error: Server error'
+                  });
+                }
+                var emaildata = data.toString();
+                var datetime = new Date();
+                emaildata = emaildata.replace("{username}", user.name.firstName);
+                emaildata = emaildata.replace("{time}", datetime.toString());
+                fs.readFile(path.join(process.cwd(), '../email_auth.csv'),'utf8', function(err,data){
+                  if (err) {
+                    return res.status(500).send({
+                      success: false,
+                      message: 'Error: Server error'
+                    });
+                  }
+                  var email = data.toString().split(',')[0].trim();
+                  var password = data.toString().split(',')[1].trim();
+                  var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                      user: email,
+                      pass: password
+                    }
+                  });
+      
+                  var mailOptions = {
+                    from: email,
+                    to: toemail,
+                    subject: 'Password Change for Alcoding Account',
+                    text: emaildata
+                  };
+      
+                  transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                      console.log(error);
+                      return res.status(500).send({
+                        success: false,
+                        message: "Error: Server error"
+                      });
+                    } else {
+                      console.log('Email for password change sent: ' + info.response);
+                      return res.status(200).send({
+                        success: true,
+                        message: "Email sent to " + toemail
+                      })
+                    }
+                  });
+                })
+              })
             }
           })
         } else {
@@ -360,7 +409,7 @@ module.exports = (app) => {
           message: "User email not found in DB"
         })
       }
-      var email = user.basicInfo.email;
+      var toemail = user.basicInfo.email;
       payload = {
         user_id: user._id,
         role: user.role
@@ -398,38 +447,47 @@ module.exports = (app) => {
             var emaildata = data.toString();
             emaildata = emaildata.replace("{username}", user.name.firstName);
             emaildata = emaildata.replace("{link}", link);
-
-            var transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                user: '',
-                pass: ''
-              }
-            });
-
-            var mailOptions = {
-              from: 'alcodingofficial@gmail.com',
-              to: email,
-              subject: 'Password Reset Link for Alcoding Account',
-              text: emaildata
-            };
-
-            transporter.sendMail(mailOptions, function (error, info) {
-              if (error) {
-                console.log(error);
+            fs.readFile(path.join(process.cwd(), '../email_auth.csv'),'utf8', function(err,data){
+              if (err) {
                 return res.status(500).send({
                   success: false,
-                  message: "Error: Server error"
+                  message: 'Error: Server error'
                 });
-              } else {
-                console.log('Email for password reset sent: ' + info.response);
-                return res.status(200).send({
-                  success: true,
-                  message: "Email sent to " + email
-                })
               }
-            });
-          })
+              var email = data.toString().split(',')[0].trim();
+              var password = data.toString().split(',')[1].trim();
+              var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: email,
+                  pass: password
+                }
+              });
+  
+              var mailOptions = {
+                from: email,
+                to: toemail,
+                subject: 'Password Reset Link for Alcoding Account',
+                text: emaildata
+              };
+  
+              transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                  console.log(error);
+                  return res.status(500).send({
+                    success: false,
+                    message: "Error: Server error"
+                  });
+                } else {
+                  console.log('Email for password reset sent: ' + info.response);
+                  return res.status(200).send({
+                    success: true,
+                    message: "Email sent to " + toemail
+                  })
+                }
+              });
+            })
+          });
         });
       });
     })

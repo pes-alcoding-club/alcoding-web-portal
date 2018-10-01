@@ -99,4 +99,33 @@ module.exports = (app) => {
             });
         }
     });
+
+    app.post('/api/admin/delete', requireRole("admin"), function(req,res){
+        if(!req.body.usn){
+            return res.status(400).send({
+                success: false,
+                message: "Error: usn not recieved"
+            });
+        }
+        User.findOneAndRemove({
+            usn:req.body.usn
+        }, function(err,user){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: 'Error: Server error'
+                });
+            }
+            if(!user){
+                return res.status(400).send({
+                    success: false,
+                    message: 'Error: User not found'
+                });
+            }
+            return res.status(200).send({
+                success:'true',
+                message:"User successfully deleted"
+            })
+        })
+    });
 }
