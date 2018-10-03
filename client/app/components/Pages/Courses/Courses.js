@@ -192,31 +192,31 @@ class CoursesAdd extends Component {
       <div>
         <form>
           <div className="form-group text-left">
-            <h6>Course Name</h6>
-            <input type="text" className="form-control" placeholder="Name" value={this.state.name} onChange={this.handleNameChange} />
+            <h6>Course Name<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Name" value={this.state.name} onChange={this.handleNameChange} required="true"/>
           </div>
           <div className="form-group text-left">
-            <h6>Code</h6>
-            <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} />
+            <h6>Code<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} required="true"/>
           </div>
           <div className="form-group text-left">
-            <h6>Department</h6>
-            <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} />
+            <h6>Department<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} required="true"/>
           </div>
           <div className="form-group text-left">
             <h6>Course Description</h6>
             <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
           </div>
           <div className="form-group text-left">
-            <h6>Credits</h6>
-            <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} />
+            <h6>Credits<sup>*</sup></h6>
+            <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} required="true"/>
           </div>
           <div className="form-group text-left">
             <h6>Duration</h6>
-            <label>Start Date</label>
-            <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} />
-            <label>End Date</label>
-            <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} />
+            <label>Start Date<sup>*</sup></label>
+            <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} required="true"/>
+            <label>End Date<sup>*</sup></label>
+            <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} required="true"/>
             <label>Number of Hours</label>
             <input type="number" className="form-control" placeholder="Hours" value={this.state.hours} onChange={this.handleHoursChange} />
           </div>

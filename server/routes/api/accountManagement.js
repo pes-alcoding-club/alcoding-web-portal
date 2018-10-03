@@ -4,8 +4,10 @@ const jwt = require('jsonwebtoken');
 var verifyUser = require('../../middleware/Token').verifyUser;
 const fs = require('fs');
 var nodemailer = require('nodemailer');
+var config = require('../../../config/config');
 var path = require('path');
 var privateKey = fs.readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
+const ip = config.IP.trim();
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
@@ -174,8 +176,8 @@ module.exports = (app) => {
                       message: 'Error: Server error'
                     });
                   }
-                  var email = data.toString().split(',')[0].trim();
-                  var password = data.toString().split(',')[1].trim();
+                  var email = config.email.trim();
+                  var password = config.password.trim();
                   var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
@@ -436,7 +438,11 @@ module.exports = (app) => {
             });
           }
           console.log("JWT generated for forgot password.");
+<<<<<<< HEAD
           var link = 'http://172.16.173.215/reset/' + token + '/' + user._id.toString();
+=======
+          var link = ip + 'reset/' + token + '/' + user._id.toString();
+>>>>>>> c47dc75... Minor UI changes for createCourse and createAssignment
           fs.readFile(path.join(process.cwd(), 'server/mailTemplates/forgotPassword.txt'), 'utf8', function (err, data) {
             if (err) {
               return res.status(500).send({
@@ -454,8 +460,8 @@ module.exports = (app) => {
                   message: 'Error: Server error'
                 });
               }
-              var email = data.toString().split(',')[0].trim();
-              var password = data.toString().split(',')[1].trim();
+              var email = config.email.trim();
+              var password = config.password.trim();
               var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {

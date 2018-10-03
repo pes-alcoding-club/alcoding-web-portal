@@ -148,34 +148,34 @@ class AssignmentAdd extends Component {
             <div>
                 <form>
                     <div className="form-group text-left">
-                        <h6>Assignment Name</h6>
-                        <input type="text" className="form-control " placeholder="Name" value={this.state.name} onChange={this.handleNameChange} />
+                        <h6>Assignment Name<sup>*</sup></h6>
+                        <input type="text" className="form-control " placeholder="Name" value={this.state.name} onChange={this.handleNameChange} required="true"/>
                     </div>
                     <div className="form-group text-left">
-                        <h6>Unique ID</h6>
-                        <input type="text" className="form-control" placeholder="Unique ID" value={this.state.uniqueID} onChange={this.handleUniqueidChange} />
+                        <h6>Unique ID<sup>*</sup></h6>
+                        <input type="text" className="form-control" placeholder="Unique ID" value={this.state.uniqueID} onChange={this.handleUniqueidChange} required="true"/>
                     </div>
                     <div className="form-group text-left">
-                        <h6>Type</h6>
-                        <input type="text" className="form-control" placeholder="Type" value={this.state.type} onChange={this.handleTypeChange} />
+                        <h6>Type<sup>*</sup></h6>
+                        <input type="text" className="form-control" placeholder="Type" value={this.state.type} onChange={this.handleTypeChange} required="true"/>
                     </div>
                     <div className="form-group text-left">
-                        <h6>Assignment Details</h6>
+                        <h6>Assignment Details<sup>*</sup></h6>
                         <textarea className="form-control" placeholder="Details" value={this.state.details} onChange={this.handleDetailsChange} />
                     </div>
                     <div className="form-group text-left">
-                        <h6>Maximum Marks</h6>
-                        <input type="number" className="form-control" placeholder="Maximum Marks" value={this.state.maxMarks} onChange={this.handleMarksChange} />
+                        <h6>Maximum Marks<sup>*</sup></h6>
+                        <input type="number" className="form-control" placeholder="Maximum Marks" value={this.state.maxMarks} onChange={this.handleMarksChange} required="true"/>
                     </div>
                     <div className="form-group text-left">
                         <h6>Duration</h6>
-                        <label>Start Date</label>
-                        <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} />
-                        <label>End Date</label>
-                        <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} />
+                        <label>Start Date<sup>*</sup></label>
+                        <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} required="true"/>
+                        <label>End Date<sup>*</sup></label>
+                        <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} required="true"/>
                     </div>
                     <div className="form-group text-left">
-                        <h6>Resources</h6>
+                        <h6>Resources<sup>*</sup></h6>
                         <input type='text' className="form-control" placeholder="URLs" value={this.state.resourcesUrl} onChange={this.handleURLChange} />
                     </div>
                 </form>
