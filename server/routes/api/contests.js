@@ -147,37 +147,11 @@ module.exports = (app) => {
         });
       }
       else {
-        //New user
-        const newUser = new User();
-
-        newUser.usn = usn;
-        if (name) { newUser.name.firstName = name.split(" ")[0]; newUser.name.lastName = name.split(" ")[1]; }
-        if (email) { newUser.basicInfo.email = email; }
-        newUser.password = newUser.generateHash(usn);
-        newUser.role = "student";
-
-        // newUser.contender.handles.codejam = codejam;
-        // newUser.contender.handles.hackerearth = hackerearth;
-        newUser.contender.rating = rating;
-        newUser.contender.volatility = volatility;
-        newUser.contender.timesPlayed = timesPlayed;
-        newUser.contender.lastFive = lastFive;
-        newUser.contender.best = best;
-
-        newUser.save((err, user) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).send({
-              success: false,
-              message: 'Server error'
-            });
-          }
-          console.log(newUser._id + " added to DB.")
-          return res.status(200).send({
-            success: true,
-            message: 'Signed Up'
-          });
-        });
+        //User not in DB
+        return res.status().send({
+          success: false,
+          message: usn+" not found"
+        })
       }
 
     });
