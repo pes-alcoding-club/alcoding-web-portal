@@ -6,6 +6,7 @@ const fs = require('fs');
 var nodemailer = require('nodemailer');
 var path = require('path');
 var privateKey = fs.readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
+const config = require('../../../config/config');
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
@@ -141,7 +142,7 @@ module.exports = (app) => {
         }
         var user = users[0];
         var toemail = user.basicInfo.email;
-        if (user.checkPassword(oldPassword, user.password)) {
+        if (user.checkPassword(oldPassword)) {
           newPassword = user.generateHash(newPassword);
           User.findByIdAndUpdate({
             _id: user_id
@@ -156,58 +157,62 @@ module.exports = (app) => {
                 message: 'Error: Server Error.'
               });
             } else {
-              fs.readFile(path.join(process.cwd(), 'server/mailTemplates/changedPassword.txt'), 'utf8', function (err, data) {
-                if (err) {
-                  return res.status(500).send({
-                    success: false,
-                    message: 'Error: Server error'
-                  });
-                }
-                var emaildata = data.toString();
-                var datetime = new Date();
-                emaildata = emaildata.replace("{username}", user.name.firstName);
-                emaildata = emaildata.replace("{time}", datetime.toString());
-                fs.readFile(path.join(process.cwd(), '../email_auth.csv'),'utf8', function(err,data){
-                  if (err) {
-                    return res.status(500).send({
-                      success: false,
-                      message: 'Error: Server error'
-                    });
-                  }
-                  var email = data.toString().split(',')[0].trim();
-                  var password = data.toString().split(',')[1].trim();
-                  var transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                      user: email,
-                      pass: password
-                    }
-                  });
+              return res.status(200).send({
+                success: true,
+                message: 'Password succesfully changed.'
+              });
+              // fs.readFile(path.join(process.cwd(), 'server/mailTemplates/changedPassword.txt'), 'utf8', function (err, data) {
+              //   if (err) {
+              //     return res.status(500).send({
+              //       success: false,
+              //       message: 'Error: Server error'
+              //     });
+              //   }
+              //   var emaildata = data.toString();
+              //   var datetime = new Date();
+              //   emaildata = emaildata.replace("{username}", user.name.firstName);
+              //   emaildata = emaildata.replace("{time}", datetime.toString());
+              //   fs.readFile(path.join(process.cwd(), '../email_auth.csv'),'utf8', function(err,data){
+              //     if (err) {
+              //       return res.status(500).send({
+              //         success: false,
+              //         message: 'Error: Server error'
+              //       });
+              //     }
+              //     var email = data.toString().split(',')[0].trim();
+              //     var password = data.toString().split(',')[1].trim();
+              //     var transporter = nodemailer.createTransport({
+              //       service: 'gmail',
+              //       auth: {
+              //         user: email,
+              //         pass: password
+              //       }
+              //     });
       
-                  var mailOptions = {
-                    from: email,
-                    to: toemail,
-                    subject: 'Password Change for Alcoding Account',
-                    text: emaildata
-                  };
+              //     var mailOptions = {
+              //       from: email,
+              //       to: toemail,
+              //       subject: 'Password Change for Alcoding Account',
+              //       text: emaildata
+              //     };
       
-                  transporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                      console.log(error);
-                      return res.status(500).send({
-                        success: false,
-                        message: "Error: Server error"
-                      });
-                    } else {
-                      console.log('Email for password change sent: ' + info.response);
-                      return res.status(200).send({
-                        success: true,
-                        message: "Email sent to " + toemail
-                      })
-                    }
-                  });
-                })
-              })
+              //     transporter.sendMail(mailOptions, function (error, info) {
+              //       if (error) {
+              //         console.log(error);
+              //         return res.status(500).send({
+              //           success: false,
+              //           message: "Error: Server error"
+              //         });
+              //       } else {
+              //         console.log('Email for password change sent: ' + info.response);
+              //         return res.status(200).send({
+              //           success: true,
+              //           message: "Email sent to " + toemail
+              //         })
+              //       }
+              //     });
+              //   })
+              // })
             }
           })
         } else {
@@ -385,7 +390,7 @@ module.exports = (app) => {
     if (!req.body.USN) {
       return res.status(400).send({
         success: false,
-        message: 'Error: SRN not sent in body'
+        message: 'Error: No SRN'
       });
     }
     User.findOne({
@@ -400,16 +405,16 @@ module.exports = (app) => {
       if (!user) {
         return res.status(404).send({
           success: false,
-          message: "User not found in DB"
+          message: "No User"
         })
       }
       if (!user.basicInfo.email) {
         return res.status(404).send({
           success: false,
-          message: "User email not found in DB"
+          message: "No User email"
         })
       }
-      var toemail = user.basicInfo.email;
+      
       payload = {
         user_id: user._id,
         role: user.role
@@ -422,7 +427,7 @@ module.exports = (app) => {
           console.log(err);
           return res.status(500).send({
             success: false,
-            message: 'Error: Server Error.'
+            message: 'Error: Server Error'
           });
         }
 
@@ -444,31 +449,52 @@ module.exports = (app) => {
                 message: 'Error: Server error'
               });
             }
-            var emaildata = data.toString();
-            emaildata = emaildata.replace("{username}", user.name.firstName);
-            emaildata = emaildata.replace("{link}", link);
-            fs.readFile(path.join(process.cwd(), '../email_auth.csv'),'utf8', function(err,data){
-              if (err) {
-                return res.status(500).send({
-                  success: false,
-                  message: 'Error: Server error'
-                });
-              }
-              var email = data.toString().split(',')[0].trim();
-              var password = data.toString().split(',')[1].trim();
+            var body = data.toString().replace("{{username}}", user.name.firstName).replace("{{link}}", link);
+            var toemail = user.basicInfo.email;
+            var fromemail = config.email.split(':')[0];
+            var key = config.email.split(':')[1];
+
+          //   let transporter = nodemailer.createTransport({
+          //     host: 'smtp.gmail.com',
+          //     port: 465,
+          //     secure: true,
+          //     auth: {
+          //         type: 'OAuth2',
+          //         clientId: '240430660505-1vpgjbm3p2231172bv5ne3bnvru18i4p.apps.googleusercontent.com',
+          //         clientSecret: 'KH7kLK3BCbyETxxV_c_lg8TY'
+          //     }
+          //   });
+          
+          // transporter.sendMail({
+          //     from: fromemail,
+          //     to: toemail,
+          //     subject: '[The Alcoding Club] Password Reset',
+          //     text: body,
+          //     auth: {
+          //         user: 'alcodingofficial@gmail.com',
+          //         refreshToken: '1/2YL4hHrE5kPrxJF_Wgt4ZBm7icAwJ9ilu1Z67IfhE9w',
+          //         expires: 1484314697598
+          //     }
+          // });
               var transporter = nodemailer.createTransport({
-                service: 'gmail',
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false,
                 auth: {
-                  user: email,
-                  pass: password
-                }
+                  user: fromemail,
+                  pass: key
+                },
+                connectionTimeout: 3000,
+                tls: {
+                  rejectUnauthorized: false
+              }
               });
   
               var mailOptions = {
-                from: email,
+                from: fromemail,
                 to: toemail,
-                subject: 'Password Reset Link for Alcoding Account',
-                text: emaildata
+                subject: '[The Alcoding Club] Password Reset',
+                text: body
               };
   
               transporter.sendMail(mailOptions, function (error, info) {
@@ -486,7 +512,7 @@ module.exports = (app) => {
                   })
                 }
               });
-            })
+            
           });
         });
       });
