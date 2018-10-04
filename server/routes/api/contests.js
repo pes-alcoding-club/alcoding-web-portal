@@ -77,7 +77,7 @@ module.exports = (app) => {
         pushObject = Object.assign({ usn: user.usn, name }, user.contender.toObject());
         pushObject.rating = Math.round(pushObject.rating);
         pushObject.best = Math.round(pushObject.best);
-        if(pushObject.rating!=-1)
+        if(pushObject.rating!=-1 && pushObject.timesPlayed!=0)
           userContenderDetails.push(pushObject);
         else
           continue;

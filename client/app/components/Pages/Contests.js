@@ -119,7 +119,7 @@ class Contests extends React.Component {
                 <div className="jumbotron pt-3 pb-2 bg-light">
                     <div className="container">
                         <div className='display-4 mb-3'>Contender Details</div>
-                        <p>Your rating shall be updated after every rated contest. If you have not taken part in any contests, you will see a '-1' indicating the same.</p>
+                        <p>Your rating shall be updated after every rated contest. If you have not taken part in any contests, you will see a '-1' indicating the same. For more information about the parameters for this Global Ranking, please visit the link <a href="https://github.com/varunvora/alcoding">here.</a></p>
                         Name: {this.state.name.firstName} {this.state.name.lastName}<br />
                         <hr />
                         Rating: {Math.round(this.state.contender.rating)}&nbsp;&nbsp;&nbsp;
