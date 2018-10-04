@@ -84,6 +84,7 @@ class Navbar extends Component {
 
   onLogoutClick(event) {
     event.preventDefault();
+    // this.forceUpdate();   
     this.props.logoutUser();
 
   }
@@ -91,7 +92,8 @@ class Navbar extends Component {
     this.setState({
       loginShow: false
     });
-    window.location.reload();
+    this.reload(); 
+    // this.forceUpdate();   
   }
 
   reload() {

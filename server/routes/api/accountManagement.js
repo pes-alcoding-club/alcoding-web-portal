@@ -477,8 +477,8 @@ module.exports = (app) => {
           //     }
           // });
               var transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
+                host: 'smtp.gmail.com',
+                port: '587',
                 secure: false,
                 auth: {
                   user: fromemail,

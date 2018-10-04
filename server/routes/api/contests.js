@@ -77,7 +77,7 @@ module.exports = (app) => {
         pushObject = Object.assign({ usn: user.usn, name }, user.contender.toObject());
         pushObject.rating = Math.round(pushObject.rating);
         pushObject.best = Math.round(pushObject.best);
-        if(pushObject.rating!=-1 && pushObject.timesPlayed!=0)
+        if (pushObject.rating != -1 && pushObject.timesPlayed != 0)
           userContenderDetails.push(pushObject);
         else
           continue;
@@ -124,34 +124,36 @@ module.exports = (app) => {
           message: 'Error: Server find error'
         });
       }
-      else if (previousUsers.length > 0) { //Update
-        // previousUsers[0].contender.handles.codejam = codejam;
-        // previousUsers[0].contender.handles.hackerearth = hackerearth;
-        previousUsers[0].contender.rating = rating;
-        previousUsers[0].contender.volatility = volatility;
-        previousUsers[0].contender.timesPlayed = timesPlayed;
-        previousUsers[0].contender.lastFive = lastFive;
-        previousUsers[0].contender.best = best;
-        previousUsers[0].save((err, user) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).send({
-              success: false,
-              message: 'Server error'
-            });
-          }
-          return res.status(200).send({
-            success: true,
-            message: 'Contender Updated'
-          });
-        });
-      }
       else {
-        //User not in DB
-        return res.status().send({
-          success: false,
-          message: usn+" not found"
-        })
+        if (previousUsers.length > 0) { //Update
+          // previousUsers[0].contender.handles.codejam = codejam;
+          // previousUsers[0].contender.handles.hackerearth = hackerearth;
+          previousUsers[0].contender.rating = rating;
+          previousUsers[0].contender.volatility = volatility;
+          previousUsers[0].contender.timesPlayed = timesPlayed;
+          previousUsers[0].contender.lastFive = lastFive;
+          previousUsers[0].contender.best = best;
+          previousUsers[0].save((err, user) => {
+            if (err) {
+              console.log(err);
+              return res.status(500).send({
+                success: false,
+                message: 'Server error'
+              });
+            }
+            return res.status(200).send({
+              success: true,
+              message: 'Contender Updated'
+            });
+          });
+        }
+        else {
+          //User not in DB
+          return res.status(204).send({
+            success: false,
+            message: usn + " not found"
+          })
+        }
       }
 
     });

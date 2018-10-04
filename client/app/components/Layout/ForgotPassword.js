@@ -43,7 +43,8 @@ export default class ForgotPassword extends Component {
             .catch(err => {
                 alert("Unable to send email.")
                 console.log(err);
-                window.location.reload();
+                // window.location.reload();
+                this.forceUpdate();
             })
 
     }
