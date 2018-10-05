@@ -4,10 +4,11 @@ import axios from 'axios';
 class SignupForm extends Component {
 	constructor() {
 		super();
-    this.handleSubmitStudents = this.handleSubmitStudents.bind(this);
-		this.handleSubmitContenders = this.handleSubmitContenders.bind(this);    
-    this.handleDownload = this.handleDownload.bind(this);    
+		this.handleSubmitStudents = this.handleSubmitStudents.bind(this);
+		this.handleSubmitContenders = this.handleSubmitContenders.bind(this);
+		this.handleDownload = this.handleDownload.bind(this);
 		this.fileInput = React.createRef();
+		this.fileInput_contest = React.createRef();
 	}
 
 	handleSubmitStudents(event) {
@@ -25,7 +26,7 @@ class SignupForm extends Component {
 		var reader = new FileReader();
 		reader.onload = function (file) {
 			var data = file.target.result.split('\n');
-			var row, invalid, attributes,count;
+			var row, invalid, attributes, count;
 			for (var row_count = 0; row_count < data.length; row_count++) {
 				row = data[row_count];
 				invalid = 0;
@@ -40,27 +41,26 @@ class SignupForm extends Component {
 
 					axios.post(signUpUrl, body, configSignup)
 						.then(function (response) {
-						    console.log(response.data);
-						 })
+							// console.log(response.data);
+						})
 						.catch(function (err) {
-						    console.log(err);
-						 })
+							console.log(err);
+						})
 				}
 				else {
 					console.log("error at user: " + attributes);
 				}
 			}
 		}
-		
 		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
 		else { console.log('Please Upload a file!'); }
-  }
-  
-  handleSubmitContenders(event) {
+	}
+
+	handleSubmitContenders(event) {
 		event.preventDefault();
-		var fileObj = this.fileInput.current.files[0];
+		var fileObj = this.fileInput_contest.current.files[0];
 		var token = 'Bearer ' + localStorage.getItem('token');
 		var configSignup = {
 			headers: {
@@ -71,40 +71,40 @@ class SignupForm extends Component {
 		var signUpUrl = '/api/contests/updateContenders';
 		var reader = new FileReader();
 		reader.onload = function (file) {
-      var data = JSON.parse(file.target.result);
-      for(var key in data) {
-        // console.log(key + " -> " + data[key]);
-        var body = "usn=" + key;
-        body += "&name=" + data[key].name;
-        body += "&email=" + data[key].email;
-        body += "&rating=" + data[key].rating; 
-        body += "&volatility=" + data[key].volatility; 
-        body += "&timesPlayed=" + data[key].timesPlayed; 
-        body += "&lastFive=" + data[key].lastFive; 
-        body += "&best=" + data[key].best; 
-        body += "&codejam=" + data[key].codejam; 
-        body += "&hackerearth=" + data[key].hackerearth;
+			var data = JSON.parse(file.target.result);
+			for (var key in data) {
+				// console.log(key + " -> " + data[key]);
+				var body = "usn=" + key;
+				body += "&name=" + data[key].name;
+				body += "&email=" + data[key].email;
+				body += "&rating=" + data[key].rating;
+				body += "&volatility=" + data[key].volatility;
+				body += "&timesPlayed=" + data[key].timesPlayed;
+				body += "&lastFive=" + data[key].lastFive;
+				body += "&best=" + data[key].best;
+				body += "&codejam=" + data[key].codejam;
+				body += "&hackerearth=" + data[key].hackerearth;
 
-        axios.post(signUpUrl, body, configSignup)
-						.then(function (response) {
-						    console.log(response.data);
-						 })
-						.catch(function (err) {
-						    console.log(err);
-						 })
-      }
+				axios.post(signUpUrl, body, configSignup)
+					.then(function (response) {
+						console.log(response.data);
+					})
+					.catch(function (err) {
+						console.log(err);
+					})
+			}
 		}
-		
+
 		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
-		else { console.log('Please Upload a file!'); }
-  }
-  
-  handleDownload(event){
+		else { console.log('Please Upload a file!..'); }
+	}
+
+	handleDownload(event) {
 		event.preventDefault();
 
-  }
+	}
 
 	render() {
 		return (
@@ -116,11 +116,11 @@ class SignupForm extends Component {
 					<br />
 					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitStudents}>Submit</button>
 				</form>
-        <br />
-        <h3>Upload/Download Contender Details: </h3>
+				<br />
+				<h3>Upload/Download Contender Details: </h3>
 				<form id="formObject">
 					<span>Please upload a .json file</span>
-					<input type="file" className="btn btn-default form-control" ref={this.fileInput} />
+					<input type="file" className="btn btn-default form-control" ref={this.fileInput_contest} />
 					<br />
 					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitContenders}>Submit</button> &nbsp;
 					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button>
