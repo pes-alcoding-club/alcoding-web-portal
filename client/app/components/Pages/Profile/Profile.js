@@ -122,7 +122,7 @@ class Profile extends React.Component {
                         <div>
                             <StaticBox fieldName="Name" val={this.state.name} />
                             <StaticBox fieldName="USN" val={this.state.usn} />
-                            <Link to="/profile/updateHandle" class="btn ml-auto pl-0">Update contest handles</Link>
+                            <Link to="/profile/updateHandle" class="btn ml-auto pl-0">Update coding handles</Link>
                         </div>
                         <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
