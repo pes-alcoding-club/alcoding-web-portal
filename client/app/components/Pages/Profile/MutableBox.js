@@ -72,7 +72,6 @@ class MutableBox extends React.Component {
                     <input ref="newText" type={inputType} className="form-control ml-3" id="input" placeholder={this.props.val} />
                     <button type="submit" onClick={this.save} className="btn btn-dark ml-auto">Save</button>
                     <button type="submit" onClick={this.cancel} className="btn btn-danger ml-1">Cancel</button>
-
                 </div>
             </div>
         );

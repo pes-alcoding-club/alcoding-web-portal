@@ -122,7 +122,10 @@ class Profile extends React.Component {
                         <div>
                             <StaticBox fieldName="Name" val={this.state.name} />
                             <StaticBox fieldName="USN" val={this.state.usn} />
-                            <Link to="/profile/updateHandle" class="btn ml-auto pl-0">Update coding handles</Link>
+                            <p/>
+                            <Link to="/profile/updateHandle">Update contest handles</Link>
+                            <PasswordBox />
+
                         </div>
                         <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
@@ -133,7 +136,6 @@ class Profile extends React.Component {
                         <hr />
 
                         <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
-                        <PasswordBox />
                     </div>
                 </div>
             );

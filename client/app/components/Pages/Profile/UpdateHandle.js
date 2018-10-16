@@ -23,8 +23,8 @@ class updateHandle extends React.Component {
 
     componentDidMount() {
         var self = this;
-        var token = localStorage.getItem('token')
-        var userID = localStorage.getItem('user_id')
+        var token = localStorage.getItem('token');
+        var userID = localStorage.getItem('user_id');
 
         var apiPath = '/api/account/' + userID + '/details'
         axios.get(apiPath, {
@@ -51,7 +51,7 @@ class updateHandle extends React.Component {
                 handles.hackerRank = (!handles.hackerRank) ? "" : handles.hackerRank;
                 handles.codeforces = (!handles.codeforces) ? "" : handles.codeforces;
                 handles.spoj = (!handles.spoj) ? "" : handles.spoj;
-                // TODO: Update dob with calendar
+
                 self.setState({
                     isLoading: false,
                     codechef: handles.codechef,
@@ -69,49 +69,41 @@ class updateHandle extends React.Component {
             });
     }
 
-
     updateValue(field, newVal) {
+        var token = localStorage.getItem('token');
+        var userID = localStorage.getItem('user_id');
         var stateObj = Object.assign({}, this.state);
         stateObj[field] = newVal;
         this.setState(stateObj);
-        ToastStore.success('Successfully updated!');
-        // var apiPath = '/api/account/' + userID + '/details'
-        // axios.get(apiPath, {
-        //     headers: {
-        //         'x-access-token': token,
-        //         'Content-Type': 'application/json'
-        //     }
-        // })
-        //     .then(function (response) {
-        //         if (!response.data.success) {
-        //             // TODO: throw appropriate error and redirect
-        //             console.log("Error: " + response.data);
-        //             return;
-        //         }
-        //         var data = response.data.user.contender;
-        //         var handles = data.handles;
-        //         if (!handles) {
-        //             handles = new Object();
-        //         }
-        //         handles.codechef = (!handles.codechef) ? "" : handles.codechef;
-        //         handles.codejam = (!handles.codejam) ? "" : handles.codejam;
-        //         handles.kickstart = (!handles.kickstart) ? "" : handles.kickstart;
-        //         handles.hackerEarth = (!handles.hackerEarth) ? "" : handles.hackerEarth;
-        //         handles.hackerRank = (!handles.hackerRank) ? "" : handles.hackerRank;
-        //         handles.codeforces = (!handles.codeforces) ? "" : handles.codeforces;
-        //         handles.spoj = (!handles.spoj) ? "" : handles.spoj;
-        //         // TODO: Update dob with calendar
-        //         self.setState({
-        //             isLoading: false,
-        //             codechef: handles.codechef,
-        //             codejam: handles.codejam,
-        //             hackerEarth: handles.hackerEarth
-        //         });
-        //     })
-        //     .catch(function (error) {
-        //         // TODO: Try again after sometime? 
-        //         console.log('error is ', error);
-        //     });
+
+        var apiPath = '/api/contests/' + userID + '/codingHandle';
+        var body = new Object();
+        body["codechef"] = stateObj.codechef;
+        body["codejam"] = stateObj.codejam;
+        body["kickstart"] = stateObj.kickstart;
+        body["spoj"] = stateObj.spoj;
+        body["hackerRank"] = stateObj.hackerRank;
+        body["codeforces"] = stateObj.codeforces;
+        body["hackerEarth"] = stateObj.hackerEarth;
+
+        axios.put(
+            apiPath,
+            body,
+            {
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function (response) {
+                console.log(response.data);
+                ToastStore.success('Successfully updated!');
+
+            })
+            .catch(function (err) {
+                console.log(err);
+                ToastStore.error("Error ocurred. Please try after a while.");
+            })
     }
 
     changeEditingStatus(value) {
@@ -132,6 +124,9 @@ class updateHandle extends React.Component {
                             <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codechef" inputType="text" fieldName="CodeChef" val={this.state.codechef} />
                             <a href="https://www.codechef.com" rel="noopener noreferrer" target="_blank">www.codechef.com</a>
                             <hr />
+                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codeforces" inputType="text" fieldName="Codeforces" val={this.state.codeforces} />
+                            <a href="https://codeforces.com" rel="noopener noreferrer" target="_blank">codeforces.com</a>
+                            <hr />
                             <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codejam" inputType="text" fieldName="Google CodeJam" val={this.state.codejam} />
                             <a href="https://codejam.withgoogle.com/codejam" rel="noopener noreferrer" target="_blank">codejam.withgoogle.com/codejam</a>
                             <hr />
@@ -143,9 +138,6 @@ class updateHandle extends React.Component {
                             <hr />
                             <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="hackerRank" inputType="text" fieldName="HackerRank" val={this.state.hackerRank} />
                             <a href="https://www.hackerrank.com" rel="noopener noreferrer" target="_blank">www.hackerrank.com</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codeforces" inputType="text" fieldName="Codeforces" val={this.state.codeforces} />
-                            <a href="https://codeforces.com" rel="noopener noreferrer" target="_blank">codeforces.com</a>
                             <hr />
                             <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="spoj" inputType="text" fieldName="SPOJ" val={this.state.spoj} />
                             <a href="https://www.spoj.com" rel="noopener noreferrer" target="_blank">www.spoj.com</a>
