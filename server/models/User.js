@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
       default: ""
     }
   },
+  graduating: {
+    type: String,
+    default: ""
+  },
   basicInfo: {
     // Contains mutable info
     email: {
