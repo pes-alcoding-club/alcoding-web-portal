@@ -41,7 +41,7 @@ class SignupForm extends Component {
 
 					axios.post(signUpUrl, body, configSignup)
 						.then(function (response) {
-							// console.log(response.data);
+							console.log(response.data);
 						})
 						.catch(function (err) {
 							console.log(err);
@@ -98,7 +98,7 @@ class SignupForm extends Component {
 		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
-		else { console.log('Please Upload a file!..'); }
+    else { console.log('Please Upload a file!'); }
 	}
 
 	handleDownload(event) {

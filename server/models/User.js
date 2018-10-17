@@ -65,6 +65,36 @@ const UserSchema = new mongoose.Schema({
       type: Number,
       default: -1
     },
+    handles: {
+      codechef: {
+        type: String,
+        default: ""
+      },
+      codejam: {
+        type: String,
+        default: ""
+      },
+      kickstart: {
+        type: String,
+        default: ""
+      },
+      spoj: {
+        type: String,
+        default: ""
+      },
+      hackerRank: {
+        type: String,
+        default: ""
+      },
+      codeforces: {
+        type: String,
+        default: ""
+      },
+      hackerEarth: {
+        type: String,
+        default: ""
+      }
+    }
   },
   role: {
     type: String,
@@ -75,7 +105,7 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-}, { strict: false, timestamps:true });
+}, { strict: false, timestamps: true });
 
 // const saltRounds = 10;
 // UserSchema.methods = {

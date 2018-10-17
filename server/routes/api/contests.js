@@ -1,6 +1,7 @@
 const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
+var verifyUser = require('../../middleware/Token').verifyUser;
 // var fileDB = require('../../middleware/fileStorage').fileDB;
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
@@ -91,22 +92,76 @@ module.exports = (app) => {
     })
   })
 
+  app.put('/api/contests/:userID/codingHandle', verifyUser, function (req, res) {
+    var userID = req.params.userID;
+    var codechef = req.body.codechef;
+    var codejam = req.body.codejam;
+    var kickstart = req.body.kickstart;
+    var spoj = req.body.spoj;
+    var hackerRank = req.body.hackerRank;
+    var codeforces = req.body.codeforces;
+    var hackerEarth = req.body.hackerEarth;
+
+    // Deduplication flow
+    User.find({
+      _id: userID,
+      isDeleted: false
+    }, (err, previousUsers) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: 'Server find error'
+        });
+      }
+      else if (previousUsers.length > 0) {
+        // Update
+        previousUsers[0].contender.handles.codechef = codechef;
+        previousUsers[0].contender.handles.codejam = codejam;
+        previousUsers[0].contender.handles.kickstart = kickstart;
+        previousUsers[0].contender.handles.spoj = spoj;
+        previousUsers[0].contender.handles.hackerRank = hackerRank;
+        previousUsers[0].contender.handles.codeforces = codeforces;
+        previousUsers[0].contender.handles.hackerEarth = hackerEarth;
+
+        previousUsers[0].save((err, user) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({
+              success: false,
+              message: 'Server error'
+            });
+          }
+          return res.status(200).send({
+            success: true,
+            message: 'Contender Updated'
+          });
+        });
+      }
+      else {
+        if (!usn) {
+          return res.status(400).send({
+            success: false,
+            message: 'Error: Could not find user'
+          });
+        }
+      }
+    });
+  });
+
   app.post('/api/contests/updateContenders', requireRole("admin"), function (req, res) {
     var usn = req.body.usn;
     var name = req.body.name;
     var email = req.body.email;
-    var codejam = req.body.codejam;
     var rating = req.body.rating;
     var volatility = req.body.volatility;
     var timesPlayed = req.body.timesPlayed;
     var lastFive = req.body.lastFive;
     var best = req.body.best;
-    var hackerearth = req.body.hackerearth;
 
     if (!usn) {
       return res.status(400).send({
         success: false,
-        message: 'Error: First name cannot be blank.'
+        message: 'Error: USN cannot be blank'
       });
     }
 
@@ -124,38 +179,34 @@ module.exports = (app) => {
           message: 'Error: Server find error'
         });
       }
-      else {
-        if (previousUsers.length > 0) { //Update
-          // previousUsers[0].contender.handles.codejam = codejam;
-          // previousUsers[0].contender.handles.hackerearth = hackerearth;
-          previousUsers[0].contender.rating = rating;
-          previousUsers[0].contender.volatility = volatility;
-          previousUsers[0].contender.timesPlayed = timesPlayed;
-          previousUsers[0].contender.lastFive = lastFive;
-          previousUsers[0].contender.best = best;
-          previousUsers[0].save((err, user) => {
-            if (err) {
-              console.log(err);
-              return res.status(500).send({
-                success: false,
-                message: 'Server error'
-              });
-            }
-            return res.status(200).send({
-              success: true,
-              message: 'Contender Updated'
-            });
-          });
-        }
-        else {
-          //User not in DB
-          return res.status(204).send({
-            success: false,
-            message: usn + " not found"
-          })
-        }
-      }
+      else if (previousUsers.length > 0) {
+        // Update
+        previousUsers[0].contender.rating = rating;
+        previousUsers[0].contender.volatility = volatility;
+        previousUsers[0].contender.timesPlayed = timesPlayed;
+        previousUsers[0].contender.lastFive = lastFive;
+        previousUsers[0].contender.best = best;
 
+        previousUsers[0].save((err, user) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({
+              success: false,
+              message: 'Error: Server error'
+            });
+          }
+          return res.status(200).send({
+            success: true,
+            message: 'Contender Updated'
+          });
+        });
+      }
+      else {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: User not found.'
+        });
+      }
     });
   });
 }
