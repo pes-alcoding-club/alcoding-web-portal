@@ -8,6 +8,7 @@ class SignupForm extends Component {
 		this.handleSubmitContenders = this.handleSubmitContenders.bind(this);
 		this.handleDownload = this.handleDownload.bind(this);
 		this.fileInput = React.createRef();
+		this.fileInput_contest = React.createRef();
 	}
 
 	handleSubmitStudents(event) {
@@ -51,7 +52,6 @@ class SignupForm extends Component {
 				}
 			}
 		}
-
 		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
@@ -60,7 +60,7 @@ class SignupForm extends Component {
 
 	handleSubmitContenders(event) {
 		event.preventDefault();
-		var fileObj = this.fileInput.current.files[0];
+		var fileObj = this.fileInput_contest.current.files[0];
 		var token = 'Bearer ' + localStorage.getItem('token');
 		var configSignup = {
 			headers: {
@@ -98,7 +98,7 @@ class SignupForm extends Component {
 		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
-		else { console.log('Please Upload a file!'); }
+    else { console.log('Please Upload a file!'); }
 	}
 
 	handleDownload(event) {
@@ -120,7 +120,7 @@ class SignupForm extends Component {
 				<h3>Upload/Download Contender Details: </h3>
 				<form id="formObject">
 					<span>Please upload a .json file</span>
-					<input type="file" className="btn btn-default form-control" ref={this.fileInput} />
+					<input type="file" className="btn btn-default form-control" ref={this.fileInput_contest} />
 					<br />
 					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitContenders}>Submit</button> &nbsp;
 					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button>
