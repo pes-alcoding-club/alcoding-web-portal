@@ -11,6 +11,28 @@ class SignupForm extends Component {
 		this.fileInput_contest = React.createRef();
 	}
 
+	componentDidMount() {
+		var token = localStorage.getItem('token');
+		var userID = localStorage.getItem('user_id');
+
+		var apiPath = '/api/account/' + userID + '/details'
+		axios.get(apiPath, {
+			headers: {
+				'x-access-token': token,
+				'Content-Type': 'application/json'
+			}
+		})
+			.then(function (response) {
+				var data = response.data;
+				if(data.user.role != "admin"){
+					<Redirect to="/"/>
+				}
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	}
+
 	handleSubmitStudents(event) {
 		event.preventDefault();
 		var fileObj = this.fileInput.current.files[0];
