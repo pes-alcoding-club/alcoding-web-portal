@@ -2,10 +2,16 @@ const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 const CourseSchema = new mongoose.Schema({
-  professors: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+  class: {
+    professor:{
+      type: Schema.Types.ObjectId,
+      required: true
+    },
+    sections: [{
+      type: String,
+      required: true
+    }]
+  },
   students: [{
     type: Schema.Types.ObjectId,
     ref: 'User'
@@ -24,6 +30,9 @@ const CourseSchema = new mongoose.Schema({
   },
   description: {
     type: String, 
+  },
+  anchorDescription: {
+    type: String
   },
   resourcesUrl: {
     type: String

@@ -19,11 +19,24 @@ class CoursesAdd extends Component {
       hours: '',
       isCore: '',
       courses: [],
+      profRole: '',
+      professorID: '',
+      classes: [],
+      sections: '',
+      graduating: '',
+      anchorDescription: '',
       show: false
     };
     this.onAdd = this.onAdd.bind(this);
     this.showForm = this.showForm.bind(this);
     this.closeForm = this.closeForm.bind(this);
+    this.chooseProfRole = this.chooseProfRole.bind(this);
+    this.chooseAnchorRole = this.chooseAnchorRole.bind(this);
+    this.handleGraduatingChange = this.handleGraduatingChange.bind(this);
+    this.handleProfessorChange = this.handleProfessorChange.bind(this);
+    this.handleSectionChange = this.handleSectionChange.bind(this);
+    // this.handleClassChange = this.handleClassChange.bind(this);
+    this.handleAnchorDescriptionChange = this.handleAnchorDescriptionChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.handleDepartmentChange = this.handleDepartmentChange.bind(this);
@@ -134,16 +147,40 @@ class CoursesAdd extends Component {
       hours: e.target.value
     })
   }
+  handleGraduatingChange(e) {
+    this.setState({
+      graduating: e.target.value
+    })
+  }
+  handleSectionChange(e) {
+    this.setState({
+      sections: e.target.value
+    })
+  }
+  // handleClassChange(obj) {
+  //   var classes = this.state.classes;
+  //   classes.push(obj)
+  // }
+  handleProfessorChange(e) {
+    this.setState({
+      professorID: e.target.value
+    })
+  }
+  handleAnchorDescriptionChange(e) {
+    this.setState({
+      anchorDescription: e.target.value
+    })
+  }
   reload() {
     window.location.reload()
   }
 
   onAdd() {
-    ///api/courses/:userID/createCourse
+    ///api/courses/createCourse
     var self = this;
     var userID = localStorage.getItem('user_id');
     var token = localStorage.getItem('token');
-    var apiPath = 'api/courses/' + userID + '/createCourse';
+    var apiPath = 'api/courses/createCourse';
     var config = {
       headers: {
         'x-access-token': token,
@@ -161,17 +198,45 @@ class CoursesAdd extends Component {
     data.details = details;
     var duration = { startDate: self.state.startDate, endDate: self.state.endDate }
     data.duration = duration;
-    data = JSON.stringify(data)
-    console.log(data)
-    axios.post(apiPath, data, config)
-      .then(res => {
-        console.log(res.data);
-        this.reload();
-      })
-      .catch(err => {
-        console.log(err);
-        alert('Course Failed to Upload!')
-      })
+    data.graduating = self.state.graduating;
+    if("prof".localeCompare(self.state.profRole)==0){
+      data.professorID = userID;
+      data.sections = self.state.sections
+      data.role = 'prof';
+      console.log(data);
+      axios.post(apiPath, data, config)
+        .then(res => {
+          console.log(res.data);
+          this.reload();
+        })
+        .catch(err => {
+          console.log(err);
+          alert('Course Failed to Upload!')
+        })
+    }
+    else if("anchor".localeCompare(self.state.profRole)==0){
+      var classes = self.state.classes;
+      // self.state.classes is an array of objects
+      // Each object has 2 items - ProfessorID and Array of sections just like in Model
+      // [{professorID: value , sections:[.....]},{professorID:value, sections:[.....]}]
+      for(var i=0; i<classes.length; i++){
+        var classData = classes[i];
+        var body = data;
+        body.professorID = classData.professorID;
+        body.sections = classData.sections;
+        data.anchorDescription = self.state.anchorDescription;
+        data.role = "anchor"
+        axios.post(apiPath, data, config)
+        .then(res => {
+          console.log(res.data);
+          this.reload();
+        })
+        .catch(err => {
+          console.log(err);
+          alert('Course Failed to Upload!')
+        })
+      }
+    }
 
   }
   showForm() {
@@ -181,13 +246,60 @@ class CoursesAdd extends Component {
   }
   closeForm() {
     this.setState({
-      show: false
+      show: false,
+      profRole: ''
+    })
+  }
+  chooseProfRole() {
+    this.setState({
+      profRole: 'prof'
+    })
+  }
+  chooseAnchorRole() {
+    this.setState({
+      profRole: 'anchor'
     })
   }
 
-
   render() {
     let content;
+    const chooseRole = (
+      <div>
+        <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.chooseProfRole}>Professor</button>
+        <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.chooseAnchorRole}>Anchor</button>
+      </div>
+    )
+
+    const professorBoxes = (
+      <div className="form-group text-left">
+            <h6>Sections<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
+      </div>
+    )
+
+    const anchorBoxes = (
+      <div className="form-group text-left">
+            <h6>Sections<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
+            <h6>Professor<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Professor of Class" value={this.state.professorID} onChange={this.handleProfessorChange} />
+      </div>
+    )
+
+    const anchorDescription = (
+      <div className="form-group text-left">
+            <h6>Anchor Description</h6>
+            <textarea className="form-control" placeholder="Anchor Description" value={this.state.anchorDescription} onChange={this.handleAnchorDescriptionChange} />
+      </div>
+    )
+    
+    const description = (
+      <div className="form-group text-left">
+            <h6>Course Description</h6>
+            <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
+      </div>
+    )
+
     const click = (
       <div>
         <form>
@@ -200,13 +312,15 @@ class CoursesAdd extends Component {
             <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} required="true"/>
           </div>
           <div className="form-group text-left">
+            <h6>Graduating<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Graduating" value={this.state.graduating} onChange={this.handleGraduatingChange} required="true"/>
+          </div>
+          <div className="form-group text-left">
             <h6>Department<sup>*</sup></h6>
             <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} required="true"/>
           </div>
-          <div className="form-group text-left">
-            <h6>Course Description</h6>
-            <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
-          </div>
+          {this.state.profRole=='anchor'?  anchorBoxes : professorBoxes }
+          {this.state.profRole=='anchor'? anchorDescription: description }
           <div className="form-group text-left">
             <h6>Credits<sup>*</sup></h6>
             <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} required="true"/>
@@ -246,9 +360,10 @@ class CoursesAdd extends Component {
         <div className='col-sm-5'>
           <div className='card bg-light text-center'>
             <div className='card-body'>
-              {this.state.show ? click : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button>}
-              {this.state.show ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
-              {this.state.show ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
+              {this.state.profRole=='' ? this.state.show && this.state.profRole=='' ? chooseRole : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button>: null}
+              {this.state.show && this.state.profRole!='' ? click : null}
+              {this.state.show && this.state.profRole!='' ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
+              {this.state.show && this.state.profRole!='' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
 
             </div>
           </div>

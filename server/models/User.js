@@ -30,7 +30,13 @@ const UserSchema = new mongoose.Schema({
   },
   graduating: {
     type: String,
-    default: ""
+    default: "",
+    required: true
+  },
+  section: {
+    type: String,
+    default: "",
+    required: true
   },
   basicInfo: {
     // Contains mutable info

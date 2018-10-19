@@ -2,6 +2,7 @@ var Course = require('../../models/assignments/Course');
 var Assignment = require('../../models/assignments/Assignment');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
+const User = require('../../models/User');
 const File = require('../../models/Files');
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
@@ -20,7 +21,9 @@ module.exports = (app) => {
 
         var search = { isDeleted: false };
         if(req.role == 'student') search.students = req.user_id;
-        else if(req.role == 'prof') search.professors = req.user_id;
+        else if(req.role == 'prof') {
+            search['class.professor']=req.user_id;
+        }
 
         Course.find(search, (err, courses) => {
             if (err) {
@@ -30,7 +33,7 @@ module.exports = (app) => {
                 });
             }
             if (courses.length < 1) {
-                console.log(courses);
+                // console.log(courses);
                 return res.status(404).send({
                     success: false,
                     message: 'Error: No courses found for this user.'
@@ -148,14 +151,7 @@ module.exports = (app) => {
         })
     })
 
-    app.post('/api/courses/:userID/createCourse', requireRole('prof'), function (req, res) {
-        if (!req.params.userID) {
-            return res.status(400).send({
-                success: false,
-                message: "Error: userID not in parameters. Please try again."
-            });
-        }
-
+    app.post('/api/courses/createCourse', requireRole('prof'), function (req, res) {
         if (!req.body.name) {
             return res.status(400).send({
                 success: false,
@@ -177,6 +173,34 @@ module.exports = (app) => {
             });
         }
 
+        if (!req.body.professorID) {
+            return res.status(400).send({
+                success: false,
+                message: 'ProfessorID in Course required.'
+            })
+        }
+
+        if (!req.body.sections) {
+            return res.status(400).send({
+                success: false,
+                message: 'Section in Course required.'
+            })
+        }
+
+        if(!req.body.role) {
+            return res.status(400).send({
+                success: false,
+                message: 'Role of Professor in Course required.'
+            })
+        }
+
+        if(!req.body.graduating){
+            return res.status(400).send({
+                success: false,
+                message: 'Graduating year of students in Course required.'
+            })
+        }
+
         Course.find({
             code: req.body.code,
             isDeleted: false,
@@ -195,7 +219,6 @@ module.exports = (app) => {
             }
             // save the course
             const newCourse = new Course();
-
             newCourse.name = req.body.name;
             newCourse.code = req.body.code;
             newCourse.department = req.body.department;
@@ -205,22 +228,52 @@ module.exports = (app) => {
             newCourse.duration.endDate = req.body.endDate;
             newCourse.details.credits = req.body.credits;
             newCourse.details.hours = req.body.hours;
-            newCourse.professors.push(req.params.userID)
-            // console.log(newCourse)
-
-            newCourse.save((err, course) => {
+            newCourse.class.professor = req.body.professorID;
+            
+            var students = new Array();
+            var sections = req.body.sections.split(',');
+            User.find({
+                isDeleted: false,
+                section: {$in: sections}, 
+                graduating: req.body.graduating
+            }, function(err, users){
                 if (err) {
                     return res.status(500).send({
                         success: false,
                         message: "Error: Server error"
                     });
                 }
-                console.log(newCourse._id + " Added to DB")
-                return res.status(200).send({
-                    success: true,
-                    message: "New course created"
+                if (!users){
+                    return res.status(404).send({
+                        success: false,
+                        message: "Error: No users found in this section"
+                    })
+                }
+                users.forEach(user => {
+                    students.push(user._id);
                 })
-            })
+                newCourse.students = students;
+                newCourse.class.sections = sections;
+                if(req.body.role=='anchor'){
+                    if(req.body.anchorDescription){
+                        newCourse.anchorDescription = req.body.anchorDescription;
+                    }
+                }
+                console.log(newCourse);
+                newCourse.save((err, course) => {
+                    if (err) {
+                        return res.status(500).send({
+                            success: false,
+                            message: "Error: Server error, hello"
+                        });
+                    }
+                    console.log(course._id + " Course Added to DB")
+                    return res.status(200).send({
+                        success: true,
+                        message: "New course created"
+                    });
+                });
+            });
         })
     })
 
@@ -260,7 +313,7 @@ module.exports = (app) => {
         Course.find({
             _id: req.body.courseID,
             isDeleted: false,
-            professors: req.params.userID
+            'class.professor': req.params.userID
         }, function (err, courses) {
             if (err) {
                 return res.status(500).send({
