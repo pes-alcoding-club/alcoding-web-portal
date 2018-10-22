@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect, Link } from 'react-router-dom';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 
@@ -32,11 +33,12 @@ class SignupForm extends Component {
 				});
 				var data = response.data;
 				if (data.user.role != "admin") {
-					<Redirect to="/" />
+					self.props.history.push('/');
 				}
 			})
 			.catch(function (error) {
 				console.log(error);
+				self.props.history.push('/');
 			});
 	}
 
@@ -136,6 +138,7 @@ class SignupForm extends Component {
 	}
 
 	render() {
+		const updatedHandlesWtoken = "/api/contests/updatedHandles?token=" + localStorage.getItem('token');
 		if (this.state.isLoading)
 			return <ReactLoading type="bubbles" color="#000080" />;
 		else
@@ -155,7 +158,8 @@ class SignupForm extends Component {
 						<input type="file" className="btn btn-default form-control" ref={this.fileInput_contest} />
 						<br />
 						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitContenders}>Submit</button> &nbsp;
-					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button>
+					{/* <button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button> */}
+						<a href={updatedHandlesWtoken} className="btn btn-dark form-control col-2">Download</a>
 					</form>
 				</div>
 			);

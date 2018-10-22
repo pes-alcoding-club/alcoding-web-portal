@@ -2,7 +2,7 @@ const User = require('../../models/User');
 const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
-// var fileDB = require('../../middleware/fileStorage').fileDB;
+var path = require("path")
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
 var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
@@ -55,6 +55,53 @@ module.exports = (app) => {
 
     })
   })
+
+  app.get('/api/contests/updatedHandles', requireRole("admin"), function (req, res) {
+    var file = path.join(dir, "handles.json");
+
+    User.find({
+      isDeleted: false,
+    }, (err, users) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: "Error: Server error."
+        });
+      }
+      if (!users) {
+        return res.status(404).send({
+          success: false,
+          message: 'No users'
+        });
+      }
+      var userContenderDetails = {};
+      for (var user of users) {
+        let name = user.name.firstName + " " + user.name.lastName;
+        delete user.contender["$init"];
+        userContenderDetails[user.usn] = Object.assign({}, user.contender);
+        userContenderDetails[user.usn]["batch"] = user.batch;
+      }
+
+      let data = JSON.stringify(userContenderDetails, null, 2);
+      // fs.writeFileSync(file, data);
+      fs.writeFile(file, data, (err) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error."
+          });
+        }
+        return res.download(file, function (err) {
+          if (err) {
+            return res.status(404).send({
+              success: false,
+              message: "Error: File not found."
+            });
+          }
+        });
+      });
+    })
+  });
 
   app.get('/api/contests/globalRankList', function (req, res) {
     User.find({
