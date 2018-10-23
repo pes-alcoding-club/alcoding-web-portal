@@ -38,10 +38,11 @@ export default class ForgotPassword extends Component {
             .then(res => {
                 console.log(res);
                 alert(res.data.message);
+                this.setState({isLoading: false});
                 <Redirect to="/" />
             })
             .catch(err => {
-                alert("Unable to send email.")
+                alert("Unable to send email")
                 console.log(err);
                 // window.location.reload();
                 this.forceUpdate();

@@ -442,78 +442,18 @@ module.exports = (app) => {
           }
           console.log("JWT generated for forgot password.");
           var link = 'http://172.16.173.215/reset/' + token + '/' + user._id.toString();
-          fs.readFile(path.join(process.cwd(), 'server/mailTemplates/forgotPassword.txt'), 'utf8', function (err, data) {
-            if (err) {
-              return res.status(500).send({
-                success: false,
-                message: 'Error: Server error'
-              });
+          var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + "\n";
+          fs.appendFile("./server/sendEmail/emails.csv", writeData, function(err) {
+            if(err) {
+                return console.log(err);
             }
-            var body = data.toString().replace("{{username}}", user.name.firstName).replace("{{link}}", link);
-            var toemail = user.basicInfo.email;
-            var fromemail = config.email.split(':')[0];
-            var key = config.email.split(':')[1];
+            console.log("Email scheduled");
+        }); 
+        return res.status(200).send({
+          success: true,
+          message: 'Email sent'
+        });
 
-          //   let transporter = nodemailer.createTransport({
-          //     host: 'smtp.gmail.com',
-          //     port: 465,
-          //     secure: true,
-          //     auth: {
-          //         type: 'OAuth2',
-          //         clientId: '240430660505-1vpgjbm3p2231172bv5ne3bnvru18i4p.apps.googleusercontent.com',
-          //         clientSecret: 'KH7kLK3BCbyETxxV_c_lg8TY'
-          //     }
-          //   });
-          
-          // transporter.sendMail({
-          //     from: fromemail,
-          //     to: toemail,
-          //     subject: '[The Alcoding Club] Password Reset',
-          //     text: body,
-          //     auth: {
-          //         user: 'alcodingofficial@gmail.com',
-          //         refreshToken: '1/2YL4hHrE5kPrxJF_Wgt4ZBm7icAwJ9ilu1Z67IfhE9w',
-          //         expires: 1484314697598
-          //     }
-          // });
-              var transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: '587',
-                secure: false,
-                auth: {
-                  user: fromemail,
-                  pass: key
-                },
-                connectionTimeout: 3000,
-                tls: {
-                  rejectUnauthorized: false
-              }
-              });
-  
-              var mailOptions = {
-                from: fromemail,
-                to: toemail,
-                subject: '[The Alcoding Club] Password Reset',
-                text: body
-              };
-  
-              transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                  console.log(error);
-                  return res.status(500).send({
-                    success: false,
-                    message: "Error: Server error"
-                  });
-                } else {
-                  console.log('Email for password reset sent: ' + info.response);
-                  return res.status(200).send({
-                    success: true,
-                    message: "Email sent to " + toemail
-                  })
-                }
-              });
-            
-          });
         });
       });
     })
