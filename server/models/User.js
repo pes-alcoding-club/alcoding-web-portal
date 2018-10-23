@@ -28,6 +28,16 @@ const UserSchema = new mongoose.Schema({
       default: ""
     }
   },
+  batch: {
+    type: String,
+    // required: true,
+    default: ""
+  },
+  // section: {
+  //   type: String,
+  //   // required: true,
+  //   default: ""
+  // },
   basicInfo: {
     // Contains mutable info
     email: {

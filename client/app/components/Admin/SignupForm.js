@@ -1,14 +1,45 @@
 import React, { Component } from 'react';
+import { Redirect, Link } from 'react-router-dom';
 import axios from 'axios';
+import ReactLoading from 'react-loading';
 
 class SignupForm extends Component {
 	constructor() {
 		super();
+		this.state = {
+			isLoading: true
+		}
 		this.handleSubmitStudents = this.handleSubmitStudents.bind(this);
 		this.handleSubmitContenders = this.handleSubmitContenders.bind(this);
 		this.handleDownload = this.handleDownload.bind(this);
 		this.fileInput = React.createRef();
 		this.fileInput_contest = React.createRef();
+	}
+
+	componentDidMount() {
+		var token = localStorage.getItem('token');
+		var userID = localStorage.getItem('user_id');
+		var self = this;
+		var apiPath = '/api/account/' + userID + '/details'
+		axios.get(apiPath, {
+			headers: {
+				'x-access-token': token,
+				'Content-Type': 'application/json'
+			}
+		})
+			.then(function (response) {
+				self.setState({
+					isLoading: false
+				});
+				var data = response.data;
+				if (data.user.role != "admin") {
+					self.props.history.push('/');
+				}
+			})
+			.catch(function (error) {
+				console.log(error);
+				self.props.history.push('/');
+			});
 	}
 
 	handleSubmitStudents(event) {
@@ -41,7 +72,7 @@ class SignupForm extends Component {
 
 					axios.post(signUpUrl, body, configSignup)
 						.then(function (response) {
-							console.log(response.data);
+							// console.log(response.data);
 						})
 						.catch(function (err) {
 							console.log(err);
@@ -98,7 +129,7 @@ class SignupForm extends Component {
 		if (fileObj) {
 			reader.readAsText(fileObj, "UTF-8");
 		}
-    else { console.log('Please Upload a file!'); }
+		else { console.log('Please Upload a file!..'); }
 	}
 
 	handleDownload(event) {
@@ -107,26 +138,31 @@ class SignupForm extends Component {
 	}
 
 	render() {
-		return (
-			<div className='container-fluid'>
-				<h3>Upload Student Details: </h3>
-				<form id="formObject">
-					<span>Please upload a .csv file</span>
-					<input type="file" className="btn btn-default form-control" ref={this.fileInput} />
+		const updatedHandlesWtoken = "/api/contests/updatedHandles?token=" + localStorage.getItem('token');
+		if (this.state.isLoading)
+			return <ReactLoading type="bubbles" color="#000080" />;
+		else
+			return (
+				<div className='container-fluid'>
+					<h3>Upload Student Details: </h3>
+					<form id="formObject">
+						<span>Please upload a .csv file</span>
+						<input type="file" className="btn btn-default form-control" ref={this.fileInput} />
+						<br />
+						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitStudents}>Submit</button>
+					</form>
 					<br />
-					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitStudents}>Submit</button>
-				</form>
-				<br />
-				<h3>Upload/Download Contender Details: </h3>
-				<form id="formObject">
-					<span>Please upload a .json file</span>
-					<input type="file" className="btn btn-default form-control" ref={this.fileInput_contest} />
-					<br />
-					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitContenders}>Submit</button> &nbsp;
-					<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button>
-				</form>
-			</div>
-		);
+					<h3>Upload/Download Contender Details: </h3>
+					<form id="formObject">
+						<span>Please upload a .json file</span>
+						<input type="file" className="btn btn-default form-control" ref={this.fileInput_contest} />
+						<br />
+						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitContenders}>Submit</button> &nbsp;
+					{/* <button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button> */}
+						<a href={updatedHandlesWtoken} className="btn btn-dark form-control col-2">Download</a>
+					</form>
+				</div>
+			);
 	}
 }
 
