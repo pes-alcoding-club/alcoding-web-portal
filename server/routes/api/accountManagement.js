@@ -441,7 +441,7 @@ module.exports = (app) => {
             });
           }
           console.log("JWT generated for forgot password.");
-          var link = 'http://172.16.173.215/reset/' + token + '/' + user._id.toString();
+          var link = config.host_url + 'reset/' + token + '/' + user._id.toString();
           var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + "\n";
           fs.appendFile("./server/sendEmail/emails.csv", writeData, function(err) {
             if(err) {

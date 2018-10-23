@@ -4,4 +4,5 @@ module.exports = {
     db: 'mongodb://username:password@url:port/db',
     db_dev: 'mongodb://url:port/db',
     email: 'JohnDoe@example.com:key',
+    host_url: 'http://domainName.com/'
   };
