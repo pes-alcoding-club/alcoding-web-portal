@@ -162,14 +162,19 @@ module.exports = (app) => {
       }
       else if (previousUsers.length > 0) {
         // Update
-        previousUsers[0].contender.handles.codechef = codechef;
-        previousUsers[0].contender.handles.codejam = codejam;
-        previousUsers[0].contender.handles.kickstart = kickstart;
-        previousUsers[0].contender.handles.spoj = spoj;
-        previousUsers[0].contender.handles.hackerRank = hackerRank;
-        previousUsers[0].contender.handles.codeforces = codeforces;
-        previousUsers[0].contender.handles.hackerEarth = hackerEarth;
+        var handles = previousUsers[0].contender.handles.toObject();
 
+        if (!handles || Array.isArray(handles))
+          handles = new Object();
+        if (codejam) handles.codejam = codejam;
+        if (kickstart) handles.kickstart = kickstart;
+        if (spoj) handles.spoj = spoj;
+        if (hackerRank) handles.hackerRank = hackerRank;
+        if (codeforces) handles.codeforces = codeforces;
+        if (hackerEarth) handles.hackerEarth = hackerEarth;
+        if (codechef) handles.codechef = codechef;
+
+        previousUsers[0].contender.handles = handles;
         previousUsers[0].save((err, user) => {
           if (err) {
             console.log(err);
