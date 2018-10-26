@@ -228,52 +228,68 @@ module.exports = (app) => {
             newCourse.duration.endDate = req.body.endDate;
             newCourse.details.credits = req.body.credits;
             newCourse.details.hours = req.body.hours;
-            newCourse.class.professor = req.body.professorID;
-            
-            var students = new Array();
-            var sections = req.body.sections.split(',');
             User.find({
-                isDeleted: false,
-                section: {$in: sections}, 
-                graduating: req.body.graduating
+                usn: req.body.professorID,
+                isDeleted: false
             }, function(err, users){
-                if (err) {
+                if(err){
                     return res.status(500).send({
                         success: false,
                         message: "Error: Server error"
                     });
                 }
-                if (!users){
+                if(!users){
                     return res.status(404).send({
                         success: false,
-                        message: "Error: No users found in this section"
-                    })
+                        message: "Error: No such user exists in DB"
+                    });
                 }
-                users.forEach(user => {
-                    students.push(user._id);
-                })
-                newCourse.students = students;
-                newCourse.class.sections = sections;
-                if(req.body.role=='anchor'){
-                    if(req.body.anchorDescription){
-                        newCourse.anchorDescription = req.body.anchorDescription;
-                    }
-                }
-                console.log(newCourse);
-                newCourse.save((err, course) => {
+                newCourse.class.professor = users[0]._id;
+                var students = new Array();
+                var sections = req.body.sections.split(',');
+                User.find({
+                    isDeleted: false,
+                    section: {$in: sections}, 
+                    graduating: req.body.graduating
+                }, function(err, users){
                     if (err) {
                         return res.status(500).send({
                             success: false,
-                            message: "Error: Server error, hello"
+                            message: "Error: Server error"
                         });
                     }
-                    console.log(course._id + " Course Added to DB")
-                    return res.status(200).send({
-                        success: true,
-                        message: "New course created"
+                    if (!users){
+                        return res.status(404).send({
+                            success: false,
+                            message: "Error: No users found in this section"
+                        })
+                    }
+                    users.forEach(user => {
+                        students.push(user._id);
+                    })
+                    newCourse.students = students;
+                    newCourse.class.sections = sections;
+                    if(req.body.role=='anchor'){
+                        if(req.body.anchorDescription){
+                            newCourse.anchorDescription = req.body.anchorDescription;
+                        }
+                    }
+                    console.log(newCourse);
+                    newCourse.save((err, course) => {
+                        if (err) {
+                            return res.status(500).send({
+                                success: false,
+                                message: "Error: Server error, hello"
+                            });
+                        }
+                        console.log(course._id + " Course Added to DB")
+                        return res.status(200).send({
+                            success: true,
+                            message: "New course created"
+                        });
                     });
                 });
-            });
+            })
         })
     })
 

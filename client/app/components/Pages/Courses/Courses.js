@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import CourseCard from '../Courses/CourseCard';
+import AddProfessor from './AddProfessor';
 
 class CoursesAdd extends Component {
   constructor(props) {
@@ -157,14 +158,18 @@ class CoursesAdd extends Component {
       sections: e.target.value
     })
   }
-  // handleClassChange(obj) {
-  //   var classes = this.state.classes;
-  //   classes.push(obj)
-  // }
+  handleClassChange(obj) {
+    var classes = this.state.classes;
+    classes.push(obj)
+    this.setState({
+      classes: classes
+    })
+  }
   handleProfessorChange(e) {
     this.setState({
       professorID: e.target.value
     })
+    // this.handleClassChange({professorID: this.state.professorID, sections: this.state.sections})
   }
   handleAnchorDescriptionChange(e) {
     this.setState({
@@ -200,7 +205,7 @@ class CoursesAdd extends Component {
     data.duration = duration;
     data.graduating = self.state.graduating;
     if("prof".localeCompare(self.state.profRole)==0){
-      data.professorID = userID;
+      data.professorID = self.state.professorID;
       data.sections = self.state.sections
       data.role = 'prof';
       console.log(data);
@@ -261,6 +266,7 @@ class CoursesAdd extends Component {
     })
   }
 
+
   render() {
     let content;
     const chooseRole = (
@@ -274,15 +280,30 @@ class CoursesAdd extends Component {
       <div className="form-group text-left">
             <h6>Sections<sup>*</sup></h6>
             <input type="text" className="form-control" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
+            <h6>Professor<sup>*</sup></h6>
+            <input type="text" className="form-control" placeholder="Professor of Class" value={this.state.professorID} onChange={this.handleProfessorChange} />
       </div>
     )
 
     const anchorBoxes = (
-      <div className="form-group text-left">
-            <h6>Sections<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
-            <h6>Professor<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Professor of Class" value={this.state.professorID} onChange={this.handleProfessorChange} />
+      <div>
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Professors</button>
+            <div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                  <h4 class="modal-title">Add Professors</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <AddProfessor/>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
       </div>
     )
 
