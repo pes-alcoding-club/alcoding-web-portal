@@ -3,6 +3,7 @@ var Assignment = require('../../models/assignments/Assignment');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
 const User = require('../../models/User');
+const Group = require('../../models/Group')
 const File = require('../../models/Files');
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
@@ -33,7 +34,6 @@ module.exports = (app) => {
                 });
             }
             if (courses.length < 1) {
-                // console.log(courses);
                 return res.status(404).send({
                     success: false,
                     message: 'Error: No courses found for this user.'
@@ -151,7 +151,8 @@ module.exports = (app) => {
         })
     })
 
-    app.post('/api/courses/createCourse', requireRole('prof'), function (req, res) {
+    // Endpoint for creating a new course as a professor or anchor
+    app.post('/api/assignments/createCourse', requireRole('prof'), function (req, res) {
         if (!req.body.name) {
             return res.status(400).send({
                 success: false,
@@ -245,29 +246,30 @@ module.exports = (app) => {
                     });
                 }
                 newCourse.class.professor = users[0]._id;
-                var students = new Array();
+                newCourse.students = new Array();
                 var sections = req.body.sections.split(',');
-                User.find({
+                Group.find({
                     isDeleted: false,
-                    section: {$in: sections}, 
+                    name: {$in: sections}, 
                     graduating: req.body.graduating
-                }, function(err, users){
+                }, function(err, groups){
                     if (err) {
                         return res.status(500).send({
                             success: false,
                             message: "Error: Server error"
                         });
                     }
-                    if (!users){
+                    if (!groups){
                         return res.status(404).send({
                             success: false,
-                            message: "Error: No users found in this section"
+                            message: "Error: No such user group found"
                         })
                     }
-                    users.forEach(user => {
-                        students.push(user._id);
+                    groups.forEach(group => {
+                        group.students.forEach( student => {
+                            newCourse.students.push(student)
+                        })
                     })
-                    newCourse.students = students;
                     newCourse.class.sections = sections;
                     if(req.body.role=='anchor'){
                         if(req.body.anchorDescription){
@@ -387,6 +389,45 @@ module.exports = (app) => {
         });
     })
 
+    app.delete('/api/assignemnts/:userID/:courseID/delete', requireRole('prof'), function(req,res){
+        if(!req.params.courseID){
+            return res.status(400).send({
+                success: false,
+                message: "Error: courseID not in parameters. Please try again."
+            });
+        }
+
+        if(!req.params.userID){
+            return res.status(400).send({
+                success: false,
+                message: "Error: userID not in parameters. Please try again."
+            });
+        }
+
+        Course.findOneAndDelete({
+            _id: req.params.courseID,
+            "class.professor": req.params.userID
+        }, function(err, course){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(!course){
+                return res.status(404).send({
+                    success: false,
+                    message: "Error: Course not found"
+                });
+            }
+            return res.status(200).send({
+                success: true,
+                message: "Course "+course._id+" successfully deleted"
+            })
+        })
+    })
+
+    // Upload Assignment
     app.all('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
