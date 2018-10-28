@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import CourseCard from '../Courses/CourseCard';
-import AddProfessor from './AddProfessor';
+import AnchorForm from './AnchorForm';
 
 class CoursesAdd extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class CoursesAdd extends Component {
       sections: '',
       graduating: '',
       anchorDescription: '',
-      show: false
+      show: false,
     };
     this.onAdd = this.onAdd.bind(this);
     this.showForm = this.showForm.bind(this);
@@ -56,7 +56,7 @@ class CoursesAdd extends Component {
     var self = this;
     var userID = localStorage.getItem('user_id');
     var token = localStorage.getItem('token')
-    
+
     var apiPath = '/api/account/' + userID + '/details'
     axios.get(apiPath, {
       headers: {
@@ -181,11 +181,11 @@ class CoursesAdd extends Component {
   }
 
   onAdd() {
-    ///api/assignments/createCourse
+    ///api/courses/createCourse
     var self = this;
     var userID = localStorage.getItem('user_id');
     var token = localStorage.getItem('token');
-    var apiPath = 'api/assignments/createCourse';
+    var apiPath = 'api/courses/createCourse';
     var config = {
       headers: {
         'x-access-token': token,
@@ -204,7 +204,7 @@ class CoursesAdd extends Component {
     var duration = { startDate: self.state.startDate, endDate: self.state.endDate }
     data.duration = duration;
     data.graduating = self.state.graduating;
-    if("prof".localeCompare(self.state.profRole)==0){
+    if ("prof".localeCompare(self.state.profRole) == 0) {
       data.professorID = self.state.professorID;
       data.sections = self.state.sections
       data.role = 'prof';
@@ -219,28 +219,28 @@ class CoursesAdd extends Component {
           alert('Course Failed to Upload!')
         })
     }
-    else if("anchor".localeCompare(self.state.profRole)==0){
-      var classes = self.state.classes;
-      // self.state.classes is an array of objects
-      // Each object has 2 items - ProfessorID and Array of sections just like in Model
-      // [{professorID: value , sections:[.....]},{professorID:value, sections:[.....]}]
-      for(var i=0; i<classes.length; i++){
-        var classData = classes[i];
-        var body = data;
-        body.professorID = classData.professorID;
-        body.sections = classData.sections;
-        data.anchorDescription = self.state.anchorDescription;
-        data.role = "anchor"
-        axios.post(apiPath, data, config)
-        .then(res => {
-          console.log(res.data);
-          this.reload();
-        })
-        .catch(err => {
-          console.log(err);
-          alert('Course Failed to Upload!')
-        })
-      }
+    else if ("anchor".localeCompare(self.state.profRole) == 0) {
+      // var classes = self.state.classes;
+      // // self.state.classes is an array of objects
+      // // Each object has 2 items - ProfessorID and Array of sections just like in Model
+      // // [{professorID: value , sections:[.....]},{professorID:value, sections:[.....]}]
+      // for (var i = 0; i < classes.length; i++) {
+      //   var classData = classes[i];
+      //   var body = data;
+      //   body.professorID = classData.professorID;
+      //   body.sections = classData.sections;
+      //   data.anchorDescription = self.state.anchorDescription;
+      //   data.role = "anchor"
+      //   axios.post(apiPath, data, config)
+      //     .then(res => {
+      //       console.log(res.data);
+      //       this.reload();
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       alert('Course Failed to Upload!')
+      //     })
+      // }
     }
 
   }
@@ -278,46 +278,30 @@ class CoursesAdd extends Component {
 
     const professorBoxes = (
       <div className="form-group text-left">
-            <h6>Sections<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
-            <h6>Professor<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Professor of Class" value={this.state.professorID} onChange={this.handleProfessorChange} />
+        <h6>Sections<sup>*</sup></h6>
+        <input type="text" className="form-control mb-3" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
+        <h6>Professor<sup>*</sup></h6>
+        <input type="text" className="form-control" placeholder="Professor of Class" value={this.state.professorID} onChange={this.handleProfessorChange} />
       </div>
     )
 
     const anchorBoxes = (
       <div>
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Professors</button>
-            <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                  <h4 class="modal-title">Add Professors</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                    <AddProfessor/>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <AnchorForm name={this.state.name} code={this.state.code} department={this.state.department} description={this.state.description} resourcesUrl={this.state.resourcesUrl} credits={this.state.credits} hours={this.state.hours} isCore={this.state.isCore} startDate={this.state.startDate} endDate={this.state.endDate} graduating={this.state.graduating} professorID={this.state.professorID} anchorDescription={this.state.anchorDescription}/>
       </div>
     )
 
     const anchorDescription = (
       <div className="form-group text-left">
-            <h6>Anchor Description</h6>
-            <textarea className="form-control" placeholder="Anchor Description" value={this.state.anchorDescription} onChange={this.handleAnchorDescriptionChange} />
+        <h6>Anchor Description</h6>
+        <textarea className="form-control" placeholder="Anchor Description" value={this.state.anchorDescription} onChange={this.handleAnchorDescriptionChange} />
       </div>
     )
-    
+
     const description = (
       <div className="form-group text-left">
-            <h6>Course Description</h6>
-            <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
+        <h6>Course Description</h6>
+        <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
       </div>
     )
 
@@ -326,32 +310,36 @@ class CoursesAdd extends Component {
         <form>
           <div className="form-group text-left">
             <h6>Course Name<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Name" value={this.state.name} onChange={this.handleNameChange} required="true"/>
+            <input type="text" className="form-control" placeholder="Name" value={this.state.name} onChange={this.handleNameChange} required="true" />
           </div>
           <div className="form-group text-left">
             <h6>Code<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} required="true"/>
+            <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} required="true" />
           </div>
           <div className="form-group text-left">
             <h6>Graduating<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Graduating" value={this.state.graduating} onChange={this.handleGraduatingChange} required="true"/>
+            <input type="text" className="form-control" placeholder="Graduating" value={this.state.graduating} onChange={this.handleGraduatingChange} required="true" />
           </div>
           <div className="form-group text-left">
             <h6>Department<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} required="true"/>
+            <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} required="true" />
           </div>
-          {this.state.profRole=='anchor'?  anchorBoxes : professorBoxes }
-          {this.state.profRole=='anchor'? anchorDescription: description }
+          <div className="form-group text-left">
+            <div>
+              {this.state.profRole == 'anchor' ? null : professorBoxes}
+              {this.state.profRole == 'anchor' ? anchorDescription : description}
+            </div>
+          </div>
           <div className="form-group text-left">
             <h6>Credits<sup>*</sup></h6>
-            <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} required="true"/>
+            <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} required="true" />
           </div>
           <div className="form-group text-left">
             <h6>Duration</h6>
             <label>Start Date<sup>*</sup></label>
-            <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} required="true"/>
+            <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} required="true" />
             <label>End Date<sup>*</sup></label>
-            <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} required="true"/>
+            <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} required="true" />
             <label>Number of Hours</label>
             <input type="number" className="form-control" placeholder="Hours" value={this.state.hours} onChange={this.handleHoursChange} />
           </div>
@@ -362,6 +350,8 @@ class CoursesAdd extends Component {
 
 
         </form>
+        {this.state.profRole == 'anchor' ? anchorBoxes : null}
+        
       </div>
     )
 
@@ -381,10 +371,10 @@ class CoursesAdd extends Component {
         <div className='col-sm-5'>
           <div className='card bg-light text-center'>
             <div className='card-body'>
-              {this.state.profRole=='' ? this.state.show && this.state.profRole=='' ? chooseRole : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button>: null}
-              {this.state.show && this.state.profRole!='' ? click : null}
-              {this.state.show && this.state.profRole!='' ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
-              {this.state.show && this.state.profRole!='' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
+              {this.state.profRole == '' ? this.state.show && this.state.profRole == '' ? chooseRole : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button> : null}
+              {this.state.show && this.state.profRole != '' ? click : null}
+              {this.state.show && this.state.profRole != '' ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
+              {this.state.show && this.state.profRole != '' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
 
             </div>
           </div>
