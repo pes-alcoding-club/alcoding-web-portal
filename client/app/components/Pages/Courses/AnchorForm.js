@@ -11,7 +11,7 @@ class AnchorForm extends React.Component {
         this.addProf = this.addProf.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    componentDidMount(){
+    componentDidMount() {
 
     }
     handleChange(e) {
@@ -30,14 +30,14 @@ class AnchorForm extends React.Component {
             values: [...prevState.values, { profID: "", sections: "" }],
         }));
     }
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault()
 
         console.log(this.state.values);
         var self = this;
         var userID = localStorage.getItem('user_id');
         var token = localStorage.getItem('token');
-        var apiPath = 'api/courses/createCourse';
+        var apiPath = 'api/assignments/createCourse';
         var config = {
             headers: {
                 'x-access-token': token,
@@ -66,17 +66,21 @@ class AnchorForm extends React.Component {
             var body = data;
             body.professorID = classData.profID;
             body.sections = classData.sections;
-            data.anchorDescription = self.props.anchorDescription;
-            data.role = "anchor"
-            axios.post(apiPath, data, config)
-                .then(res => {
-                    console.log(res.data);
-                    this.reload();
-                })
-                .catch(err => {
-                    console.log(err);
-                    alert('Course Failed to Upload!')
-                })
+            body.anchorDescription = self.props.anchorDescription;
+            body.role = "anchor"
+            console.log(body)
+            try {
+                var response = await axios.post(apiPath, data, config);
+                console.log(response);
+                window.location.reload();
+                // .then(res => {
+                //     console.log(res.data);
+                //     // this.reload();
+                // })
+            } catch (err) {
+                console.log(err);
+                alert('Course Failed to Upload!')
+            }
         }
     }
     render() {

@@ -185,7 +185,7 @@ class CoursesAdd extends Component {
     var self = this;
     var userID = localStorage.getItem('user_id');
     var token = localStorage.getItem('token');
-    var apiPath = 'api/courses/createCourse';
+    var apiPath = 'api/assignments/createCourse';
     var config = {
       headers: {
         'x-access-token': token,
