@@ -119,11 +119,9 @@ class AnchorForm extends React.Component {
                     })
                 }
                 <button className="btn btn-dark btn-sm mt-2 mb-2 mr-3" onClick={this.addProf}>Add new professor</button>
+                <button type="submit" className="btn btn-dark btn-sm mt-2 mb-2" onClick={this.handleSubmit} value="Submit" >Submit</button>
                 <hr />
-                <button type="submit" className="btn btn-dark mt-2 mb-2" onClick={this.handleSubmit} value="Submit" >Submit</button>
-
             </form>
-            
         )
     }
 }

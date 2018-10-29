@@ -373,7 +373,7 @@ class CoursesAdd extends Component {
             <div className='card-body'>
               {this.state.profRole == '' ? this.state.show && this.state.profRole == '' ? chooseRole : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button> : null}
               {this.state.show && this.state.profRole != '' ? click : null}
-              {this.state.show && this.state.profRole == 'prof' ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
+              {this.state.show && this.state.profRole != '' ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
               {this.state.show && this.state.profRole != '' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
 
             </div>
