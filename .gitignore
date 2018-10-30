@@ -26,5 +26,9 @@ $RECYCLE.BIN/
 # node files
 package-lock.json
 
-#ssl files
+# ssl files
 server/sslcert/
+
+# email extra files
+server/sendEmail/__pycache__/
+server/sendEmail/emails.csv
