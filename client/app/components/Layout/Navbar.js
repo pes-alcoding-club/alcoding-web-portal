@@ -92,7 +92,7 @@ class Navbar extends Component {
     this.setState({
       loginShow: false
     });
-    this.reload(); 
+    this.reload();
     // this.forceUpdate();   
   }
 
@@ -111,6 +111,11 @@ class Navbar extends Component {
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
+            <Link className="nav-link" to="/contests" onClick={this.reload}>
+              Contests
+            </Link>
+          </li>
+          <li className="nav-item">
             <Link className="nav-link" to="/courses" onClick={this.reload}>
               Courses
             </Link>
@@ -118,11 +123,6 @@ class Navbar extends Component {
           <li className="nav-item">
             <Link className="nav-link" to="/assignments" onClick={this.reload}>
               Assignments
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/contests" onClick={this.reload}>
-              Contests
             </Link>
           </li>
         </ul>
