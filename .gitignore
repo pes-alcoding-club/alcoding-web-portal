@@ -25,3 +25,6 @@ $RECYCLE.BIN/
 
 # node files
 package-lock.json
+
+#ssl files
+server/sslcert/
