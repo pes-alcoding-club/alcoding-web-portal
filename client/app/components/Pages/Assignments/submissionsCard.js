@@ -47,7 +47,7 @@ class SubmissionsCard extends Component {
 
     render() {
         let content;
-        const downloadSubmission = "/api/assignments/" + this.props.fileID + '/download?token=' + localStorage.getItem('token');
+        const downloadSubmission = "/api/assignments/" + this.props.fileID + '/'+this.props.user+'/download?token=' + localStorage.getItem('token');
 
         const Content = (
             <div id="SubmissionsCard">
@@ -56,8 +56,8 @@ class SubmissionsCard extends Component {
                     <div className="card-body text-left">
                         Name : {this.state.name}<br />
                         USN : {this.state.usn} <br /><br />
-                        <button className="btn btn-dark" onClick={() => window.open("/download/" + this.props.fileID)}> Download Submission </button>
-                        {/* <a href={downloadSubmission} className="btn btn-dark">Download</a> */}
+                        {/* <button className="btn btn-dark" onClick={() => window.open("/download/" + this.props.fileID)}> Download Submission </button> */}
+                        <a href={downloadSubmission} className="btn btn-dark">Download</a>
                     </div>
 
                 </div>

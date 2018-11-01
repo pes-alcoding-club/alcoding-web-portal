@@ -11,7 +11,7 @@ class downloadFile extends Component {
 
         // console.log(params.fileID)
         var token = localStorage.getItem('token')
-        axios.get(`/api/assignments/${params.fileID}/download`, {
+        axios.get(`/api/assignments/${params.fileID}/${params.userID}/download`, {
             headers: {
                 'x-access-token': token,
             }
