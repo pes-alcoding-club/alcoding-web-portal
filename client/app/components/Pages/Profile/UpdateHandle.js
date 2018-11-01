@@ -66,6 +66,12 @@ class updateHandle extends React.Component {
             .catch(function (error) {
                 // TODO: Try again after sometime? 
                 console.log('error is ', error);
+                if (error.response) {
+                    if (error.response.status) {
+                        alert("Session timed out.");
+                        window.location.href = '/';
+                    }
+                }
             });
     }
 

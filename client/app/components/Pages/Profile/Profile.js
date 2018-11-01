@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
@@ -40,7 +40,7 @@ class Profile extends React.Component {
             .then(function (response) {
                 if (!response.data.success) {
                     // TODO: throw appropriate error and redirect
-                    console.log("Error: " + response.data);
+                    console.log("Error:" + response.data);
                     return;
                 }
                 var data = response.data;
@@ -55,6 +55,12 @@ class Profile extends React.Component {
             .catch(function (error) {
                 // TODO: Try again after sometime? 
                 console.log('error is ', error);
+                if (error.response) {
+                    if (error.response.status) {
+                        alert("Session timed out.");
+                        window.location.href = '/';
+                    }
+                }
             });
     }
 
@@ -122,7 +128,7 @@ class Profile extends React.Component {
                         <div>
                             <StaticBox fieldName="Name" val={this.state.name} />
                             <StaticBox fieldName="USN" val={this.state.usn} />
-                            <p/>
+                            <p />
                             <Link to="/profile/updateHandle">Update contest handles</Link>
                             <PasswordBox />
 

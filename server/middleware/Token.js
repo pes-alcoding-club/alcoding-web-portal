@@ -31,7 +31,7 @@ var verifyToken = function (req, res, next) {
           }
         });
       }
-      return res.status(401).send({ auth: false, err });
+      return res.status(401).send({ sucess: false, message:err });
     }
     // save to request for use in other routes
     req.user_id = decoded.user_id;

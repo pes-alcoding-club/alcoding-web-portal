@@ -75,7 +75,13 @@ class CoursesAdd extends Component {
         });
       })
       .catch(function (error) {
-        console.log('Error2: ', error);
+        console.log(error);
+        if (error.response) {
+          if (error.response.status) {
+            alert("Session timed out.");
+            window.location.href = '/';
+          }
+        }
       });
     ///api/assignments/:userID/courses
     var apiPath = 'api/assignments/' + userID + '/courses'
@@ -287,7 +293,7 @@ class CoursesAdd extends Component {
 
     const anchorBoxes = (
       <div>
-        <AnchorForm name={this.state.name} code={this.state.code} department={this.state.department} description={this.state.description} resourcesUrl={this.state.resourcesUrl} credits={this.state.credits} hours={this.state.hours} isCore={this.state.isCore} startDate={this.state.startDate} endDate={this.state.endDate} graduating={this.state.graduating} professorID={this.state.professorID} anchorDescription={this.state.anchorDescription}/>
+        <AnchorForm name={this.state.name} code={this.state.code} department={this.state.department} description={this.state.description} resourcesUrl={this.state.resourcesUrl} credits={this.state.credits} hours={this.state.hours} isCore={this.state.isCore} startDate={this.state.startDate} endDate={this.state.endDate} graduating={this.state.graduating} professorID={this.state.professorID} anchorDescription={this.state.anchorDescription} />
       </div>
     )
 
@@ -351,7 +357,7 @@ class CoursesAdd extends Component {
 
         </form>
         {this.state.profRole == 'anchor' ? anchorBoxes : null}
-        
+
       </div>
     )
 

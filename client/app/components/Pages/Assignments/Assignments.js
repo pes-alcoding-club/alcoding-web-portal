@@ -15,7 +15,7 @@ class Assignments extends Component {
     var self = this;
     var token = localStorage.getItem('token');
     var userID = localStorage.getItem('user_id');
-    
+
     var apiPath = '/api/account/' + userID + '/details'
     axios.get(apiPath, {
       headers: {
@@ -35,7 +35,13 @@ class Assignments extends Component {
         });
       })
       .catch(function (error) {
-        console.log('Error2: ', error);
+        console.log(error);
+        if (error.response) {
+          if (error.response.status) {
+            alert("Session timed out.");
+            window.location.href = '/';
+          }
+        }
       });
     var apiPath = '/api/assignments/' + userID + '/courses'
     axios.get(apiPath, {
