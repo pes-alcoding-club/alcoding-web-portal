@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import AssignmentCard from './AssignmentCard';
+import ReactLoading from 'react-loading';
+
 class Assignments extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: true,
       courses: [],
       role: "student",
       assignments: []
@@ -58,10 +61,11 @@ class Assignments extends Component {
         }
         var data = response.data;
         // console.log(data);
+        self.setState({ isLoading: false });
         self.setState({
-          courses: data.courses.courses
+          courses: data.courses
         });
-        var courses = data.courses.courses;
+        var courses = data.courses;
         for (var i = 0; i < courses.length; i++) {
           var apiPath = '/api/assignments/' + courses[i]._id + '/' + userID + '/new';
           axios.get(apiPath, {
@@ -91,6 +95,10 @@ class Assignments extends Component {
     const profContent = (
       <div>
         {
+          this.state.assignments.length < 1 &&
+          <div className="lead text-center mb-2">Sorry, no assignments found.</div>
+        }
+        {
           this.state.assignments.map(function (each) {
             return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} assignmentID={each._id} submissions={each.submissions} role='prof' />
           })
@@ -100,6 +108,10 @@ class Assignments extends Component {
     );
     const studContent = (
       <div>
+        {
+          this.state.assignments.length < 1 &&
+          <div className="lead text-center mb-2">Sorry, no assignments found.</div>
+        }
         {
           this.state.assignments.map(function (each) {
             return <AssignmentCard key={each.uniqueID} uniqueID={each.uniqueID} name={each.name} details={each.details} type={each.type.toUpperCase()} maxMarks={each.maxMarks} resourceUrl={each.resourceUrl} assignmentID={each._id} submissions={each.submissions} role='student' />
@@ -114,10 +126,12 @@ class Assignments extends Component {
     else {
       content = studContent;
     }
-    return (
-      <div>{content}</div>
-
-    )
+    if (this.state.isLoading)
+      return <ReactLoading type="bubbles" color="#000080" />;
+    else
+      return (
+        <div>{content}</div>
+      );
   }
 }
 export default Assignments;

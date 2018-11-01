@@ -33,17 +33,17 @@ module.exports = (app) => {
                     message: "Error: Server error."
                 });
             }
-            if (courses.length < 1) {
-                return res.status(404).send({
-                    success: false,
-                    message: 'Error: No courses found for this user.'
-                });
-            }
+            // if (courses.length < 1) {
+            //     return res.status(404).send({
+            //         success: false,
+            //         message: 'Error: No courses found for this user.'
+            //     });
+            // }
 
             return res.status(200).send({
                 success: true,
                 message: "Details successfully retrieved.",
-                courses: { courses }
+                courses
             });
         });
     })
