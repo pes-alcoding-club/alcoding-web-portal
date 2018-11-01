@@ -120,12 +120,14 @@ class Profile extends React.Component {
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/' + userID + '/basicInfo'
-
-        var basicInfoUpdated = Object.assign({}, this.state.basicInfo)
+        var body = new Object();
+        body["phone"] = basicInfoCopy.phone; 
+        body["email"]= basicInfoCopy.email;
+        body["dob"]= basicInfoCopy.dob;
 
         axios.put(
             apiPath,
-            basicInfoUpdated,
+            body,
             {
                 headers: {
                     'x-access-token': token,
@@ -141,13 +143,17 @@ class Profile extends React.Component {
                 else {
                     // TODO: redirect to this page(profile)
                     console.log(response.data);
-                    alert('Details Updated!');
+                    ToastStore.success('Successfully updated!');
                 }
             })
             .catch(function (error) {
                 // TODO: Try again after sometime? 
                 console.log('error is ', error);
             });
+    }
+
+    changeEditingStatus(value) {
+        this.state.isEditing += value;
     }
 
     render() {
