@@ -10,7 +10,7 @@ var diskStorage = function (dir) {
         destination: function (req, file, cb) {
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir);
-            }            
+            }
             cb(null, dir);
         },
         filename: function (req, file, cb) {
@@ -38,7 +38,7 @@ var fileUpload = function (req, res, next) {
         }
         else {
             var uploadFile = new File();
-            
+
             uploadFile.originalname = req.file.originalname;
             uploadFile.encoding = req.file.encoding;
             uploadFile.mimetype = req.file.mimetype;
@@ -77,8 +77,8 @@ var fileUpload = function (req, res, next) {
     next();
 }
 
-var downloadFile = function(dir) {
-    return function(req,res,next){
+var downloadFile = function (dir) {
+    return function (req, res, next) {
         File.find({
             _id: req.params.fileID
         }, function (err, files) {
@@ -96,11 +96,19 @@ var downloadFile = function(dir) {
             }
             var file = files[0];
             var filePath = path.join(dir, file.originalname);
-            var fileName = file._id.toString()+'.'+file.originalname.split('.')[1];
+            var fileName = file._id.toString() + '.' + file.originalname.split('.')[1];
             fs.createReadStream(filePath).pipe(fs.createWriteStream(fileName));
-            fs.rename(fileName, path.join(path.join(homedir,'Downloads'), fileName), function(err){
-                if (err) throw err
-                console.log('Successfully downloaded file '+file._id);
+            // fs.rename(fileName, path.join(path.join(homedir,'Downloads'), fileName), function(err){
+            //     if (err) throw err
+            //     console.log('Successfully downloaded file '+file._id);
+            // });
+            return res.download(filePath, function (err) {
+                if (err) {
+                    return res.status(404).send({
+                        success: false,
+                        message: "Error: File not found."
+                    });
+                }
             });
         });
     }

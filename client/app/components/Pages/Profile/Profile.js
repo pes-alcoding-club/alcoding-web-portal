@@ -111,45 +111,6 @@ class Profile extends React.Component {
         this.state.isEditing += value;
     }
 
-    onConfirm() {
-        if (this.state.isEditing) {
-            alert("Please save changes before confirming.");
-            return;
-        }
-
-        var token = localStorage.getItem('token')
-        var userID = localStorage.getItem('user_id')
-        var apiPath = '/api/account/' + userID + '/basicInfo'
-
-        var basicInfoUpdated = Object.assign({}, this.state.basicInfo)
-
-        axios.put(
-            apiPath,
-            basicInfoUpdated,
-            {
-                headers: {
-                    'x-access-token': token,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(function (response) {
-                if (!response.data.success) {
-                    // TODO: throw appropriate error and redirect
-                    console.log("Error: " + response.data);
-                    return;
-                }
-                else {
-                    // TODO: redirect to this page(profile)
-                    console.log(response.data);
-                    alert('Details Updated!');
-                }
-            })
-            .catch(function (error) {
-                // TODO: Try again after sometime? 
-                console.log('error is ', error);
-            });
-    }
-
     render() {
         const { isAuthenticated, user } = this.props.auth;
         if (this.state.isLoading)
