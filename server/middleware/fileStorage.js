@@ -113,12 +113,14 @@ var downloadFile = function (dir) {
                 var file = files[0];
                 var filePath = path.join(dir, file.originalname)
                 var fileName = usn+'_'+file.originalname;
-                console.log(fileName)
-                fs.createReadStream(filePath).pipe(fs.createWriteStream(fileName));
-                fs.rename(fileName, path.join(path.join(homedir,'Downloads'), fileName), function(err){
-                    if (err) throw err
-                    console.log('Successfully downloaded file '+file._id);
-                });
+                return res.download(filePath, fileName, function (err) {
+                    if (err) {
+                      return res.status(404).send({
+                        success: false,
+                        message: "Error: File not found."
+                      });
+                    }
+                  });
             })
         });
     }
