@@ -22,6 +22,14 @@ $RECYCLE.BIN/
 .DS_Store
 .Spotlight-V100
 .Trashes
+.vscode/
 
 # node files
 package-lock.json
+
+# ssl files
+server/sslcert/
+
+# email extra files
+server/sendEmail/__pycache__/
+server/sendEmail/emails.csv

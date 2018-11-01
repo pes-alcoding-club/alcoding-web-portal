@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import axios from "axios";
 import { Link, Redirect } from 'react-router-dom';
+import ReactLoading from 'react-loading';
 
 export default class ForgotPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
             signInUsn: "",
             isLoading: false
         };
@@ -38,14 +40,18 @@ export default class ForgotPassword extends Component {
             .then(res => {
                 console.log(res);
                 alert(res.data.message);
-                this.setState({isLoading: false});
-                <Redirect to="/" />
+                this.setState({ isLoading: false });
+                window.location.href = '/';
             })
             .catch(err => {
-                alert("Unable to send email")
-                console.log(err);
-                // window.location.reload();
-                this.forceUpdate();
+                this.setState({ isLoading: false });
+                if (err.response) {
+                    if (err.response.status == 404) {
+                        alert("User not found.");
+                    }
+                }
+                else
+                    alert("Unable to send email. Please try again later.");
             })
 
     }
@@ -65,7 +71,7 @@ export default class ForgotPassword extends Component {
                     />
                 </div>
                 <div className="card-footer">
-                    {!this.state.isLoading ? <button className="btn btn-dark" onClick={this.sendEmail}>Send Email</button> : <p className="text-info">Loading, Please Wait.</p>}
+                    {!this.state.isLoading ? <button className="btn btn-dark" onClick={this.sendEmail}>Send Email</button> : <ReactLoading type="bubbles" color="#000080" />}
                 </div>
             </div>
         )

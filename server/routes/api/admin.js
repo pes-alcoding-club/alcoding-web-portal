@@ -1,5 +1,6 @@
 const User = require('../../models/User');
 const File = require('../../models/Files');
+const Group = require('../../models/Group')
 var requireRole = require('../../middleware/Token').requireRole;
 // var fileDB = require('../../middleware/fileStorage').fileDB;
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
@@ -58,7 +59,7 @@ module.exports = (app) => {
             if (lastName) { newUser.name.lastName = lastName; }
             if (email) { newUser.basicInfo.email = email; }
             newUser.password = newUser.generateHash(usn);
-        
+
             if (role) {
                 if (role == "admin") {
                     return res.status(403).send({
@@ -91,7 +92,7 @@ module.exports = (app) => {
                 message: "Error: File not recieved"
             });
         }
-        if(req.file){
+        if (req.file) {
             return res.status(200).send({
                 success: true,
                 message: "File uploaded and added to DB",
@@ -100,31 +101,148 @@ module.exports = (app) => {
         }
     });
 
-    app.post('/api/admin/delete', requireRole("admin"), function(req,res){
-        if(!req.body.usn){
+    app.delete('/api/admin/user', requireRole("admin"), function (req, res) {
+        if (!req.body.usn) {
             return res.status(400).send({
                 success: false,
                 message: "Error: usn not recieved"
             });
         }
-        User.findOneAndRemove({
-            usn:req.body.usn
-        }, function(err,user){
-            if(err){
+        User.findOneAndDelete({
+            usn: req.body.usn
+        }, function (err, user) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: 'Error: Server error'
                 });
             }
-            if(!user){
-                return res.status(400).send({
+            if (!user) {
+                return res.status(404).send({
                     success: false,
                     message: 'Error: User not found'
                 });
             }
             return res.status(200).send({
-                success:'true',
-                message:"User successfully deleted"
+                success: 'true',
+                message: "User " + user._id + " successfully deleted"
+            })
+        })
+    });
+
+    app.post('/api/admin/createGroup', requireRole('admin'), function (req, res) {
+        if (!req.body.name) {
+            return res.status(400).send({
+                success: false,
+                message: "Error: name not recieved"
+            });
+        }
+
+        if (!req.body.usn) {
+            return res.status(400).send({
+                success: false,
+                message: "Error: usn not recieved"
+            });
+        }
+
+        if (!req.body.graduating) {
+            return res.status(400).send({
+                success: false,
+                message: "Error: graduating year not recieved"
+            });
+        }
+
+        User.findOne({
+            usn: req.body.usn,
+            isDeleted: false
+        }, function (err, user) {
+            if (err) {
+                return res.status(500).send({
+                    success: false,
+                    message: 'Error: Server error'
+                });
+            }
+            if (!user) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'Error: User not found'
+                });
+            }
+
+            var userID = user._id;
+            Group.findOne({
+                name: req.body.name,
+                graduating: req.body.graduating
+            }, function (err, group) {
+                if (err) {
+                    return res.status(500).send({
+                        success: false,
+                        message: 'Error: Server error'
+                    });
+                }
+                if (!group) {
+                    var newGroup = new Group();
+                    newGroup.name = req.body.name;
+                    newGroup.graduating = req.body.graduating;
+                    newGroup.students = new Array();
+                    newGroup.students.push(userID);
+                    newGroup.save(function (err, group) {
+                        if (err) {
+                            return res.status(500).send({
+                                success: false,
+                                message: 'Error: Server error'
+                            });
+                        }
+                        console.log("Group " + group._id + " added");
+                        User.findOneAndUpdate({
+                            _id: userID
+                        }, {
+                                $push: { "groups": group._id }
+                            }, { new: true }, function (err, user) {
+                                if (err) {
+                                    return res.status(500).send({
+                                        success: false,
+                                        message: 'Error: Server error'
+                                    });
+                                }
+                                return res.status(200).send({
+                                    success: true,
+                                    message: "User added to Group " + group.name
+                                })
+                            })
+                    })
+                }
+                else {
+                    Group.findOneAndUpdate({
+                        _id: group._id,
+                        isDeleted: false
+                    }, {
+                            $push: { "students": userID }
+                        }, { new: true }, function (err, group) {
+                            if (err) {
+                                return res.status(500).send({
+                                    success: false,
+                                    message: 'Error: Server error'
+                                });
+                            }
+                            User.findOneAndUpdate({
+                                _id: userID
+                            }, {
+                                    $push: { "groups": group._id }
+                                }, { new: true }, function (err, user) {
+                                    if (err) {
+                                        return res.status(500).send({
+                                            success: false,
+                                            message: 'Error: Server error'
+                                        });
+                                    }
+                                    return res.status(200).send({
+                                        success: true,
+                                        message: "User added to Group " + group.name
+                                    })
+                                })
+                        })
+                }
             })
         })
     });

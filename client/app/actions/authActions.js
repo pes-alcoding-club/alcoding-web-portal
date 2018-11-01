@@ -20,7 +20,7 @@ export const loginUser = user => dispatch => {
 
         })
         .catch(err =>
-            alert('Invalid Login')     
+            alert('Invalid Login')
         );
 };
 
@@ -44,8 +44,8 @@ export const logoutUser = () => dispatch => {
     })
     console.log(userID + " logged out.");
     //save data into local storage
-    localStorage.removeItem('token', token);
-    localStorage.removeItem('user_id', userID);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
     dispatch(setCurrentUser({}))
 }
 
@@ -65,7 +65,17 @@ export const getName = () => dispatch => {
                 payload: res.data.user.name
             })
         })
-        .catch(err =>
-            console.log(err)
-        )
+        .catch((error) => {
+            // Error
+            if (error.response) {
+                console.log(error.response.status);
+                if (error.response.status == 401) {
+                    // import logoutUser from './authActions';
+                    console.log("User not authenticated");
+                    localStorage.clear();
+                    dispatch(setCurrentUser({}))
+                }
+            }
+            else console.log(error)
+        })
 }

@@ -25,6 +25,7 @@ class viewSubmissions extends Component {
             this.setState({
                 submissions: res.data.data.assignment.submissions
             })
+            console.log(this.state.submissions);
         })
         .catch(err => console.log(err))
     }

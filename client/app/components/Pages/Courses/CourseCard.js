@@ -22,15 +22,18 @@ class CourseCard extends Component {
         <div className="card bg-light mx-auto">
           <div className="card-title text-center"><h3><strong><i>{this.props.code}</i>: {this.props.name}</strong></h3></div>
           <div className="card-body text-left">
-            Description: {this.props.description}<br />
-            Resource URL: <a href={'//' + this.props.resourceUrl}>{this.props.resourceUrl}</a>
+            <b>Credits:</b> {this.props.credits}<br />
+            <b>Deparment:</b> {this.props.department}<br />
+            <b>Description:</b> {this.props.description}<br />
+            <b>Resource URL:</b> <a href={'//' + this.props.resourceUrl}>{this.props.resourceUrl}</a>
           </div>
           <div className="card-footer">
             <Link className='btn btn-dark mx-2' to={{
               pathname: '/courses/' + this.props.courseID,
               state: {
                 code: this.props.code,
-                name: this.props.name
+                name: this.props.name,
+                anchorDescription: this.props.anchorDescription
               }
             }}> View Course </Link>
           </div>
@@ -43,8 +46,10 @@ class CourseCard extends Component {
         <div className="card bg-light mx-auto">
           <div className="card-title text-center"><h3><strong><i>{this.props.code}</i>: {this.props.name}</strong></h3></div>
           <div className="card-body text-left">
-            Description: {this.props.description}<br />
-            Resource URL: <a href={'//' + this.props.resourceUrl}>{this.props.resourceUrl}</a>
+            <b>Credits:</b> {this.props.credits}<br />
+            <b>Deparment:</b> {this.props.department}<br />
+            <b>Description:</b> {this.props.description}<br />
+            <b>Resource URL:</b> <a href={'//' + this.props.resourceUrl}>{this.props.resourceUrl}</a>
           </div>
         </div>
         <br />

@@ -11,7 +11,7 @@ export default class viewAssignment extends Component {
     componentDidMount(){
         var token = localStorage.getItem('token');
         const { match: { params } } = this.props;
-        ///api/assignments/:assignmentID/details
+        // /api/assignments/:assignmentID/details
         axios.get(`/api/assignments/${params.assignmentID}/details`)
         .then(res=> {
             console.log(res);

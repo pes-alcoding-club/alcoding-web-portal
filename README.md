@@ -15,9 +15,7 @@ npm install
 ```
 
 
-## Running
-
-Make sure to add a `config.js` file in the `config` folder. See the example there for more details.
+## Instructions
 
 Production mode:
 
@@ -30,3 +28,7 @@ Development (Webpack dev server) mode:
 ```shell
 npm run start:dev
 ```
+
+### Note
+1. Make sure to add a `config.js` file in the `config` folder. See the `config.example.js` under `config/` directory for more details.
+2. Genrate and add ssl files in the `server/` directory under a folder named `sslcert`.
