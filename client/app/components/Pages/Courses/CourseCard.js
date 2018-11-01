@@ -9,7 +9,6 @@ class CourseCard extends Component {
     };
   }
   componentDidMount() {
-    console.log(this.props);
     this.setState({
       courseID: this.props.courseID
     })

@@ -16,7 +16,8 @@ class AssignmentAdd extends Component {
             endDate: '',
             assignment: {},
             assignments: [],
-            show: false
+            show: false.anchorDescription,
+            showDescription: true
         };
         this.onAdd = this.onAdd.bind(this);
         this.showForm = this.showForm.bind(this);
@@ -33,7 +34,12 @@ class AssignmentAdd extends Component {
     componentDidMount() {
         var self = this;
         const { match: { params } } = this.props;
-
+        console.log(this.props.anchorDescription);
+        if(this.props.anchorDescription == ""){
+            this.setState({
+                showDescription:false
+            });
+        }
         var token = localStorage.getItem('token')
         ///api/assignments/:courseID/assignments
         axios.get(`/api/assignments/${params.courseID}/assignments`, {
@@ -197,7 +203,7 @@ class AssignmentAdd extends Component {
                     <div className='col'>
 
                         <div className="display-4 text-center">{this.props.location.state.code}: {this.props.location.state.name}</div><br/>
-                        <div className="font-italic">Anchor Description: {this.props.location.state.anchorDescription}</div>
+                        {this.props.location.state.anchorDescription ? <div className="font-italic">Anchor Description: {this.props.location.state.anchorDescription}</div> : null}
 
                     </div>
                 </div>
