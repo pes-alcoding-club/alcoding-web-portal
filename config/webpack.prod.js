@@ -14,6 +14,8 @@ module.exports = merge(commonConfig, {
 
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
+      mangle: true, 
+      sourcemap: false, 
       compressor: {
         warnings: false,
         screw_ie8: true
