@@ -47,7 +47,7 @@ class SubmissionsCard extends Component {
 
     render() {
         let content;
-        const downloadSubmission = "/api/assignments/" + this.props.fileID + '/download?token=' + localStorage.getItem('token');
+        const downloadSubmission = "/api/assignments/" + this.props.fileID + '/'+this.props.user+'/download?token=' + localStorage.getItem('token');
 
         const Content = (
             <div id="SubmissionsCard">

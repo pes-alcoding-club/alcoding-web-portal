@@ -523,7 +523,7 @@ module.exports = (app) => {
         })
     })
 
-    app.get('/api/assignments/:fileID/download', requireRole('prof'), downloadFile(dir));
+    app.get('/api/assignments/:fileID/:userID/download', requireRole('prof'), downloadFile(dir));
 
     app.get('/api/assignments/:assignmentID/details', function(req,res){
         Assignment.find({
