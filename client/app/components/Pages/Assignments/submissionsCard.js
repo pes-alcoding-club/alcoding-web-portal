@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 class SubmissionsCard extends Component {
     constructor(props) {
         super(props);
-        this.state({
+        this.state = {
             name: "",
-            usn: ""
-        })
+            usn: "", 
+            email: ""
+        }
     }
 
     componentDidMount() {
@@ -30,8 +32,9 @@ class SubmissionsCard extends Component {
                 }
                 var data = response.data;
                 self.setState({
-                    firstName: data.user.firstName,
-                    usn: data.user.usn
+                    name: data.user.name.firstName + data.user.name.lastName ,
+                    usn: data.user.usn,
+                    email: data.user.basicInfo.email
                 });
             })
             .catch(function (error) {
@@ -53,8 +56,9 @@ class SubmissionsCard extends Component {
                 <div className="card bg-light mx-auto">
 
                     <div className="card-body text-left">
-                        Name : {this.state.firstName}<br />
-                        FileID : {this.state.usn} <br /><br />
+                        Name : {this.state.name}<br />
+                        USN : {this.state.usn} <br />
+                        Email: {this.state.email} <br /><br />
                         {/* <button className="btn btn-dark" onClick={() => window.open("/download/" + this.props.fileID)}> Download Submission </button> */}
                         <a href={downloadSubmission} className="btn btn-dark">Download</a>
                     </div>
