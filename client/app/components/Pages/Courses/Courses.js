@@ -368,7 +368,7 @@ class CoursesAdd extends Component {
           <div>
             {
               this.state.courses.map(function (each) {
-                return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='prof' />
+                return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} anchorDescription={each.anchorDescription} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='prof' />
               })
             }
             <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
@@ -394,7 +394,7 @@ class CoursesAdd extends Component {
       <div>
         {
           this.state.courses.map(function (each) {
-            return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='student' />
+            return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} anchorDescription={each.anchorDescription} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='student' />
           })
         }
         <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
