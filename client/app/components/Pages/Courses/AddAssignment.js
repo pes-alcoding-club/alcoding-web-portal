@@ -196,8 +196,8 @@ class AssignmentAdd extends Component {
                 <div className='row'>
                     <div className='col'>
 
-                        <div className="display-4 text-center">{this.props.location.state.code}: {this.props.location.state.name}</div>
-
+                        <div className="display-4 text-center">{this.props.location.state.code}: {this.props.location.state.name}</div><br/>
+                        <div className="font-italic">Anchor Description: {this.props.location.state.anchorDescription}</div>
 
                     </div>
                 </div>

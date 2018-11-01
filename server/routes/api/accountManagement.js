@@ -358,6 +358,60 @@ module.exports = (app) => {
       });
     }), //end of getDetails endpoint
 
+    app.get('/api/account/:userID/info', function (req, res) {
+      // GET http://localhost:8080/api/account/:userID/info
+      var user_id = req.params.userID;
+
+      //Verify that userID is present as a parameter
+      if (!user_id) {
+        return res.status(400).send({
+          success: false,
+          message: 'Error: userID parameter cannot be blank'
+        });
+      }
+
+      console.log("Requesting info of " + user_id);
+      // Search for the user in the User model with his user_id
+      User.find({
+        _id: user_id
+      }, (err, users) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+
+        if (users.length != 1) {
+          return res.status(404).send({
+            success: false,
+            message: 'Error: User not found.'
+          });
+        }
+        var user = users[0].toObject();
+        delete user.password;
+        delete user.isDeleted;
+        delete user.__v;
+        delete user.files;
+        delete user.contender;
+        delete user.basicInfo;
+        delete user.groups;
+        delete user.role;
+        delete user.createdAt;
+        delete user.updatedAt;
+        delete user._id;
+        console.log(user);
+
+
+        // Return a response with user data
+        return res.status(200).send({
+          success: true,
+          message: "Details successfully retrieved",
+          user: user
+        });
+      });
+    }), //end of info endpoint
+
     app.put('/api/account/:userID/basicInfo', verifyUser, function (req, res) {
       // PUT http://localhost:8080/api/account/:userID/basicInfo
       var user_id = req.params.userID;

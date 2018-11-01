@@ -463,7 +463,7 @@ module.exports = (app) => {
                         });
                     }
                     req.fileID = files[files.length-1]._id; //Get Latest file submitted by user
-                    var object = {"user":req.user_id, "file":req.fileID};
+                    var object = {user:req.user_id, file:req.fileID};
                     submissions.push(object);
                     
                     Assignment.findOneAndUpdate({
