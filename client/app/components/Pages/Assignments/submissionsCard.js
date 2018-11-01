@@ -4,9 +4,41 @@ import { Link } from 'react-router-dom';
 class SubmissionsCard extends Component {
     constructor(props) {
         super(props);
-        }
+        this.state({
+            name: "",
+            usn: ""
+        })
+    }
 
-    openWindow(){
+    componentDidMount() {
+        var self = this;
+        var token = localStorage.getItem('token');
+        var userID = localStorage.getItem('user_id');
+
+        var apiPath = '/api/account/' + userID + '/details'
+        axios.get(apiPath, {
+            headers: {
+                'x-access-token': token,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(function (response) {
+                if (!response.data.success) {
+                    // TODO: throw appropriate error and redirect
+                    console.log("Error1: " + response.data);
+                    return;
+                }
+                var data = response.data;
+                self.setState({
+                    firstName: data.user.firstName,
+                    usn: data.user.usn
+                });
+            })
+            .catch(function (error) {
+                console.log('Error2: ', error);
+            });
+    }
+    openWindow() {
         // <Link className="btn btn-dark" to={{
         //     pathname: '/download/' + this.props.fileID
         // }}> Download Submission </Link>
@@ -14,14 +46,17 @@ class SubmissionsCard extends Component {
 
     render() {
         let content;
+        const downloadSubmission = "/api/assignments/download/" + this.props.fileID;
+
         const Content = (
             <div id="SubmissionsCard">
                 <div className="card bg-light mx-auto">
 
                     <div className="card-body text-left">
-                        Name : {this.props.user}<br />
-                        FileID : {this.props.fileID} <br /><br />
-                        <button className="btn btn-dark" onClick={()=>window.open("/download/"+this.props.fileID)}> Download Submission </button>
+                        Name : {this.state.firstName}<br />
+                        FileID : {this.state.usn} <br /><br />
+                        {/* <button className="btn btn-dark" onClick={() => window.open("/download/" + this.props.fileID)}> Download Submission </button> */}
+                        <a href={downloadSubmission} className="btn btn-dark">Download</a>
                     </div>
 
                 </div>
