@@ -94,14 +94,32 @@ var downloadFile = function(dir) {
                     message: "Error: No file found with this id"
                 });
             }
-            var file = files[0];
-            var filePath = path.join(dir, file.originalname);
-            var fileName = file._id.toString()+'.'+file.originalname.split('.')[1];
-            fs.createReadStream(filePath).pipe(fs.createWriteStream(fileName));
-            fs.rename(fileName, path.join(path.join(homedir,'Downloads'), fileName), function(err){
-                if (err) throw err
-                console.log('Successfully downloaded file '+file._id);
-            });
+            User.findOne({
+                _id: req.params.userID
+            }, function(err, user){
+                if(err){
+                    return res.status(500).send({
+                        success: false,
+                        message: "Error: server error"
+                    });
+                }
+                if(!user){
+                    return res.status(404).send({
+                        success: false,
+                        message: "Error: No such user found"
+                    });
+                }
+                var usn = user.usn
+                var file = files[0];
+                var filePath = path.join(dir, file.originalname)
+                var fileName = usn+'_'+file.originalname;
+                console.log(fileName)
+                fs.createReadStream(filePath).pipe(fs.createWriteStream(fileName));
+                fs.rename(fileName, path.join(path.join(homedir,'Downloads'), fileName), function(err){
+                    if (err) throw err
+                    console.log('Successfully downloaded file '+file._id);
+                });
+            })
         });
     }
 }

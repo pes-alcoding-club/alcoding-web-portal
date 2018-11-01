@@ -33,17 +33,17 @@ module.exports = (app) => {
                     message: "Error: Server error."
                 });
             }
-            if (courses.length < 1) {
-                return res.status(404).send({
-                    success: false,
-                    message: 'Error: No courses found for this user.'
-                });
-            }
+            // if (courses.length < 1) {
+            //     return res.status(404).send({
+            //         success: false,
+            //         message: 'Error: No courses found for this user.'
+            //     });
+            // }
 
             return res.status(200).send({
                 success: true,
                 message: "Details successfully retrieved.",
-                courses: { courses }
+                courses
             });
         });
     })
@@ -463,7 +463,7 @@ module.exports = (app) => {
                         });
                     }
                     req.fileID = files[files.length-1]._id; //Get Latest file submitted by user
-                    var object = {"user":req.user_id, "file":req.fileID};
+                    var object = {user:req.user_id, file:req.fileID};
                     submissions.push(object);
                     
                     Assignment.findOneAndUpdate({
@@ -523,7 +523,7 @@ module.exports = (app) => {
         })
     })
 
-    app.get('/api/assignments/:fileID/download', requireRole('prof'), downloadFile(dir));
+    app.get('/api/assignments/:fileID/:userID/download', requireRole('prof'), downloadFile(dir));
 
     app.get('/api/assignments/:assignmentID/details', function(req,res){
         Assignment.find({

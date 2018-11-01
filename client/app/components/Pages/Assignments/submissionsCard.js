@@ -14,13 +14,12 @@ class SubmissionsCard extends Component {
 
     componentDidMount() {
         var self = this;
-        var token = localStorage.getItem('token');
-        var userID = localStorage.getItem('user_id');
+        // var token = localStorage.getItem('token');
+        var userID = this.props.user;
 
-        var apiPath = '/api/account/' + userID + '/details'
+        var apiPath = '/api/account/' + userID + '/info'
         axios.get(apiPath, {
             headers: {
-                'x-access-token': token,
                 'Content-Type': 'application/json'
             }
         })
@@ -31,11 +30,16 @@ class SubmissionsCard extends Component {
                     return;
                 }
                 var data = response.data;
+                console.log(data)
                 self.setState({
-                    name: data.user.name.firstName + data.user.name.lastName ,
-                    usn: data.user.usn,
-                    email: data.user.basicInfo.email
+                    name: data.user.name.firstName + ' ' + data.user.name.lastName ,
+                    usn: data.user.usn
                 });
+                if(data.user.basicInfo.email!=''){
+                    this.setState({
+                        email:data.user.basicInfo.email
+                    })
+                }
             })
             .catch(function (error) {
                 console.log('Error2: ', error);
@@ -49,7 +53,7 @@ class SubmissionsCard extends Component {
 
     render() {
         let content;
-        const downloadSubmission = "/api/assignments/download/" + this.props.fileID;
+        const downloadSubmission = "/api/assignments/" + this.props.fileID + '/'+this.props.user+'/download?token=' + localStorage.getItem('token');
 
         const Content = (
             <div id="SubmissionsCard">
@@ -57,10 +61,9 @@ class SubmissionsCard extends Component {
 
                     <div className="card-body text-left">
                         Name : {this.state.name}<br />
-                        USN : {this.state.usn} <br />
-                        Email: {this.state.email} <br /><br />
-                        {/* <button className="btn btn-dark" onClick={() => window.open("/download/" + this.props.fileID)}> Download Submission </button> */}
-                        <a href={downloadSubmission} className="btn btn-dark">Download</a>
+                        USN : {this.state.usn} <br /><br />
+                        <button className="btn btn-dark" onClick={() => window.open("/download/" + this.props.fileID+'/'+this.props.user)}> Download Submission </button>
+                        {/* <a href={downloadSubmission} className="btn btn-dark">Download</a> */}
                     </div>
 
                 </div>
