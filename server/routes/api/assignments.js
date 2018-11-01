@@ -202,52 +202,53 @@ module.exports = (app) => {
             })
         }
 
-        Course.find({
-            code: req.body.code,
-            isDeleted: false,
-        }, (err, previousCourse) => {
-            if (err) {
+        User.findOne({
+            usn: req.body.professorID,
+            isDeleted: false
+        }, function(err, user){
+            if(err){
                 return res.status(500).send({
                     success: false,
-                    message: "Error: Server Error"
+                    message: "Error: Server error"
                 });
             }
-            if (previousCourse.length > 0) {
-                return res.status(409).send({
+            if(!user){
+                return res.status(404).send({
                     success: false,
-                    message: "Error: Course already exists"
+                    message: "Error: No such user exists in DB"
                 });
             }
-            // save the course
-            const newCourse = new Course();
-            newCourse.name = req.body.name;
-            newCourse.code = req.body.code;
-            newCourse.department = req.body.department;
-            newCourse.description = req.body.description;
-            newCourse.resourcesUrl = req.body.resourcesUrl;
-            newCourse.duration.startDate = req.body.startDate;
-            newCourse.duration.endDate = req.body.endDate;
-            newCourse.details.credits = req.body.credits;
-            newCourse.details.hours = req.body.hours;
-            User.find({
-                usn: req.body.professorID,
+            Course.find({
+                code: req.body.code,
+                'class.professor': user._id,
                 isDeleted: false
-            }, function(err, users){
-                if(err){
+            }, function(err, previousCourse){
+                if (err) {
                     return res.status(500).send({
                         success: false,
-                        message: "Error: Server error"
+                        message: "Error: Server Error"
                     });
                 }
-                if(!users){
-                    return res.status(404).send({
+                if (previousCourse.length > 0) {
+                    return res.status(409).send({
                         success: false,
-                        message: "Error: No such user exists in DB"
+                        message: "Error: Course already exists"
                     });
                 }
-                newCourse.class.professor = users[0]._id;
+                const newCourse = new Course();
+                newCourse.name = req.body.name;
+                newCourse.code = req.body.code;
+                newCourse.department = req.body.department;
+                newCourse.description = req.body.description;
+                newCourse.resourcesUrl = req.body.resourcesUrl;
+                newCourse.duration.startDate = req.body.startDate;
+                newCourse.duration.endDate = req.body.endDate;
+                newCourse.details.credits = req.body.credits;
+                newCourse.details.hours = req.body.hours;
+                newCourse.class.professor = user._id;
                 newCourse.students = new Array();
                 var sections = req.body.sections.split(',');
+                newCourse.class.sections = sections;
                 Group.find({
                     isDeleted: false,
                     name: {$in: sections}, 
@@ -270,18 +271,17 @@ module.exports = (app) => {
                             newCourse.students.push(student)
                         })
                     })
-                    newCourse.class.sections = sections;
                     if(req.body.role=='anchor'){
                         if(req.body.anchorDescription){
                             newCourse.anchorDescription = req.body.anchorDescription;
                         }
                     }
-                    console.log(newCourse);
+                    // console.log(newCourse);
                     newCourse.save((err, course) => {
                         if (err) {
                             return res.status(500).send({
                                 success: false,
-                                message: "Error: Server error, hello"
+                                message: "Error: Server error"
                             });
                         }
                         console.log(course._id + " Course Added to DB")

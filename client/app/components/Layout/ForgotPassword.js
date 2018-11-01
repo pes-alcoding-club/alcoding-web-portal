@@ -38,10 +38,11 @@ export default class ForgotPassword extends Component {
             .then(res => {
                 console.log(res);
                 alert(res.data.message);
+                this.setState({isLoading: false});
                 <Redirect to="/" />
             })
             .catch(err => {
-                alert("Unable to send email.")
+                alert("Unable to send email")
                 console.log(err);
                 // window.location.reload();
                 this.forceUpdate();
@@ -64,7 +65,7 @@ export default class ForgotPassword extends Component {
                     />
                 </div>
                 <div className="card-footer">
-                    {!this.state.isLoading ? <button className="btn btn-danger" onClick={this.sendEmail}>Send Email</button> : <p className="text-info">Loading, Please Wait.</p>}
+                    {!this.state.isLoading ? <button className="btn btn-dark" onClick={this.sendEmail}>Send Email</button> : <p className="text-info">Loading, Please Wait.</p>}
                 </div>
             </div>
         )

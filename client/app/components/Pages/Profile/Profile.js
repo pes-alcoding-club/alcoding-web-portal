@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import ReactLoading from 'react-loading';
 
 import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
@@ -11,6 +12,7 @@ class Profile extends React.Component {
     constructor() {
         super();
         this.state = {
+            isLoading: true,
             isEditing: 0,
             usn: "",
             name: "",
@@ -24,7 +26,6 @@ class Profile extends React.Component {
 
 
     componentDidMount() {
-
         var self = this;
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
@@ -45,6 +46,7 @@ class Profile extends React.Component {
                 var data = response.data;
                 // TODO: Update dob with calendar
                 self.setState({
+                    isLoading: false,
                     usn: data.user.usn,
                     name: data.user.name.firstName + " " + data.user.name.lastName,
                     basicInfo: data.user.basicInfo
@@ -109,16 +111,22 @@ class Profile extends React.Component {
 
     render() {
         const { isAuthenticated, user } = this.props.auth;
-
-        return (
-            <div className="container col-md-8">
-                <div className="jumbotron center pt-3 pb-2 bg-light">
-                    <div className="container">
+        if (this.state.isLoading)
+            return <ReactLoading type="bubbles" color="#000080" />;
+        else
+            return (
+                <div className="container col-md-8">
+                    <div className="jumbotron center pt-3 pb-2 bg-light">
                         <div className='display-4 mb-3'>Profile</div>
 
-                        <StaticBox fieldName="Name" val={this.state.name} />
-                        <StaticBox fieldName="USN" val={this.state.usn} />
+                        <div>
+                            <StaticBox fieldName="Name" val={this.state.name} />
+                            <StaticBox fieldName="USN" val={this.state.usn} />
+                            <p/>
+                            <Link to="/profile/updateHandle">Update contest handles</Link>
+                            <PasswordBox />
 
+                        </div>
                         <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
                         <hr />
@@ -128,11 +136,9 @@ class Profile extends React.Component {
                         <hr />
 
                         <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
-                        <PasswordBox />
                     </div>
                 </div>
-            </div>
-        );
+            );
     }
 }
 

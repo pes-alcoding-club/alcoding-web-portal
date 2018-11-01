@@ -30,9 +30,14 @@ class AnchorForm extends React.Component {
             values: [...prevState.values, { profID: "", sections: "" }],
         }));
     }
-    async handleSubmit(e) {
+    // handleSubmit = async function(e) {
+    handleSubmit(e) {
         e.preventDefault()
+        this.sendToDb();
+    }
 
+    async sendToDb()
+    {
         console.log(this.state.values);
         var self = this;
         var userID = localStorage.getItem('user_id');
@@ -57,31 +62,30 @@ class AnchorForm extends React.Component {
         data.duration = duration;
         data.graduating = self.props.graduating;
         var values = self.state.values;
-        console.log(data);
+        var err_flag = false;
         // self.state.classes is an array of objects
         // Each object has 2 items - ProfessorID and Array of sections just like in Model
         // [{professorID: value , sections:[.....]},{professorID:value, sections:[.....]}]
-        for (var i = 0; i < values.length; i++) {
-            var classData = values[i];
-            var body = data;
+        values.forEach(function(classData) {
+            var body = Object.assign({}, data);
             body.professorID = classData.profID;
             body.sections = classData.sections;
             body.anchorDescription = self.props.anchorDescription;
-            body.role = "anchor"
-            console.log(body)
-            try {
-                var response = await axios.post(apiPath, data, config);
-                console.log(response);
-                window.location.reload();
-                // .then(res => {
-                //     console.log(res.data);
-                //     // this.reload();
-                // })
-            } catch (err) {
-                console.log(err);
-                alert('Course Failed to Upload!')
-            }
-        }
+            body.role = "anchor";
+            console.log(body);
+            console.log(classData.profID);
+            console.log(classData.sections);
+            axios.post(apiPath, body, config)
+                .then(res => {
+                    console.log(res.data);
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                    err_flag = true
+                })  
+        });
+        if(err_flag) alert("Course failed to upload");
     }
     render() {
         let { values } = this.state
@@ -105,6 +109,7 @@ class AnchorForm extends React.Component {
                                     id={pId}
                                     onChange={this.handleChange}
                                     value={values[idx].profID}
+                                    placeholder="Professor USN"
                                     // className="profID mr-1 mb-1 form-control"
                                     className="profID"
                                 />
@@ -116,6 +121,7 @@ class AnchorForm extends React.Component {
                                     id={cId}
                                     onChange={this.handleChange}
                                     value={values[idx].sections}
+                                    placeholder="Add sections with comma in between"
                                     className="sections"
                                 />
                             </div>

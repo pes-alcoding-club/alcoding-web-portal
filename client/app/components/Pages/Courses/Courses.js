@@ -317,7 +317,7 @@ class CoursesAdd extends Component {
             <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} required="true" />
           </div>
           <div className="form-group text-left">
-            <h6>Graduating<sup>*</sup></h6>
+            <h6>Year of Graduation<sup>*</sup></h6>
             <input type="text" className="form-control" placeholder="Graduating" value={this.state.graduating} onChange={this.handleGraduatingChange} required="true" />
           </div>
           <div className="form-group text-left">

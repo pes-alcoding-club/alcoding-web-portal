@@ -26,6 +26,7 @@ import viewAssignment from './components/Pages/Assignments/viewAssignment';
 import ForgotPassword from './components/Layout/ForgotPassword';
 import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
+import updateHandle from './components/Pages/Profile/UpdateHandle';
 import './styles/styles.scss';
 
 
@@ -69,6 +70,8 @@ render((
             <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
 
             <PrivateRoute exact path="/download/:fileID" component={downloadFile} />
+
+            <PrivateRoute exact path="/profile/updateHandle" component={updateHandle} />
 
             <Route exact path="/forgotpassword" component={ForgotPassword} />
 
