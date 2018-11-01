@@ -69,7 +69,7 @@ class Profile extends React.Component {
         var basicInfoCopy = Object.assign({}, this.state.basicInfo);
         basicInfoCopy[field] = newVal;
         this.setState({ basicInfo: basicInfoCopy });
-        // console.log(this.state.basicInfo)
+
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/' + userID + '/basicInfo'

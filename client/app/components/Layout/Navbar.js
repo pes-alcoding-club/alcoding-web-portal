@@ -115,7 +115,6 @@ class Navbar extends Component {
               Contests
             </Link>
           </li>
-
           <li className="nav-item">
             <Link className="nav-link" to="/courses" onClick={this.reload}>
               Courses
