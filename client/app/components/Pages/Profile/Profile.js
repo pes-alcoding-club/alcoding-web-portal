@@ -109,6 +109,10 @@ class Profile extends React.Component {
         this.state.isEditing += value;
     }
 
+    changeEditingStatus(value) {
+        this.state.isEditing += value;
+    }
+
     render() {
         const { isAuthenticated, user } = this.props.auth;
         if (this.state.isLoading)

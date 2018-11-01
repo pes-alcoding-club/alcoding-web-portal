@@ -17,20 +17,18 @@ class AssignmentCard extends Component {
 
   componentDidMount() {
     var userID = localStorage.getItem('user_id');
-    var success=0;
+    var success = 0;
     if (this.props.submissions.length) {
-      for(var i=0; i<this.props.submissions.length; i++)
-      {
+      for (var i = 0; i < this.props.submissions.length; i++) {
         var submission = this.props.submissions[i];
-        if(submission.user==userID)
-        {
+        if (submission.user == userID) {
           this.setState({
             showUpload: false
           })
         }
       }
     }
-     
+
     else {
       this.setState({
         showUpload: true
@@ -78,12 +76,13 @@ class AssignmentCard extends Component {
   render() {
     const toUpload = (
       <div className="row">
-        <div className="custom-file col-sm">
-          <input type="file" className="custom-file-input" id="validatedCustomFile" onChange={this.onChange}/>
-          <label className="custom-file-label" for="validatedCustomFile">Choose file</label>
+        <div className="custom-file col-4">
+          {/* <input type="file" className="custom-file-input" id="validatedCustomFile" onChange={this.onChange}/>
+          <label className="custom-file-label" for="validatedCustomFile">Choose file</label> */}
+          <input type="file" onChange={this.onChange} /><br />
         </div>
-        <div className="col-sm">
-        <button className="btn btn-dark" onClick={this.onSubmit}> Submit </button>
+        <div className="col-8">
+          <button className="btn btn-dark" onClick={this.onSubmit}> Submit </button>
         </div>
       </div>
     );
@@ -101,14 +100,14 @@ class AssignmentCard extends Component {
             <Link className='btn btn-dark mx-2' to={{
               pathname: '/assignments/' + this.props.assignmentID,
               state: {
-                uniqueID:this.props.uniqueID,
-                name:this.props.name,
-                details:this.props.details,
-                type:this.props.type,
-                dueDate:this.props.dueDate,
-                maxMarks:this.props.maxMarks,
-                resourceUrl:this.props.resourceUrl
-            }
+                uniqueID: this.props.uniqueID,
+                name: this.props.name,
+                details: this.props.details,
+                type: this.props.type,
+                dueDate: this.props.dueDate,
+                maxMarks: this.props.maxMarks,
+                resourceUrl: this.props.resourceUrl
+              }
             }}> View Assignment </Link>
             <Link className='btn btn-dark mx-2' to={{
               pathname: '/assignments/submissions/' + this.props.uniqueID,
@@ -138,14 +137,14 @@ class AssignmentCard extends Component {
         <br />
       </div>
     );
-    
+
     if (this.props.role == "prof") {
       content = profContent;
     }
     else {
       content = studContent;
     }
-    
+
     return (
       <div>{content}</div>
 

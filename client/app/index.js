@@ -55,6 +55,8 @@ render((
 
             <PrivateRoute exact path="/assignments" component={Assignments} />
 
+            <PrivateRoute exact path='/assignments/:assignmentID' component={viewAssignment} />
+
             <PrivateRoute exact path="/contests" component={Contests} />
 
             <PrivateRoute exact path="/courses" component={Courses} />
@@ -67,9 +69,7 @@ render((
 
             <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
 
-            <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
-
-            <PrivateRoute exact path="/download/:fileID" component={downloadFile} />
+            <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
             <PrivateRoute exact path="/profile/updateHandle" component={updateHandle} />
 
