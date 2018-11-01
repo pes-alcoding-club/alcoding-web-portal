@@ -10,7 +10,7 @@ class Home extends Component {
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     var self = this;
     var token = localStorage.getItem('token');
     var userID = localStorage.getItem('user_id');
@@ -28,8 +28,8 @@ class Home extends Component {
           return;
         }
         var data = response.data.globalRankList.userContenderDetails;
-        data.sort(function(a, b){
-          return b.rating-a.rating;
+        data.sort(function (a, b) {
+          return b.rating - a.rating;
         });
         self.setState({
           globalRankList: data
@@ -53,7 +53,7 @@ class Home extends Component {
           maxWidth: 65,
           filterable: false,
           Cell: (row) => {
-            return <div>{row.index+1}</div>;
+            return <div>{row.index + 1}</div>;
           }
         },
         {
@@ -90,48 +90,42 @@ class Home extends Component {
 
     return (
       <div>
-        <div className="card-deck">
-          <div className="card bg-light">
-            <div className="card-body text-center">
-            <h4 className="card-title">About Us</h4>
-            <p className="card-text text-justify">{staticText.aboutUs}</p>
-            </div>
+        <div class="masthead-followup row m-0 border border-white">
+          <div class="col-12 col-md-4 p-3 p-md-8 bg-light border border-white">
+            <h3 className="text-center">About Us</h3>
+            <p className="text-center">{staticText.aboutUs}</p>
           </div>
-          <div className="card bg-light">
-            <div className="card-body text-center">
-            <h4 className="card-title">Latest News</h4>
-            <p className="card-text text-justify">{staticText.latestNews}</p>
-            </div>
+          <div class="col-12 col-md-4 p-3 p-md-8 bg-light border border-white">
+            <h3 className="text-center">Latest News</h3>
+            <p className="text-center">{staticText.latestNews}</p>
           </div>
-          <div className="card bg-light">
-            <div className="card-body text-center">
-            <h4 className="card-title">Announcements</h4>
-            <p className="card-text text-justify">{staticText.announcements}</p>
-            </div>
+          <div class="col-12 col-md-4 p-3 p-md-8 bg-light border border-white">
+            <h3 className="text-center">Announcements</h3>
+            <p className="text-center">{staticText.announcements}</p>
           </div>
         </div>
         <br />
         <div className="jumbotron pt-3 pb-2 bg-light">
-        <div className='display-4 mb-3 text-center'>Global Rank List</div>
-        <br />
-        <ReactTable
-          data={data}
-          columns={columns}
-          defaultSorted={[
-            {
-              id: "rating",
-              desc: true
-            }
-          ]}
-          defaultPageSize={10}
-          index=""
-          viewIndex=""
-          className="-striped -highlight"
-        />
-        <br />
+          <div className='display-4 mb-3 text-center'>Global Rank List</div>
+          <br />
+          <ReactTable
+            data={data}
+            columns={columns}
+            defaultSorted={[
+              {
+                id: "rating",
+                desc: true
+              }
+            ]}
+            defaultPageSize={10}
+            index=""
+            viewIndex=""
+            className="-striped -highlight"
+          />
+          <br />
         </div>
         <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css"></link>
-        </div>
+      </div>
     );
   }
 }

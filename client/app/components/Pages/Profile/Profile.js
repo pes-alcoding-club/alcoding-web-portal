@@ -22,8 +22,6 @@ class Profile extends React.Component {
         };
         this.updateValue = this.updateValue.bind(this);
         this.changeEditingStatus = this.changeEditingStatus.bind(this);
-        this.onConfirm = this.onConfirm.bind(this);
-
     }
 
 
