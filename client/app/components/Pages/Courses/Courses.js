@@ -3,11 +3,13 @@ import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import CourseCard from '../Courses/CourseCard';
 import AnchorForm from './AnchorForm';
+import ReactLoading from 'react-loading';
 
 class CoursesAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: true,
       role: '',
       name: '',
       code: '',
@@ -95,8 +97,9 @@ class CoursesAdd extends Component {
         console.log("Error1: " + response.data);
       }
       var data = response.data;
+      self.setState({ isLoading: false });
       self.setState({
-        courses: self.state.courses.concat(data.courses.courses)
+        courses: self.state.courses.concat(data.courses)
       });
       console.log(response.data);
     })
@@ -364,8 +367,11 @@ class CoursesAdd extends Component {
     const profContent = (
       <div className='row'>
         <div className='col-sm-7'>
-
           <div>
+            {
+              this.state.courses.length < 1 &&
+              <div className="lead text-center mb-2">Sorry, no courses found.</div>
+            }
             {
               this.state.courses.map(function (each) {
                 return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} anchorDescription={each.anchorDescription} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='prof' />
@@ -393,6 +399,10 @@ class CoursesAdd extends Component {
     const studContent = (
       <div>
         {
+          this.state.courses.length < 1 &&
+          <div className="lead text-center mb-2">Sorry, no courses found.</div>
+        }
+        {
           this.state.courses.map(function (each) {
             return <CourseCard key={each.code} code={each.code} name={each.name} department={each.department} description={each.description} anchorDescription={each.anchorDescription} credits={each.credits} resourceUrl={each.resourceUrl} courseID={each._id} role='student' />
           })
@@ -406,11 +416,12 @@ class CoursesAdd extends Component {
     else {
       content = studContent;
     }
-
-    return (
-      <div>{content}</div>
-
-    )
+    if (this.state.isLoading)
+      return <ReactLoading type="bubbles" color="#000080" />;
+    else
+      return (
+        <div>{content}</div>
+      );
   }
 }
 

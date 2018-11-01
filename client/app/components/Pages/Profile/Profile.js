@@ -47,8 +47,8 @@ class Profile extends React.Component {
                 }
                 var data = response.data;
                 // TODO: Update dob with calendar
+                self.setState({ isLoading: false });
                 self.setState({
-                    isLoading: false,
                     usn: data.user.usn,
                     name: data.user.name.firstName + " " + data.user.name.lastName,
                     basicInfo: data.user.basicInfo

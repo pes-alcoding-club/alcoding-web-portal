@@ -58,25 +58,25 @@ class ChangePassword extends Component {
                     'Content-Type': 'application/json'
                 }
             }).then(res => {
-
-                <Redirect to="/"/>
-
-                if (res.data.success) {
-                    console.log(res.data);
-                    this.props.history.push('/');
-                    alert(res.data.message);
-                }
+                alert(res.data.message);
+                this.props.history.push('/');
             })
                 .catch(err => {
                     console.log(err);
-                    alert("Error changing the password. Please try again.");
+                    if (err.response) {
+                        if (err.response.status == 401) {
+                            alert("Token expired. Please request for a password change again.");
+                            window.location.href = '/';
+                        }
+                    }
+                    else
+                        alert("Error changing the password. Please try after a while.");
                 })
         }
     }
 
 
     render() {
-
         return (
             <div>
                 <button type="button" className="btn btn-info ml-0 mb-2" data-toggle="modal" data-target="#myModal">Change Password</button>

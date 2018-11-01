@@ -265,7 +265,7 @@ module.exports = (app) => {
           });
           return res.status(200).send({
             success: true,
-            message: "User password changes successfully"
+            message: "User password changed successfully."
           })
         });
     }), //end of new password endpoint
