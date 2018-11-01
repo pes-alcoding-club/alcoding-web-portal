@@ -7,6 +7,8 @@ import ReactLoading from 'react-loading';
 import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';
+import { ToastContainer, ToastStore } from 'react-toasts';
+
 
 class Profile extends React.Component {
     constructor() {
@@ -69,7 +71,40 @@ class Profile extends React.Component {
         var basicInfoCopy = Object.assign({}, this.state.basicInfo);
         basicInfoCopy[field] = newVal;
         this.setState({ basicInfo: basicInfoCopy });
-        console.log(this.state.basicInfo)
+        // console.log(this.state.basicInfo)
+        var token = localStorage.getItem('token')
+        var userID = localStorage.getItem('user_id')
+        var apiPath = '/api/account/' + userID + '/basicInfo'
+        var body = new Object();
+        body["phone"] = basicInfoCopy.phone; 
+        body["email"]= basicInfoCopy.email;
+        body["dob"]= basicInfoCopy.dob;
+
+        axios.put(
+            apiPath,
+            body,
+            {
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function (response) {
+                if (!response.data.success) {
+                    // TODO: throw appropriate error and redirect
+                    console.log("Error: " + response.data);
+                    return;
+                }
+                else {
+                    // TODO: redirect to this page(profile)
+                    console.log(response.data);
+                    ToastStore.success('Successfully updated!');
+                }
+            })
+            .catch(function (error) {
+                // TODO: Try again after sometime? 
+                console.log('error is ', error);
+            });
     }
 
     changeEditingStatus(value) {
@@ -140,8 +175,9 @@ class Profile extends React.Component {
                         <hr />
                         <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" inputType="date" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
                         <hr />
+                        <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_RIGHT} />
 
-                        <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button>
+                        {/* <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button> */}
                     </div>
                 </div>
             );

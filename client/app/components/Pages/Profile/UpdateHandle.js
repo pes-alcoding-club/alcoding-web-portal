@@ -148,7 +148,7 @@ class updateHandle extends React.Component {
                             <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="spoj" inputType="text" fieldName="SPOJ" val={this.state.spoj} />
                             <a href="https://www.spoj.com" rel="noopener noreferrer" target="_blank">www.spoj.com</a>
                             <hr />
-                            <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_LEFT} />
+                            <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_RIGHT} />
                         </div>
                     </div>
                 </div>
