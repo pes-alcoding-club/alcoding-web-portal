@@ -27,12 +27,19 @@ export default class ForgotPassword extends Component {
                   <h3>We're hiring!</h3>
                   <p>If you would like to work with The Alcoding Club's Web Application team, here are some details for you. You can gain visibility by fixing issues found under our GitHub 'Issues' tab. You may also work on a fork of this repository and add a feature. Make sure to send in legitimate pull requests with well documented code. If we like your enhancement, we'll pull your code! Once you're visible to us, a member of our team will get in touch with you for the interview process.</p>
                   <p>By working with the Web App team, you'll be exposed to technologies like React, Express and Mongo. You will also be working with specialists in these technologies who are excited to help you start your journey into developement!</p>
+                  <p>The setup instructions and guidlines for contributing are available at this project's GitHub page. For any queries, feel free to contact any of the authors. May the force be with you.</p>
               </div>
-              <div>
-                  <Avatar facebookId="parth.v.shah.925" size="100" round={true}/>&nbsp;
-                  <Avatar facebookId="aniket.kaulavkar" size="100" round={true}/>&nbsp;
+              {/* <div className="d-flex justify-content-center">
+                  <a href="https://parthvshah.github.io"><Avatar facebookId="100003276372182" size="100" round={true}/></a>&nbsp;
+                  <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="100004149601002" size="100" round={true}/></a>&nbsp;
+                  <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="1056861003" size="100" round={true}/></a>&nbsp;
+                  <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="100004779877441" size="100" round={true}/></a>&nbsp;
+              </div> */}
+              <div className="d-flex justify-content-center">
+                  <Avatar facebookId="100003276372182" size="100" round={true}/>&nbsp;
+                  <Avatar facebookId="100004149601002" size="100" round={true}/>&nbsp;
                   <Avatar facebookId="1056861003" size="100" round={true}/>&nbsp;
-                  <Avatar facebookId="adityavinodk" size="100" round={true}/>&nbsp;
+                  <Avatar facebookId="100004779877441" size="100" round={true}/>&nbsp;
               </div>
           </div>
                 )
