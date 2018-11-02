@@ -36,7 +36,7 @@ export default class ForgotPassword extends Component {
                   <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="100004779877441" size="100" round={true}/></a>&nbsp;
               </div> */}
               <div className="d-flex justify-content-center">
-                  <Avatar facebookId="100003276372182" size="100" round={true}/>&nbsp;
+                  <Avatar name="Parth Vipul Shah" size="100" round={true}/>&nbsp;
                   <Avatar facebookId="100004149601002" size="100" round={true}/>&nbsp;
                   <Avatar facebookId="1056861003" size="100" round={true}/>&nbsp;
                   <Avatar facebookId="100004779877441" size="100" round={true}/>&nbsp;
