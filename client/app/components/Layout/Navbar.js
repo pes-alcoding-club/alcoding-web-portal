@@ -133,6 +133,11 @@ class Navbar extends Component {
             </div>
           </li>
           <li className="nav-item">
+            <Link className="nav-link" to="/contribute" onClick={this.reload}>
+              Contribute
+            </Link>
+          </li>
+          <li className="nav-item">
             <Link className="nav-link" to="/profile" onClick={this.reload}>
               Profile
             </Link>
