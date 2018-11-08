@@ -31,11 +31,11 @@ npm run start:dev
 
 ### Note
 1. Make sure to add a `config.js` file in the `config` folder. See the `config.example.js` under `config/` directory for more details.
-2. Genrate and add ssl files in the `server/` directory under a folder named `sslcert`.
-```
-openssl req -x509 -out localhost.crt -keyout localhost.key \
+2. Generate and add ssl files in the `server/` directory under a folder named `sslcert`. To genrate certificates, navigate to the `server/sslcert/` directory and execute the following command. 
+  ```shell
+  openssl req -x509 -out server.crt -keyout server.key \
   -newkey rsa:2048 -nodes -sha256 \
   -subj '/CN=localhost' -extensions EXT -config <( \
    printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
-```
-Rename the two generated files to `server.key` and `server.crt`.
+   ```
+  This should generate two files `server.key` and `server.crt`.
