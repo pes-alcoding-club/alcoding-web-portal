@@ -38,4 +38,20 @@ npm run start:dev
   -subj '/CN=localhost' -extensions EXT -config <( \
    printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
    ```
-  This should generate two files `server.key` and `server.crt`.
+  This should generate two files, `server.key` and `server.crt`.
+  
+  ### Steps to create the first user (an admin user)
+  1. Replace line 14 in `server/routes/api/admin.js` by the following
+  ```
+      app.post('/api/admin/signup', function (req, res) {
+  ```
+  2. Make a `POST` request using any REST API client to `http://localhost:8080/api/admin/signup` with the body as `{ "usn": "admin", "firstName": "YourName" }`
+  
+  3. Using Mongo Compass, change the role of the created user to `admin`. 
+  4. Undo changes to `server/routes/api/admin.js`.
+  5. Run the server.
+  6. Log in using admin credentials. ( username = "ADMIN", password = "ADMIN" )
+  
+  ### Steps to add new users
+  1. Using an `admin` account, access `localhost:8080/admin` page. Upload a csv file containing new users in the format "firstName, email, usn".
+  2. Default password is USN (in uppercase) for all users.
