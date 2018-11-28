@@ -3,6 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser, logoutUser, getName } from '../../actions/authActions';
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 class Navbar extends Component {
   constructor() {
@@ -132,11 +133,11 @@ class Navbar extends Component {
               {this.props.auth.userName.firstName}
             </div>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link className="nav-link" to="/contribute" onClick={this.reload}>
               Contribute
             </Link>
-          </li>
+          </li> */}
           <li className="nav-item">
             <Link className="nav-link" to="/profile" onClick={this.reload}>
               Profile
@@ -157,40 +158,19 @@ class Navbar extends Component {
     const guestLinks = (
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav ml-auto">
-          <li className="nav-item dropdown">
-            <button className="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown"> Login </button>
-            <ul className="dropdown-menu dropdown-menu-right w-auto">
-              <li>
-                <form className="form-inline mx-1">
-                  <div className="form-group">
-                    <input
-                      className="form-control mx-2 mt-3 mb-3"
-                      placeholder="USN"
-                      required="required"
-                      value={signInUsn}
-                      onChange={this.onTextboxChangeSignInUsn}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      className="form-control mx-2 mb-0"
-                      placeholder="Password"
-                      required="required"
-                      value={signInPassword}
-                      onChange={this.onTextboxChangeSignInPassword}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <Link to="/forgotpassword" className="mt-0 ml-2 mb-3 mr-3" onClick={this.forgotpw}>Forgot Password?</Link>
-                  </div>
-                  <div className="form-group">
-                    <button className="btn btn-dark mx-2 mb-4" onClick={this.onSignIn}>Log in</button>
-                  </div>
-                </form>
-              </li>
-            </ul>
-          </li>
+          <Form inline onSubmit={this.onSignIn}>
+            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+              <Label for="usn" hidden>USN</Label>
+              <Input type="text" name="usn" id="usn" placeholder="USN" required onChange={this.onTextboxChangeSignInUsn} />
+            </FormGroup>
+            {' '}
+            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+              <Label for="Password" hidden>Password</Label>
+              <Input type="password" name="password" id="Password" placeholder="Password" required onChange={this.onTextboxChangeSignInPassword} />
+            </FormGroup>
+            {' '}
+            <Button>Login</Button>
+          </Form>
         </ul>
       </div>
     );
