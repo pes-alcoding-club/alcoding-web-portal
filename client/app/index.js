@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-
 import {
   BrowserRouter as Router,
   Route,
@@ -29,7 +28,7 @@ import downloadFile from './components/Pages/Assignments/downloadFile';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
 import './styles/styles.scss';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 if (localStorage.token) {
@@ -67,7 +66,7 @@ render((
 
             <PrivateRoute exact path="/profile/updateHandle" component={updateHandle} />
 
-            <PrivateRoute exact path="/contribute" component={contribute} />
+            <Route exact path="/contribute" component={contribute} />
 
             <Route exact path="/forgotpassword" component={ForgotPassword} />
 
