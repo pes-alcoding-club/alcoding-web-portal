@@ -127,7 +127,7 @@ class Profile extends React.Component {
                             <StaticBox fieldName="Name" val={this.state.name} />
                             <StaticBox fieldName="USN" val={this.state.usn} />
                             <p />
-                            <Link to="/profile/updateHandle">Update contest handles</Link>
+                            <Link to="/profile/updateHandle">Update Contest Handles</Link>
                             <PasswordBox />
 
                         </div>

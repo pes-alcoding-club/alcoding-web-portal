@@ -27,6 +27,7 @@ import ForgotPassword from './components/Layout/ForgotPassword';
 import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
+import contribute from './components/Pages/Contribute';
 import './styles/styles.scss';
 
 
@@ -65,6 +66,8 @@ render((
             <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
             <PrivateRoute exact path="/profile/updateHandle" component={updateHandle} />
+
+            <PrivateRoute exact path="/contribute" component={contribute} />
 
             <Route exact path="/forgotpassword" component={ForgotPassword} />
 
