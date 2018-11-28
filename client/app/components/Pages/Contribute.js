@@ -23,13 +23,76 @@ export default class Contribute extends Component {
                         <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="1056861003" size="100" round={true} /></a>&nbsp;
                         <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="100004779877441" size="100" round={true} /></a>&nbsp;
                     </div> */}
-                <div className="d-flex justify-content-center">
+                {/* <div className="d-flex justify-content-center">
                     <a href="https://parthvshah.github.io" target="_blank"><Avatar name="Parth Vipul Shah" size="100" round={true} />&nbsp; </a>
                     <a href="https://github.com/aniketnk" target="_blank"><Avatar googleId="107470330673159780136" name="Aniket Nitin Kaulavkar" size="100" round={true} />&nbsp; </a>
                     <a href="https://github.com/RRK1000" target="_blank"><Avatar name="Rishi Ravikumar" size="100" round={true} />&nbsp; </a>
                     <a href="https://github.com/adityavinodk" target="_blank"><Avatar name="Aditya Vinod Kumar" size="100" round={true} />&nbsp; </a>
+                </div> */}
+                <div className="ml-4">
+                    <div className="h3 mb-4">Developers</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-6">
+                            <div className="row">
+                                <div className="col-sm-12 col-lg-3 mb-4">
+                                    <Avatar googleId="107470330673159780136" name="Aniket Nitin Kaulavkar" size="100" round={5} />&nbsp;
+                                </div>
+                                <div className="col-9">
+                                    <a href="https://github.com/aniketnk" target="_blank">
+                                        <p className="bold lead">Aniket Nitin Kaulavkar</p>
+                                    </a>
+                                    <p>Full-stack, Android, React-native and React Developer. Competitive coding fanatic.</p>
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-lg-6">
+                            <div className="row">
+                                <div className="col-sm-12 col-lg-3 mb-4">
+                                    <Avatar name="Parth Vipul Shah" size="100" round={5} />&nbsp;
+                            </div>
+                                <div className="col-9">
+                                    <a href="https://parthvshah.github.io" target="_blank">
+                                        <p className="bold lead">Parth Vipul Shah</p>
+                                    </a>
+                                    {/* <p>Some Random Bio</p> */}
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-6">
+                            <div className="row">
+                                <div className="col-sm-12 col-lg-3 mb-4">
+                                    <Avatar initials="RRK" name="Rishi Ravikumar" size="100" round={5} />&nbsp;
+                            </div>
+                                <div className="col-9">
+                                    <a href="https://github.com/RRK1000" target="_blank">
+                                        <p className="bold lead">Rishi Ravikumar</p>
+                                    </a>
+                                    {/* <p>Some Random Bio</p> */}
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-lg-6">
+                            <div className="row">
+                                <div className="col-sm-12 col-lg-3 mb-4">
+                                    <Avatar name="Aditya Vinod Kumar" size="100" round={5} />&nbsp;
+                                </div>
+                                <div className="col-9">
+                                    <a href="https://github.com/adityavinodk" target="_blank">
+                                        <p className="bold lead">Aditya Vinod Kumar</p>
+                                    </a>
+                                    {/* <p>Some Random Bio</p> */}
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </div >
         )
     }
 }
