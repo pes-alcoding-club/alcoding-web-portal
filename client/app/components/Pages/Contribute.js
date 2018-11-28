@@ -9,7 +9,8 @@ export default class Contribute extends Component {
         return (
             <div className="container col-md-12">
                 <div className="jumbotron center pt-3 pb-2 bg-light">
-                    <div className='display-4 mb-3'>Contribute</div>
+                    <h2 className='d-md-none'>Contribute</h2>
+                    <div className="d-none d-md-block display-4 mb-3">Contribute</div>
                     <p>This project is Open Source under the MIT Licence and all details can be found at this project's GitHub repository.</p>
                     <p>Find the repository <a href="https://github.com/aniketnk/alcoding-data-analysis" target="_blank">here.</a></p>
                     <h3>We're hiring!</h3>
@@ -17,12 +18,6 @@ export default class Contribute extends Component {
                     <p>By working with the Web App team, you'll be exposed to technologies like React, Express and Mongo. You will also be working with specialists in these technologies who are excited to help you start your journey into developement!</p>
                     <p>The setup instructions and guidlines for contributing are available at this project's GitHub page. For any queries, feel free to contact any of the authors. May the force be with you.</p>
                 </div>
-                {/* <div className="d-flex justify-content-center">
-                        <a href="https://parthvshah.github.io"><Avatar name="Parth Vipul Shah" size="100" round={true} />&nbsp; </a>
-                        <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="100004149601002" size="100" round={true} /></a>&nbsp;
-                        <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="1056861003" size="100" round={true} /></a>&nbsp;
-                        <a href="https://github.com/aniketnk/alcoding-data-analysis"><Avatar facebookId="100004779877441" size="100" round={true} /></a>&nbsp;
-                    </div> */}
                 {/* <div className="d-flex justify-content-center">
                     <a href="https://parthvshah.github.io" target="_blank"><Avatar name="Parth Vipul Shah" size="100" round={true} />&nbsp; </a>
                     <a href="https://github.com/aniketnk" target="_blank"><Avatar googleId="107470330673159780136" name="Aniket Nitin Kaulavkar" size="100" round={true} />&nbsp; </a>
@@ -34,8 +29,8 @@ export default class Contribute extends Component {
                     <div className="row">
                         <div className="col-sm-12 col-lg-6">
                             <div className="row">
-                                <div className="col-sm-12 col-lg-3 mb-4">
-                                    <Avatar googleId="107470330673159780136" name="Aniket Nitin Kaulavkar" size="100" round={5} />&nbsp;
+                                <div className="col-sm-12 col-md-2 col-lg-3 mb-4">
+                                    <Avatar googleId="107470330673159780136" name="Aniket Nitin Kaulavkar" size="100" round={"5px"} />&nbsp;
                                 </div>
                                 <div className="col-9">
                                     <a href="https://github.com/aniketnk" target="_blank">
@@ -48,8 +43,8 @@ export default class Contribute extends Component {
                         </div>
                         <div className="col-sm-12 col-lg-6">
                             <div className="row">
-                                <div className="col-sm-12 col-lg-3 mb-4">
-                                    <Avatar name="Parth Vipul Shah" size="100" round={5} />&nbsp;
+                                <div className="col-sm-12 col-md-2 col-lg-3 mb-4">
+                                    <Avatar name="Parth Vipul Shah" size="100" round={"5px"} />&nbsp;
                             </div>
                                 <div className="col-9">
                                     <a href="https://parthvshah.github.io" target="_blank">
@@ -64,8 +59,8 @@ export default class Contribute extends Component {
                     <div className="row">
                         <div className="col-sm-12 col-lg-6">
                             <div className="row">
-                                <div className="col-sm-12 col-lg-3 mb-4">
-                                    <Avatar initials="RRK" name="Rishi Ravikumar" size="100" round={5} />&nbsp;
+                                <div className="col-sm-12 col-md-2 col-lg-3 mb-4">
+                                    <Avatar initials="RRK" name="Rishi Ravikumar" size="100" round={"5px"} />&nbsp;
                             </div>
                                 <div className="col-9">
                                     <a href="https://github.com/RRK1000" target="_blank">
@@ -78,8 +73,8 @@ export default class Contribute extends Component {
                         </div>
                         <div className="col-sm-12 col-lg-6">
                             <div className="row">
-                                <div className="col-sm-12 col-lg-3 mb-4">
-                                    <Avatar name="Aditya Vinod Kumar" size="100" round={5} />&nbsp;
+                                <div className="col-sm-12 col-md-2 col-lg-3 mb-4">
+                                    <Avatar name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
                                 </div>
                                 <div className="col-9">
                                     <a href="https://github.com/adityavinodk" target="_blank">
