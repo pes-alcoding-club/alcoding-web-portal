@@ -43,13 +43,6 @@ render((
         <Header />
 
         <div className='container'>
-          {/* <Switch>
-        <Route path="/login" component={Login}/>
-      </Switch> */}
-          {/* <Switch>
-                <PrivateRoute exact path="/landing" component={Landing} />
-     </Switch> */}
-
           <Switch>
             <Route exact path="/" component={Home} />
 
