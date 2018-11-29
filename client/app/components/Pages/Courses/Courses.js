@@ -400,7 +400,7 @@ class CoursesAdd extends Component {
       <div>
         {
           this.state.courses.length < 1 &&
-          <div className="lead text-center mb-2">Sorry, no courses found.</div>
+          <div className="lead text-center mb-2" style={{color: "white"}}>Sorry, no courses found.</div>
         }
         {
           this.state.courses.map(function (each) {

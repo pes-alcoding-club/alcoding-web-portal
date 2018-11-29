@@ -10,12 +10,12 @@ import { setCurrentUser, logoutUser, loginUser } from './actions/authActions';
 import { Provider } from 'react-redux';
 import store from '../app/store/store';
 import PrivateRoute from '../app/components/common/PrivateRoute';
-import App from '../app/components/App/App';
-import Home from '../app/components/Home/Home';
-import Profile from '../app/components/Pages/Profile/Profile';
-import Assignments from '../app/components/Pages/Assignments/Assignments';
+import App from '../app/components/App';
+import Home from '../app/components/Home';
+import Profile from '../app/components/Pages/Profile';
+import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
-import Courses from '../app/components/Pages/Courses/Courses';
+import Courses from '../app/components/Pages/Courses';
 import NotFound from './components/App/NotFound';
 import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
