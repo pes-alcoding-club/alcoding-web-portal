@@ -198,6 +198,10 @@ class NavbarClass extends Component {
               <DropdownItem tag={Link} to="/contribute">
                 Contribute
             </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem tag={Link} to="/forgotPassword">
+                Forgot Password
+            </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
         </Nav>
