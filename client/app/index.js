@@ -61,7 +61,7 @@ render((
 
             <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
-            <PrivateRoute exact path="/profile/updateHandle" component={updateHandle} />
+            <PrivateRoute exact path="/updateHandle" component={updateHandle} />
 
             <Route exact path="/contribute" component={contribute} />
 

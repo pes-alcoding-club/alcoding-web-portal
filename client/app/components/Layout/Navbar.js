@@ -205,7 +205,7 @@ class NavbarClass extends Component {
     );
 
     return (
-        <Navbar color="dark" dark expand="md" className="mb-2">
+        <Navbar color="dark" dark expand="md" className="mb-4">
           <NavbarBrand href="/">The Alcoding Club</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           {isAuthenticated ? authLinks : guestLinks}

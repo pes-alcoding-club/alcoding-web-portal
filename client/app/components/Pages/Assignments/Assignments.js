@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import AssignmentCard from './AssignmentCard';
-import ReactLoading from 'react-loading';
+import ReactLoading from '../../Loading';
 
 class Assignments extends Component {
   constructor(props) {

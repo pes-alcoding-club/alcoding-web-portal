@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import axios from "axios";
 import { Link, Redirect } from 'react-router-dom';
 import Avatar from 'react-avatar';
-import ReactLoading from 'react-loading';
+import ReactLoading from '../Loading';
 
 export default class Contribute extends Component {
     render() {
         return (
-            <div className="container col-md-12">
+            <div>
                 <div className="jumbotron center pt-3 pb-2 bg-light">
                     <h2 className='d-md-none'>Contribute</h2>
                     <div className="d-none d-md-block display-4 mb-3">Contribute</div>
@@ -24,7 +24,7 @@ export default class Contribute extends Component {
                     <a href="https://github.com/RRK1000" target="_blank"><Avatar name="Rishi Ravikumar" size="100" round={true} />&nbsp; </a>
                     <a href="https://github.com/adityavinodk" target="_blank"><Avatar name="Aditya Vinod Kumar" size="100" round={true} />&nbsp; </a>
                 </div> */}
-                <div className="ml-4">
+                <div className="jumbotron center pt-3 pb-2 bg-light">
                     <div className="h3 mb-4">Developers</div>
                     <div className="row">
                         <div className="col-sm-12 col-lg-6">
