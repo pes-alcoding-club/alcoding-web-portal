@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import ReactTable from "react-table";
-import 'react-table/react-table.css'
+import 'react-table/react-table.css';
 
 class Home extends Component {
   constructor() {
@@ -99,7 +99,7 @@ class Home extends Component {
         <div className="masthead-followup row m-0 border border-white">
           <div className="col-12 col-md-4 p-3 p-md-8 bg-light border border-white">
             <h3 className="text-center">About Us</h3>
-            <p className="text-center">{staticText.aboutUs} <br />We'd love your help, <a href='/contribute'>contribute</a> to this project on GitHub!</p>
+            <p className="text-center">{staticText.aboutUs}</p>
           </div>
           <div className="col-12 col-md-4 p-3 p-md-8 bg-light border border-white">
             <h3 className="text-center">Latest News</h3>

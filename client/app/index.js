@@ -10,8 +10,7 @@ import { setCurrentUser, logoutUser, loginUser } from './actions/authActions';
 import { Provider } from 'react-redux';
 import store from '../app/store/store';
 import PrivateRoute from '../app/components/common/PrivateRoute';
-import Header from '../app/components/Header/Header';
-import Footer from '../app/components/Footer/Footer';
+import App from '../app/components/App/App';
 import Home from '../app/components/Home/Home';
 import Profile from '../app/components/Pages/Profile/Profile';
 import Assignments from '../app/components/Pages/Assignments/Assignments';
@@ -39,9 +38,7 @@ if (localStorage.token) {
 render((
   <Provider store={store}>
     <Router>
-      <div className='App'>
-        <Header />
-
+      <App>
         <div className='container'>
           <Switch>
             <Route exact path="/" component={Home} />
@@ -76,8 +73,7 @@ render((
           </Switch>
 
         </div>
-        <Footer />
-      </div>
+      </App>
     </Router>
   </Provider>
 ), document.getElementById('app'));
