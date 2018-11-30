@@ -6,6 +6,7 @@ import {
   Link,
   Switch
 } from 'react-router-dom'
+import './styles/styles.scss';
 import { setCurrentUser, logoutUser, loginUser } from './actions/authActions';
 import { Provider } from 'react-redux';
 import store from '../app/store/store';
@@ -26,8 +27,7 @@ import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
-import './styles/styles.scss';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 if (localStorage.token) {
