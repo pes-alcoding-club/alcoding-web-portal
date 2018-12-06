@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import ReactLoading from '../Loading';
+import ReactLoading from '../common/Loading';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 

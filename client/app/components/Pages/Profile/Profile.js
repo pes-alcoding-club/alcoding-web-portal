@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import ReactLoading from '../../Loading';
+import ReactLoading from '../../common/Loading';
 import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';

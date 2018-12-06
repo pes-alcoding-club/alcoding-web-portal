@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import CourseCard from '../Courses/CourseCard';
 import AnchorForm from './AnchorForm';
-import ReactLoading from '../../Loading';
+import ReactLoading from './../../common/Loading';
 
 class CoursesAdd extends Component {
   constructor(props) {

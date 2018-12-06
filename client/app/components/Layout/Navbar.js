@@ -9,7 +9,6 @@ import {
   FormGroup,
   Label,
   Input,
-  InputCollapse,
   Collapse,
   Navbar,
   NavbarToggler,
@@ -209,7 +208,7 @@ class NavbarClass extends Component {
     );
 
     return (
-        <Navbar color="dark" dark expand="md" className="mb-4">
+        <Navbar color="navbar-dark" dark expand="md" className="mb-4">
           <NavbarBrand href="/">The Alcoding Club</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           {isAuthenticated ? authLinks : guestLinks}
