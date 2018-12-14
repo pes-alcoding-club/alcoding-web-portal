@@ -144,7 +144,7 @@ class Profile extends React.Component {
         else
             return (
                 <div>
-                    <div className="d-none d-lg-block container col-lg-8">
+                    <div className="d-none d-lg-block container-fluid col-lg-8">
                         {content}
                     </div>
                     <div className='d-lg-none'>
