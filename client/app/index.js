@@ -27,6 +27,7 @@ import ForgotPassword from './components/Layout/ForgotPassword';
 import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
+import PublicProfile from './components/Pages/Profile/PublicProfile';
 import './styles/styles.scss';
 
 
@@ -52,6 +53,8 @@ render((
 
           <Switch>
             <Route exact path="/" component={Home} />
+
+            <Route exact path="/users/:username" component = {PublicProfile} />
 
             <PrivateRoute exact path="/assignments" component={Assignments} />
 

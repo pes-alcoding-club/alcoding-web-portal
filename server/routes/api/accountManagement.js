@@ -313,6 +313,55 @@ module.exports = (app) => {
       });
     }), //end of verifyToken endpoint
 
+    app.post('/api/account/:userID/username', verifyUser, function(req,res){
+      if(!req.body.username){
+        return res.status(400).send({
+          success: false,
+          message: 'Error: username not provided'
+        });
+      }
+      User.find({
+        username: req.body.username,
+        isDeleted: false
+      }, function(err,users){
+        if(err){
+          return res.status(500).send({
+            success: false,
+            message: "Error: Server error"
+          });
+        }
+        if(users.length>0){
+          return res.status(404).send({
+            success: false,
+            message: 'Error: Username already exists'
+          });
+        }
+        User.findOneAndUpdate({
+          _id: req.user_id,
+          isDeleted: false
+        }, {
+          username: req.body.username
+        }, null, function(err, user){
+          if(err){
+            return res.status(500).send({
+              success: false,
+              message: "Error: Server error"
+            });
+          }
+          if(!user){
+            return res.status(404).send({
+              success: false,
+              message: 'Error: No such user exists'
+            });
+          }
+          return res.status(200).send({
+            success: true,
+            message: 'Username updated successfully',
+          });
+        })
+      })
+    })
+
     app.get('/api/account/:userID/details', verifyUser, function (req, res) {
       // GET http://localhost:8080/api/account/:userID/details
       var user_id = req.params.userID;
