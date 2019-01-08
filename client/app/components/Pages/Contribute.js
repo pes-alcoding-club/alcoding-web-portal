@@ -6,6 +6,9 @@ import ReactLoading from '../common/Loading';
 import { Jumbotron, Row, Col } from 'reactstrap';
 
 export default class Contribute extends Component {
+    componentDidMount(){
+        window.scrollTo(0,0);
+    }
     render() {
         return (
             <div>

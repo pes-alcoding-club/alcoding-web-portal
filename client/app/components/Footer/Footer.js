@@ -7,7 +7,7 @@ import {
 const Footer = () => (
   <footer className="footer">
     <Container fluid className="text-light bg-dark">
-    <div className="lead text-center pt-2">We'd love your help! <Link to="/contribute">Contribute</Link> to this project on Github.</div>
+    <div className="lead text-center pt-2">We'd love your help! Click <Link to="/contribute">here</Link> to contribute to this project.</div>
     <div className="footer-copyright text-center py-3">
       <div>
         &copy; {new Date().getFullYear()}{" "}
