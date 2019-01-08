@@ -99,15 +99,15 @@ class Home extends Component {
           <div className="masthead-followup row m-0 bg-light mb-4" style={{ "borderRadius": 5 }}>
             <div className="col-12 col-md-4 p-3 p-md-8 border-right">
               <h3 className="text-center">About Us</h3>
-              <p className="text-justify">{staticText.aboutUs}</p>
+              <p></p><p className="text-justify">{staticText.aboutUs}</p>
             </div>
             <div className="col-12 col-md-4 p-3 p-md-8 border-right">
-              <h3 className="text-center">Latest News</h3>
-              <p className="text-justify">{staticText.latestNews}</p>
+            <h3 className="text-center">Latest News</h3>
+              <p></p><p className="text-justify">{staticText.latestNews}</p>
             </div>
             <div className="col-12 col-md-4 p-3 p-md-">
-              <h3 className="text-center">Announcements</h3>
-              <p className="text-justify">{staticText.announcements}</p>
+            <h3 className="text-center">Announcements</h3>
+              <p></p><p className="text-justify">{staticText.announcements}</p>
           </div>
         </div>
         <div className="jumbotron pt-3 pb-2 bg-light">

@@ -7,7 +7,7 @@ const App = ({ children }) => (
   <div className="app-wrapper">
     <Header />
 
-    <main>
+    <main style={{paddingTop:100}}>
       {children}
     </main>
 

@@ -19,7 +19,8 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Container
 } from 'reactstrap';
 
 class NavbarClass extends Component {
@@ -208,10 +209,12 @@ class NavbarClass extends Component {
     );
 
     return (
-        <Navbar color="navbar-dark" dark expand="md" className="mb-4">
+      <Navbar color="navbar-dark fixed-top" dark expand="md" className="mb-4">
+      <Container className="pb-2 pt-2">
           <NavbarBrand href="/">The Alcoding Club</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           {isAuthenticated ? authLinks : guestLinks}
+      </Container>
         </Navbar>
     );
   }
