@@ -187,7 +187,7 @@ class NavbarClass extends Component {
               <Input type="password" name="password" id="Password" placeholder="Password" required onChange={this.onTextboxChangeSignInPassword} />
             </FormGroup>
             {' '}
-            <Button>Login</Button>
+            <Button color="dark">Login</Button>
           </Form>
           <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret >
