@@ -72,6 +72,11 @@ class Profile extends React.Component {
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/'+userID+'/username'
         var body = {username: newVal};
+        var previous_username = this.state.username;
+        if(newVal==previous_username){
+            ToastStore.warning("Current username. Please try another one");
+            return;
+        }
         this.setState({username: newVal});
         axios.post(apiPath, body, {
             headers: {
