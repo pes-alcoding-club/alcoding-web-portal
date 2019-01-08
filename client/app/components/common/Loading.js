@@ -13,7 +13,7 @@ class Loading extends React.Component {
                         <div className="col-12">
                             <ReactLoading 
                                 type={this.props.type ? this.props.type : "bubbles"} 
-                                color={this.props.color ? this.props.color : "#000080"} 
+                                color={this.props.color ? this.props.color : "#18bc9c"} 
                                 />
                             {/* Loading.. */}
                         </div>

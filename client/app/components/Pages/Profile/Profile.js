@@ -123,7 +123,7 @@ class Profile extends React.Component {
                     <StaticBox fieldName="Name" val={this.state.name} />
                     <StaticBox fieldName="USN" val={this.state.usn} />
                     <p />
-                    <Link to="/updateHandle">Update Contest Handles</Link>
+                    <Link to="/updateHandle" className="text-dark">Update Contest Handles</Link>
                     <PasswordBox />
 
                 </div>
@@ -140,7 +140,7 @@ class Profile extends React.Component {
         );
 
         if (this.state.isLoading)
-            return <ReactLoading type="bubbles" color="#000080" />;
+            return <ReactLoading/>;
         else
             return (
                 <div>

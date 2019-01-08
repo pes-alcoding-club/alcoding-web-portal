@@ -140,7 +140,7 @@ class SignupForm extends Component {
 	render() {
 		const updatedHandlesWtoken = "/api/contests/updatedHandles?token=" + localStorage.getItem('token');
 		if (this.state.isLoading)
-			return <ReactLoading type="bubbles" color="#000080" />;
+			return <ReactLoading/>;
 		else
 			return (
 				<div className='container-fluid'>

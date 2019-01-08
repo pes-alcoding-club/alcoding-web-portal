@@ -119,7 +119,7 @@ class Contests extends React.Component {
         }
       ]
     if (this.state.isLoading)
-      return <ReactLoading type="bubbles" color="#000080" />;
+      return <ReactLoading/>;
     else
       return (
           <div className="jumbotron pt-3 pb-4 bg-light">

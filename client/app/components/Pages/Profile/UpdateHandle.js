@@ -148,7 +148,7 @@ class updateHandle extends React.Component {
         );
 
         if (this.state.isLoading)
-            return <ReactLoading type="bubbles" color="#000080" />;
+            return <ReactLoading/>;
         else
             return (
                 <div>
