@@ -1,3 +1,31 @@
 @charset "UTF-8";
 
-@import url(vendor/normalize.css);
+@import url("vendor/normalize.css");
+
+/* Custom colors */
+$theme-colors: (
+//   "navbar-dark": #002358  //t1
+//   "navbar-dark": #A83738  //t2
+  // "navbar-dark": #225378  //t3
+  // "navbar-dark": #5f63bd  //t4
+  "navbar-dark": #212529  //t5
+);
+
+/* bootstrap override color variables */
+// $body-bg: #007A9B; //t1
+// $body-bg: #D95242; //t2
+// $body-bg: #ACF0F2;  //t3
+// $body-bg: #87cef5; //t4
+$body-bg: #18bc9c; //t5
+// #ACF0F2;
+// $primary: #2E418C;
+// $secondary: #6c757d;
+// $success: #28a745;
+// $info: #17a2b8;
+// $warning: #ffc107;
+// $danger: #dc3545;
+$light: #ffffff;
+$dark: #212529;
+// $white: #05DBFE;
+
+@import "node_modules/bootstrap/scss/bootstrap.scss";
