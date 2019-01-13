@@ -1,23 +1,22 @@
 import React from 'react';
 import { render } from 'react-dom';
-
 import {
   BrowserRouter as Router,
   Route,
   Link,
   Switch
 } from 'react-router-dom'
+import './styles/styles.scss';
 import { setCurrentUser, logoutUser, loginUser } from './actions/authActions';
 import { Provider } from 'react-redux';
 import store from '../app/store/store';
 import PrivateRoute from '../app/components/common/PrivateRoute';
-import Header from '../app/components/Header/Header';
-import Footer from '../app/components/Footer/Footer';
-import Home from '../app/components/Home/Home';
-import Profile from '../app/components/Pages/Profile/Profile';
-import Assignments from '../app/components/Pages/Assignments/Assignments';
+import App from '../app/components/App';
+import Home from '../app/components/Home';
+import Profile from '../app/components/Pages/Profile';
+import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
-import Courses from '../app/components/Pages/Courses/Courses';
+import Courses from '../app/components/Pages/Courses';
 import NotFound from './components/App/NotFound';
 import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
@@ -28,8 +27,8 @@ import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import PublicProfile from './components/Pages/Profile/PublicProfile';
-import './styles/styles.scss';
-
+import contribute from './components/Pages/Contribute';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 if (localStorage.token) {
@@ -40,17 +39,8 @@ if (localStorage.token) {
 render((
   <Provider store={store}>
     <Router>
-      <div className='App'>
-        <Header />
-
+      <App>
         <div className='container'>
-          {/* <Switch>
-        <Route path="/login" component={Login}/>
-      </Switch> */}
-          {/* <Switch>
-                <PrivateRoute exact path="/landing" component={Landing} />
-     </Switch> */}
-
           <Switch>
             <Route exact path="/" component={Home} />
 
@@ -74,7 +64,9 @@ render((
 
             <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
-            <PrivateRoute exact path="/profile/updateHandle" component={updateHandle} />
+            <PrivateRoute exact path="/updateHandle" component={updateHandle} />
+
+            <Route exact path="/contribute" component={contribute} />
 
             <Route exact path="/forgotpassword" component={ForgotPassword} />
 
@@ -84,8 +76,7 @@ render((
           </Switch>
 
         </div>
-        <Footer />
-      </div>
+      </App>
     </Router>
   </Provider>
 ), document.getElementById('app'));

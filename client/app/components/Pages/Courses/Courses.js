@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import CourseCard from '../Courses/CourseCard';
 import AnchorForm from './AnchorForm';
-import ReactLoading from 'react-loading';
+import ReactLoading from './../../common/Loading';
 
 class CoursesAdd extends Component {
   constructor(props) {
@@ -400,7 +400,7 @@ class CoursesAdd extends Component {
       <div>
         {
           this.state.courses.length < 1 &&
-          <div className="lead text-center mb-2">Sorry, no courses found.</div>
+          <div className="lead text-center mb-2" style={{color: "white"}}>Sorry, no courses found.</div>
         }
         {
           this.state.courses.map(function (each) {
@@ -417,7 +417,7 @@ class CoursesAdd extends Component {
       content = studContent;
     }
     if (this.state.isLoading)
-      return <ReactLoading type="bubbles" color="#000080" />;
+      return <ReactLoading/>;
     else
       return (
         <div>{content}</div>

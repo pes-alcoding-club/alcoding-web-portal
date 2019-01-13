@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 const helpers = require('./helpers');
 const commonConfig = require('./webpack.common');
@@ -13,15 +14,17 @@ module.exports = merge(commonConfig, {
   },
 
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      mangle: true, 
-      sourcemap: false, 
-      compressor: {
-        warnings: false,
-        screw_ie8: true
-      },
-      output: {
-        comments: false
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        mangle: true,
+        sourcemap: false,
+        compressor: {
+          warnings: false,
+          screw_ie8: true
+        },
+        output: {
+          comments: false
+        }
       }
     })
   ]

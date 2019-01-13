@@ -37,30 +37,17 @@ module.exports = {
         loader: 'babel-loader'
       },
 
-      // SCSS files
       {
+        // Preprocess our own .scss files
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                'sourceMap': true,
-                'importLoaders': 1
-              }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                plugins: () => [
-                  autoprefixer
-                ]
-              }
-            },
-            'sass-loader'
-          ]
-        })
+        exclude: /node_modules/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
+        // Preprocess 3rd party .css files located in node_modules
+        test: /\.css$/,
+        include: /node_modules/,
+        use: ['style-loader', 'css-loader'],
       }
     ]
   },
@@ -76,7 +63,7 @@ module.exports = {
 
     new HtmlWebpackPlugin({
       template: helpers.root('client/public/index.html'),
-      inject: 'body'
+      inject: true
     }),
 
     new ExtractTextPlugin({

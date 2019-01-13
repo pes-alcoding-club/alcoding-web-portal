@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import AssignmentCard from './AssignmentCard';
-import ReactLoading from 'react-loading';
+import ReactLoading from './../../common/Loading';
 
 class Assignments extends Component {
   constructor(props) {
@@ -110,7 +110,7 @@ class Assignments extends Component {
       <div>
         {
           this.state.assignments.length < 1 &&
-          <div className="lead text-center mb-2">Sorry, no assignments found.</div>
+          <div className="lead text-center mb-2" style={{ color: "white" }}>Sorry, no assignments found.</div>
         }
         {
           this.state.assignments.map(function (each) {
@@ -127,7 +127,7 @@ class Assignments extends Component {
       content = studContent;
     }
     if (this.state.isLoading)
-      return <ReactLoading type="bubbles" color="#000080" />;
+      return <ReactLoading/>;
     else
       return (
         <div>{content}</div>

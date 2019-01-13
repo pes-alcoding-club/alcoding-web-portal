@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import ReactLoading from 'react-loading';
-
+import ReactLoading from '../../common/Loading';
 import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';
@@ -116,9 +115,9 @@ class Profile extends React.Component {
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/' + userID + '/basicInfo'
         var body = new Object();
-        body["phone"] = basicInfoCopy.phone; 
-        body["email"]= basicInfoCopy.email;
-        body["dob"]= basicInfoCopy.dob;
+        body["phone"] = basicInfoCopy.phone;
+        body["email"] = basicInfoCopy.email;
+        body["dob"] = basicInfoCopy.dob;
 
         axios.put(
             apiPath,
@@ -153,33 +152,42 @@ class Profile extends React.Component {
 
     render() {
         const { isAuthenticated, user } = this.props.auth;
+
+        const content = (
+            <div className="jumbotron center pt-3 pb-4 bg-light">
+                <div className='display-4 mb-3'>Profile</div>
+
+                <div>
+                    <StaticBox fieldName="Name" val={this.state.name} />
+                    <StaticBox fieldName="USN" val={this.state.usn} />
+                    <p />
+                    <Link to="/updateHandle" className="text-dark">Update Contest Handles</Link>
+                    <PasswordBox />
+                    <MutableBox updateFieldValue={this.updateUsername} changeEditingStatus={this.changeEditingStatus} field="username" inputType="text" fieldName="Username" val={this.state.username} />
+                </div>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" inputType="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" inputType="date" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
+                <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_RIGHT} />
+
+                {/* <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button> */}
+            </div>
+        );
+
         if (this.state.isLoading)
-            return <ReactLoading type="bubbles" color="#000080" />;
+            return <ReactLoading/>;
         else
             return (
-                <div className="container col-md-8">
-                    <div className="jumbotron center pt-3 pb-2 bg-light">
-                        <div className='display-4 mb-3'>Profile</div>
-
-                        <div>
-                            <StaticBox fieldName="Name" val={this.state.name} />
-                            <StaticBox fieldName="USN" val={this.state.usn} />
-                            <p />
-                            <Link to="/profile/updateHandle">Update contest handles</Link>
-                            <PasswordBox />
-                            <MutableBox updateFieldValue={this.updateUsername} changeEditingStatus={this.changeEditingStatus} field="username" inputType="text" fieldName="Username" val={this.state.username} />
-                        </div>
-                        <hr />
-                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
-                        <hr />
-                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="email" inputType="email" fieldName="Email ID" val={this.state.basicInfo["email"]} />
-                        <hr />
-                        <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="dob" inputType="date" fieldName="Date of Birth" val={this.state.basicInfo["dob"]} />
-                        <hr />
-                        <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_RIGHT} />
-
-                        {/* <button onClick={this.onConfirm} type="button" className="btn btn-dark mb-4 ">Confirm Changes</button> */}
+                <div>
+                    <div className="d-none d-lg-block container-fluid col-lg-8">
+                        {content}
                     </div>
+                    <div className='d-lg-none'>
+                        {content}
+                    </div >
                 </div>
             );
     }
