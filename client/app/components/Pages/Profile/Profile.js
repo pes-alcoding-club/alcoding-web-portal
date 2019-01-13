@@ -163,8 +163,9 @@ class Profile extends React.Component {
                     <p />
                     <Link to="/updateHandle" className="text-dark">Update Contest Handles</Link>
                     <PasswordBox />
-                    <MutableBox updateFieldValue={this.updateUsername} changeEditingStatus={this.changeEditingStatus} field="username" inputType="text" fieldName="Username" val={this.state.username} />
                 </div>
+                <hr />
+                <MutableBox updateFieldValue={this.updateUsername} changeEditingStatus={this.changeEditingStatus} field="username" inputType="text" fieldName="Username" val={this.state.username} />
                 <hr />
                 <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
                 <hr />
