@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginUser, logoutUser, getName } from '../../actions/authActions';
+import { loginUser, logoutUser } from '../../actions/authActions';
 import {
   Button,
   Form,
@@ -43,37 +43,8 @@ class NavbarClass extends Component {
 
 
   componentDidMount() {
-    if (this.props.auth.isAuthenticated) {
-      this.setState({
-        bool: true
-      })
-      if (this.state.bool) {
-        this.props.getName()
-        this.setState({
-          bool: false
-        });
-      }
-      <Redirect to="/" />
-      //this.props.history.push('/landing');
-    }
-  }
-
-
-  // componentWillReceiveProps(nextProps) {
-    // if (nextProps.auth.isAuthenticated) {
-    //   this.setState({
-    //     bool: true
-    //   })
-    //   if (this.state.bool) {
-    //     nextProps.getName()
-    //     this.setState({
-    //       bool: false
-    //     });
-    //   }
     //   <Redirect to="/" />
-    //   //this.props.history.push('/landing');
-    // }
-  // }
+  }
 
   onTextboxChangeSignInPassword(event) {
     event.preventDefault();
@@ -127,6 +98,7 @@ class NavbarClass extends Component {
 
   render() {
     var isAuthenticated = this.props.auth.isAuthenticated;
+    var displayName = (this.props.auth.name && this.props.auth.name.firstName) || "";
 
     const authLinks = (
       <Collapse isOpen={this.state.navbarIsOpen} navbar>
@@ -145,7 +117,7 @@ class NavbarClass extends Component {
         <Nav className="ml-auto" navbar>
           <NavItem>
             <NavLink disabled active>
-              {this.props.auth.userName.firstName}
+              {displayName.split(" ", 1)[0]}
             </NavLink>
           </NavItem>
           <NavItem>
@@ -225,5 +197,5 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { loginUser, logoutUser, getName })(NavbarClass);
+export default connect(mapStateToProps, { loginUser, logoutUser })(NavbarClass);
 
