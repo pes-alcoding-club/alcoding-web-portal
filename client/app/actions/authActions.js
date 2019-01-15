@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, GET_DETAILS } from '../actions/types';
+import { SET_CURRENT_USER, GET_DETAILS, LOGOUT_USER } from '../actions/types';
 import axios from 'axios';
 
 export const loginUser = user => dispatch => {
@@ -13,7 +13,7 @@ export const loginUser = user => dispatch => {
                 localStorage.setItem('user_id', response.data.user_id);
 
                 //set current user
-                dispatch(setCurrentUser(response.data.token));
+                dispatch(setCurrentUser(response.data.token, response.data.user_id));
             }
 
         })
@@ -23,28 +23,44 @@ export const loginUser = user => dispatch => {
 };
 
 
-// Set logged in user
-export const setCurrentUser = token => {
+/*
+ACTION CREATORS
+*/
+// Set a logged in user
+export const setCurrentUser = (token, user_id) => {
     return {
         type: SET_CURRENT_USER,
-        payload: token
+        payload: {
+            token, user_id
+        }
     };
 };
 
-export const logoutUser = () => dispatch => {
-    var userID = localStorage.getItem('user_id')
-    var token = localStorage.getItem('token')
-    axios.get('/api/account/' + userID + '/logout', {
-        headers: {
-            'x-access-token': token,
-            'Content-Type': 'application/json'
-        },
-    })
-    console.log(userID + " logged out.");
-    //save data into local storage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
-    dispatch(setCurrentUser({}))
+// Logout a user
+const logoutUserCreator = () => {
+    return {
+        type: LOGOUT_USER,
+        payload: {
+            success: true
+        }
+    };
+};
+
+export const logoutUser = () => {
+    return (dispatch) => {
+        var userID = localStorage.getItem('user_id')
+        var token = localStorage.getItem('token')
+        axios.get('/api/account/' + userID + '/logout', {
+            headers: {
+                'x-access-token': token,
+                'Content-Type': 'application/json'
+            },
+        })
+        console.log(userID + " logged out.");
+        //remove data from local storage
+        localStorage.clear();
+        return dispatch(logoutUserCreator());
+    }
 }
 
 export const getName = () => dispatch => {

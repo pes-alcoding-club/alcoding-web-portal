@@ -59,21 +59,21 @@ class NavbarClass extends Component {
   }
 
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      this.setState({
-        bool: true
-      })
-      if (this.state.bool) {
-        nextProps.getName()
-        this.setState({
-          bool: false
-        });
-      }
-      <Redirect to="/" />
-      //this.props.history.push('/landing');
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+    // if (nextProps.auth.isAuthenticated) {
+    //   this.setState({
+    //     bool: true
+    //   })
+    //   if (this.state.bool) {
+    //     nextProps.getName()
+    //     this.setState({
+    //       bool: false
+    //     });
+    //   }
+    //   <Redirect to="/" />
+    //   //this.props.history.push('/landing');
+    // }
+  // }
 
   onTextboxChangeSignInPassword(event) {
     event.preventDefault();
@@ -126,12 +126,7 @@ class NavbarClass extends Component {
   }
 
   render() {
-    const {
-      signInUsn,
-      signInPassword,
-
-    } = this.state;
-    const { isAuthenticated } = this.props.auth;
+    var isAuthenticated = this.props.auth.isAuthenticated;
 
     const authLinks = (
       <Collapse isOpen={this.state.navbarIsOpen} navbar>
@@ -211,7 +206,7 @@ class NavbarClass extends Component {
     return (
       <Navbar color="navbar-dark fixed-top" dark expand="md" className="mb-4">
       <Container className="pb-2 pt-2">
-          <NavbarBrand href="/">The Alcoding Club</NavbarBrand>
+          <NavbarBrand tag={Link} to="/">The Alcoding Club</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           {isAuthenticated ? authLinks : guestLinks}
       </Container>
