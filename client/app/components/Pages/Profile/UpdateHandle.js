@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import MutableBox from './MutableBox'
-import ReactLoading from '../../common/Loading';
+import ReactLoading from 'react-loading';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { ToastContainer, ToastStore } from 'react-toasts';
