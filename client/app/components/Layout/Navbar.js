@@ -30,11 +30,9 @@ class NavbarClass extends Component {
       signInUsn: "",
       signInpassword: "",
       loginShow: true,
-      bool: true,
       navbarIsOpen: false
     };
 
-    this.forgotpw = this.forgotpw.bind(this);
     this.toggle = this.toggle.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
     this.onTextboxChangeSignInUsn = this.onTextboxChangeSignInUsn.bind(this);
@@ -76,13 +74,6 @@ class NavbarClass extends Component {
     event.preventDefault();
     // this.forceUpdate();   
     this.props.logoutUser();
-  }
-  forgotpw() {
-    this.setState({
-      loginShow: false
-    });
-    this.reload();
-    // this.forceUpdate();   
   }
 
   reload() {
