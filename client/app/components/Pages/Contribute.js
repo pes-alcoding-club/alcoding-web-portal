@@ -48,13 +48,13 @@ export default class Contribute extends Component {
                         <Col sm="12" lg="6">
                             <Row>
                                 <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar name="Parth Vipul Shah" size="100" round={"5px"} />&nbsp;
+                                    <Avatar name="Parth Vipul Shah" githubhandle="parthvshah" size="100" round={"5px"} />&nbsp;
                                 </Col>
                                 <Col>
                                     <a href="https://parthvshah.github.io" target="_blank">
-                                        <p className="bold lead">Parth Vipul Shah</p>
+                                        <p className="bold lead">Parth V Shah</p>
                                     </a>
-                                    {/* <p>Some Random Bio</p> */}
+                                    <p>Technology enthusiast and Full-stack developer.</p>
                                     <hr />
                                 </Col>
                             </Row>
