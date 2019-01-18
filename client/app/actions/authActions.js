@@ -41,24 +41,31 @@ ACTION FUNCTIONS aka THUNKS
 
 export const logoutUser = () => {
     return (dispatch, getState) => {
-        var userID = localStorage.getItem('user_id')
-        var token = localStorage.getItem('token')
+        const userID = getState().auth.user_id;
+        const token = getState().auth.token;
         axios.get('/api/account/' + userID + '/logout', {
             headers: {
                 'x-access-token': token,
                 'Content-Type': 'application/json'
             },
         })
-        console.log(userID + " logged out.");
-        //remove data from local storage
-        localStorage.clear();
-        return dispatch(logoutUserCreator());
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            .finally(() => {
+                console.log(userID + " logged out.");
+                //remove data from local storage
+                localStorage.clear();
+                return dispatch(logoutUserCreator());
+            })
     }
 }
 
 export const getName = () => {
     return (dispatch, getState) => {
-        console.log("Getting name....");
         const userID = getState().auth.user_id;
         const token = getState().auth.token;
         axios.get('/api/account/' + userID + '/details',
@@ -99,7 +106,7 @@ export const loginUser = user => dispatch => {
         })
         .catch(err => {
             console.log(err);
-            alert('Invalid Locgin.');
+            alert('Invalid Login.');
         }
         );
 };
