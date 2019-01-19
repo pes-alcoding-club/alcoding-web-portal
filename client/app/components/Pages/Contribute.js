@@ -78,7 +78,7 @@ export default class Contribute extends Component {
                         <Col sm="12" lg="6">
                             <Row>
                                 <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
+                                    <Avatar githubhandle="adityavinodk" name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
                                     </Col>
                                 <Col>
                                     <a href="https://github.com/adityavinodk" target="_blank">

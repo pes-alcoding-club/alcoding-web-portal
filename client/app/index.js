@@ -68,6 +68,8 @@ render((
 
             <Route exact path="/contribute" component={contribute} />
 
+            <Route exact path="/contribute" component={contribute} />
+
             <Route exact path="/forgotpassword" component={ForgotPassword} />
 
             <Route exact path="/reset/:token/:userID" component={ChangePassword} />
