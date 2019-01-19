@@ -1,9 +1,11 @@
 var multer = require('multer');
 const User = require('../models/User');
 const File = require('../models/Files');
+var Assignment = require('../models/assignments/Assignment');
 var fs = require("fs");
 var path = require('path');
 var homedir = require('os').homedir();
+var archiver = require('archiver');
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -126,6 +128,94 @@ var downloadFile = function (dir) {
     }
 }
 
+var zipFile = function(dir){
+    return function(req,res,next){
+        Assignment.findOne({
+            _id: req.params.assignmentID
+        }, function(err,assignment){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(!assignment){
+                return res.status(404).send({
+                    success: false,
+                    message: "Error: No such assignment found"
+                });
+            }
+            if(assignment.submissions.length>0){
+                var output = fs.createWriteStream(path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/'+req.params.assignmentID+'.zip'));
+                var archive = archiver('zip', {
+                    gzip: true,
+                    zlib: {level: 9}
+                });
+                archive.on('error', function(err){
+                    console.log(err);
+                    throw err;
+                });
+                archive.pipe(output);
+                var files = [];
+                var itemsProcessed = 0;
+                assignment.submissions.forEach(obj => {
+                    User.findOne({
+                        _id: obj.user
+                    }, function(err, user){
+                        if(err){
+                            return res.status(500).send({
+                                success: false,
+                                message: "Error: server error"
+                            });
+                        }
+                        if(!user){
+                            return res.status(404).send({
+                                success: false,
+                                message: "Error: No such user found"
+                            });
+                        }
+                        var usn = user.usn;
+                        File.findOne({
+                            _id: obj.file
+                        }, function(err,file){
+                            if(err){
+                                return res.status(500).send({
+                                    success: false,
+                                    message: "Error: server error"
+                                });
+                            }
+                            if(!file){
+                                return res.status(404).send({
+                                    success: false,
+                                    message: "Error: No such file found"
+                                });
+                            }
+                            var filePath = path.join(dir, file.originalname);
+                            var fileName = usn+'_'+file.originalname;
+                            var fileObj = {};
+                            fileObj['path'] = filePath;
+                            fileObj['name'] = fileName;
+                            itemsProcessed++;
+                            files.push(fileObj);
+                            if(itemsProcessed == assignment.submissions.length){
+                                console.log(files);
+                                files.forEach(fileObj => {
+                                    archive.file(fileObj.path, {name: fileObj.name});
+                                })
+                                archive.finalize();
+                                return res.status(200).send({
+                                    success: true,
+                                    message: "The Files have been successfully zipped"
+                                })
+                            }
+                        });
+                    });
+                })
+            }
+        })
+    }
+}
+
 //TODO: Delete file endpoint
 
-module.exports = { diskStorage, fileUpload, downloadFile };
+module.exports = { diskStorage, fileUpload, downloadFile, zipFile };
