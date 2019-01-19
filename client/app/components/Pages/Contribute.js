@@ -72,19 +72,19 @@ export default class Contribute extends Component {
                                     </a>
                                     {/* <p>Some Random Bio</p> */}
                                     <hr />
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col sm="12" lg="6">
-                            <Row>
-                                <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
-                                    </Col>
-                                <Col>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-lg-6">
+                            <div className="row">
+                                <div className="col-sm-12 col-md-2 col-lg-3 mb-4">
+                                    <Avatar githubHandle='adityavinodk' name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
+                                </div>
+                                <div className="col-9">
                                     <a href="https://github.com/adityavinodk" target="_blank">
                                         <p className="bold lead">Aditya Vinod Kumar</p>
                                     </a>
-                                    {/* <p>Some Random Bio</p> */}
+                                    <p>Full-Stack Developer. Machine Learning and Competitive Coding Enthusiast.</p>
                                     <hr />
                                 </Col>
                             </Row>

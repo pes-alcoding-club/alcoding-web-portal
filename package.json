@@ -20,6 +20,7 @@
     "@babel/core": "^7.0.0-beta.42",
     "@babel/preset-env": "^7.0.0-beta.42",
     "@babel/preset-react": "^7.0.0-beta.42",
+    "archiver": "^3.0.0",
     "autoprefixer": "^8.6.4",
     "axios": "^0.18.0",
     "babel-loader": "^8.0.0-beta.4",

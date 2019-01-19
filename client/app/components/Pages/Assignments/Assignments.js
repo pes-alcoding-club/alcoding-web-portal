@@ -110,7 +110,7 @@ class Assignments extends Component {
       <div>
         {
           this.state.assignments.length < 1 &&
-          <div className="lead text-center mb-2" style={{ color: "white" }}>Sorry, no assignments found.</div>
+          <div className="lead text-center mb-2" style={{ color: "white" }}>Sorry, no new assignments found.</div>
         }
         {
           this.state.assignments.map(function (each) {
