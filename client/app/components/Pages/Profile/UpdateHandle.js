@@ -117,40 +117,47 @@ class updateHandle extends React.Component {
     }
 
     render() {
+        const content = (
+            <div className="jumbotron center pt-3 pb-2 bg-light">
+                <div className='display-4 mb-3'>Coding handles</div>
+                <div className="lead">Keep it updated to be recognised in the contest ranking.</div>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codechef" inputType="text" fieldName="CodeChef" val={this.state.codechef} />
+                <a href="https://www.codechef.com" rel="noopener noreferrer" target="_blank">www.codechef.com</a>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codeforces" inputType="text" fieldName="Codeforces" val={this.state.codeforces} />
+                <a href="https://codeforces.com" rel="noopener noreferrer" target="_blank">codeforces.com</a>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codejam" inputType="text" fieldName="Google CodeJam" val={this.state.codejam} />
+                <a href="https://codejam.withgoogle.com/codejam" rel="noopener noreferrer" target="_blank">codejam.withgoogle.com/codejam</a>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="kickstart" inputType="text" fieldName="Google Kickstart" val={this.state.kickstart} />
+                <a href="https://code.google.com/codejam/kickstart" rel="noopener noreferrer" target="_blank">code.google.com/codejam/kickstart</a>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="hackerEarth" inputType="text" fieldName="HackerEarth" val={this.state.hackerEarth} />
+                <a href="https://www.hackerearth.com" rel="noopener noreferrer" target="_blank">www.hackerearth.com</a>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="hackerRank" inputType="text" fieldName="HackerRank" val={this.state.hackerRank} />
+                <a href="https://www.hackerrank.com" rel="noopener noreferrer" target="_blank">www.hackerrank.com</a>
+                <hr />
+                <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="spoj" inputType="text" fieldName="SPOJ" val={this.state.spoj} />
+                <a href="https://www.spoj.com" rel="noopener noreferrer" target="_blank">www.spoj.com</a>
+                <hr />
+                <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_RIGHT} />
+            </div>
+        );
+
         if (this.state.isLoading)
-            return <ReactLoading type="bubbles" color="#000080" />;
+            return <ReactLoading/>;
         else
             return (
                 <div>
-                    <div className="container col-md-8">
-                        <div className="jumbotron center pt-3 pb-2 bg-light">
-                            <div className='display-4 mb-3'>Coding handles</div>
-                            <div className="lead">Keep it updated to be recognised in the contest ranking.</div>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codechef" inputType="text" fieldName="CodeChef" val={this.state.codechef} />
-                            <a href="https://www.codechef.com" rel="noopener noreferrer" target="_blank">www.codechef.com</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codeforces" inputType="text" fieldName="Codeforces" val={this.state.codeforces} />
-                            <a href="https://codeforces.com" rel="noopener noreferrer" target="_blank">codeforces.com</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="codejam" inputType="text" fieldName="Google CodeJam" val={this.state.codejam} />
-                            <a href="https://codejam.withgoogle.com/codejam" rel="noopener noreferrer" target="_blank">codejam.withgoogle.com/codejam</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="kickstart" inputType="text" fieldName="Google Kickstart" val={this.state.kickstart} />
-                            <a href="https://code.google.com/codejam/kickstart" rel="noopener noreferrer" target="_blank">code.google.com/codejam/kickstart</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="hackerEarth" inputType="text" fieldName="HackerEarth" val={this.state.hackerEarth} />
-                            <a href="https://www.hackerearth.com" rel="noopener noreferrer" target="_blank">www.hackerearth.com</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="hackerRank" inputType="text" fieldName="HackerRank" val={this.state.hackerRank} />
-                            <a href="https://www.hackerrank.com" rel="noopener noreferrer" target="_blank">www.hackerrank.com</a>
-                            <hr />
-                            <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="spoj" inputType="text" fieldName="SPOJ" val={this.state.spoj} />
-                            <a href="https://www.spoj.com" rel="noopener noreferrer" target="_blank">www.spoj.com</a>
-                            <hr />
-                            <ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_RIGHT} />
-                        </div>
+                    <div className="d-none d-lg-block container-fluid col-lg-8">
+                        {content}
                     </div>
+                    <div className='d-lg-none'>
+                        {content}
+                    </div >
                 </div>
             );
     }

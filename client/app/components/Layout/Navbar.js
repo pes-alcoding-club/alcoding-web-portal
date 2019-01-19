@@ -9,7 +9,6 @@ import {
   FormGroup,
   Label,
   Input,
-  InputCollapse,
   Collapse,
   Navbar,
   NavbarToggler,
@@ -20,7 +19,8 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Container
 } from 'reactstrap';
 
 class NavbarClass extends Component {
@@ -188,7 +188,7 @@ class NavbarClass extends Component {
               <Input type="password" name="password" id="Password" placeholder="Password" required onChange={this.onTextboxChangeSignInPassword} />
             </FormGroup>
             {' '}
-            <Button>Login</Button>
+            <Button color="dark">Login</Button>
           </Form>
           <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret >
@@ -209,10 +209,12 @@ class NavbarClass extends Component {
     );
 
     return (
-        <Navbar color="dark" dark expand="md" className="mb-2">
+      <Navbar color="navbar-dark fixed-top" dark expand="md" className="mb-4">
+      <Container className="pb-2 pt-2">
           <NavbarBrand href="/">The Alcoding Club</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           {isAuthenticated ? authLinks : guestLinks}
+      </Container>
         </Navbar>
     );
   }

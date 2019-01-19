@@ -1,10 +1,8 @@
 import { SET_CURRENT_USER, GET_DETAILS } from '../actions/types';
-
 import axios from 'axios';
-import qs from 'qs';
 
 export const loginUser = user => dispatch => {
-    axios.post("/api/account/signin", qs.stringify(user))
+    axios.post("/api/account/signin", user)
         .then((response) => {
             console.log(response);
 

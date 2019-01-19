@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import AssignmentCard from './AssignmentCard';
-import ReactLoading from 'react-loading';
+import ReactLoading from './../../common/Loading';
 
 class Assignments extends Component {
   constructor(props) {
@@ -127,7 +127,7 @@ class Assignments extends Component {
       content = studContent;
     }
     if (this.state.isLoading)
-      return <ReactLoading type="bubbles" color="#000080" />;
+      return <ReactLoading/>;
     else
       return (
         <div>{content}</div>
