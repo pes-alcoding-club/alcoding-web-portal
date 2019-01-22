@@ -70,7 +70,7 @@ export default class Contribute extends Component {
                                     <a href="https://github.com/RRK1000" target="_blank">
                                         <p className="bold lead">Rishi Ravikumar</p>
                                     </a>
-                                    {/* <p>Some Random Bio</p> */}
+                                    <p>Full-Stack Developer. Ardent Competitive Coder.</p>
                                     <hr />
                                 </Col>
                             </Row>
