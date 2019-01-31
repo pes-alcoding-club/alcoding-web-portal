@@ -71,7 +71,6 @@ render((
 
             <Route component={NotFound} />
           </Switch>
-
         </div>
       </App>
     </Router>
