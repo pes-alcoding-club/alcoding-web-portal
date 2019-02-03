@@ -1,9 +1,6 @@
 # Data Analysis Project
-This project is being developed for the Alcoding Club of PES University, Bangalore.
-It is a Web Application that acts as a portal for all students belonging to the Computer Science Department, in which students can view their coding contest rankings and submit assignments for the courses they have enrolled.
-This project is currently being developed using the MERN stack. 
-Implementation details, features shall be enlisted in the near future. 
-
+A web application built using MERN (MongoDB, Express.js, React.js, Node.js) full-stack framework. This project is developed for the students and professors of the CS&E department, PES University and is developed by the members of *The Alcoding Club*, PES University.
+The web app enables student to view their ranking among other students in global competitive coding competitions, helps them build a public profile, submit course related assignments and view their submissions.
 
 ## Requirements
 
@@ -30,6 +27,7 @@ npm run start:dev
 ```
 
 ### Note
+
 1. Make sure to add a `config.js` file in the `config` folder. See the `config.example.js` under `config/` directory for more details.
 2. Generate and add ssl files in the `server/` directory under a folder named `sslcert`. To genrate certificates, navigate to the `server/sslcert/` directory and execute the following command. 
   ```shell
@@ -40,7 +38,7 @@ npm run start:dev
    ```
   This should generate two files, `server.key` and `server.crt`.
   
-  ### Steps to create the first user (an admin user)
+### Steps to create the first user (an admin user)
   1. Replace line 14 in `server/routes/api/admin.js` by the following
   ```
       app.post('/api/admin/signup', function (req, res) {
