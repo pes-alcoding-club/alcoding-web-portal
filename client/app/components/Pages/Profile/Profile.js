@@ -76,7 +76,6 @@ class Profile extends React.Component {
             ToastStore.warning("Current username. Please try another one");
             return;
         }
-        this.setState({username: newVal});
         axios.post(apiPath, body, {
             headers: {
                 'x-access-token': token,
@@ -90,7 +89,7 @@ class Profile extends React.Component {
                 return;
             }
             else if(response.status == 200) {
-                console.log(response.data);
+                this.setState({username: newVal});
                 ToastStore.success('Successfully updated!');
             }
         }).catch(function (error) {
