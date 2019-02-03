@@ -7,6 +7,8 @@ import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';
 import { ToastContainer, ToastStore } from 'react-toasts';
+var validator = require("email-validator");
+ 
 
 
 class Profile extends React.Component {
@@ -106,11 +108,34 @@ class Profile extends React.Component {
     }
 
     updateValue(field, newVal) {
-        // TODO: Some Form validation based on field
+        // TODO: Verify email and phone existance.
         var basicInfoCopy = Object.assign({}, this.state.basicInfo);
+        if(basicInfoCopy[field]==newVal){
+            ToastStore.warning("Current "+field+". Please try another one");
+            return; //^ If old value equals updated value, displays appropriate error
+        }
+        if(field=="phone"){
+            if(String(newVal).length!=10 || isNaN(Number(newVal))){
+                ToastStore.warning("Invalid Phone Number. Please try another one");
+                return; //^ If value isn't a numeric, or is not 10 digits long
+            }
+        }
+        else if(field=="email"){
+            if(!validator.validate(newVal)){
+                ToastStore.warning("Invalid Email ID. Please try another one");
+                return; //^ If email ID isn't of format - {x@y.z}
+            }
+        }
+        else if(field=="dob"){
+            var givenDob=new Date(newVal);
+            var presentDate=new Date();
+            if(presentDate-givenDob<16*365*24*60*1000 || presentDate-givenDob>65*365*24*60*1000){
+                ToastStore.warning("Invalid Date of Birth. Please try another one");
+                return; //^ If user is less than 16 years or greater than 65 years
+            }
+        }
         basicInfoCopy[field] = newVal;
         this.setState({ basicInfo: basicInfoCopy });
-
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/' + userID + '/basicInfo'
@@ -118,7 +143,6 @@ class Profile extends React.Component {
         body["phone"] = basicInfoCopy.phone;
         body["email"] = basicInfoCopy.email;
         body["dob"] = basicInfoCopy.dob;
-
         axios.put(
             apiPath,
             body,
