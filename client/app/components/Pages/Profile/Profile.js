@@ -7,7 +7,7 @@ import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';
 import { ToastContainer, ToastStore } from 'react-toasts';
-var validator = require("email-validator");
+
  
 
 
@@ -115,13 +115,17 @@ class Profile extends React.Component {
             return; //^ If old value equals updated value, displays appropriate error
         }
         if(field=="phone"){
+            //var phoneFormat=new RegExp(/((\+*)((0[ -]+)*|(91 )*)(\d{12}+|\d{10}+))|\d{5}([- ]*)\d{6}/);
+            // Above regex doesn't work, "Invalid Reguar Expression error"
             if(String(newVal).length!=10 || isNaN(Number(newVal))){
                 ToastStore.warning("Invalid Phone Number. Please try another one");
-                return; //^ If value isn't a numeric, or is not 10 digits long
+                return; //^ Invalidates phone numbers that aren't 10 digits long, or which aren't numeric. 
+            // ToDo : Find working regex for Indian phone numbers.
             }
         }
         else if(field=="email"){
-            if(!validator.validate(newVal)){
+            var emailFormat=new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+            if(!emailFormat.test(newVal)){
                 ToastStore.warning("Invalid Email ID. Please try another one");
                 return; //^ If email ID isn't of format - {x@y.z}
             }
