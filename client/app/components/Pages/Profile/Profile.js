@@ -129,7 +129,7 @@ class Profile extends React.Component {
         else if(field=="dob"){
             var givenDob=new Date(newVal);
             var presentDate=new Date();
-            if(presentDate-givenDob<16*365*24*60*1000 || presentDate-givenDob>65*365*24*60*1000){
+            if(presentDate-givenDob<16*365*24*3600*1000 || presentDate-givenDob>65*365*24*3600*1000){
                 ToastStore.warning("Invalid Date of Birth. Please try another one");
                 return; //^ If user is less than 16 years or greater than 65 years
             }
