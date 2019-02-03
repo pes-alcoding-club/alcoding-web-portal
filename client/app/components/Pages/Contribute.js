@@ -6,8 +6,8 @@ import ReactLoading from '../common/Loading';
 import { Jumbotron, Row, Col } from 'reactstrap';
 
 export default class Contribute extends Component {
-    componentDidMount(){
-        window.scrollTo(0,0);
+    componentDidMount() {
+        window.scrollTo(0, 0);
     }
     render() {
         return (
@@ -78,8 +78,8 @@ export default class Contribute extends Component {
                         <Col sm="12" lg="6">
                             <Row>
                                 <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
-                                    </Col>
+                                    <Avatar githubHandle='adityavinodk' name="Aditya Vinod Kumar" size="100" round={"5px"} />&nbsp;
+                                </Col>
                                 <Col>
                                     <a href="https://github.com/adityavinodk" target="_blank">
                                         <p className="bold lead">Aditya Vinod Kumar</p>

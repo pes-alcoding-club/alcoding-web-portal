@@ -91,6 +91,7 @@ class Profile extends React.Component {
                 return;
             }
             else if(response.status == 200) {
+                this.setState({username: newVal});
                 ToastStore.success('Successfully updated!');
             }
         }).catch(function (error) {
