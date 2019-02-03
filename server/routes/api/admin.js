@@ -154,13 +154,14 @@ module.exports = (app) => {
 
         User.findOne({
             usn: req.body.usn,
+            role: 'student',
             isDeleted: false
         }, function (err, user) {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: 'Error: Server error'
-                });
+                }); 
             }
             if (!user) {
                 return res.status(404).send({
