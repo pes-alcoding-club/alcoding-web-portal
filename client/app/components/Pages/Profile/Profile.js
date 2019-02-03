@@ -115,12 +115,13 @@ class Profile extends React.Component {
             return; //^ If old value equals updated value, displays appropriate error
         }
         if(field=="phone"){
-            //var phoneFormat=new RegExp(/((\+*)((0[ -]+)*|(91 )*)(\d{12}+|\d{10}+))|\d{5}([- ]*)\d{6}/);
-            // Above regex doesn't work, "Invalid Reguar Expression error"
-            if(String(newVal).length!=10 || isNaN(Number(newVal))){
+            if(newVal[0]!='+'){
+                newVal='+91'+newVal;
+            }
+            var phoneFormat=new RegExp(/^((\+){1}91){1}[6-9]{1}[0-9]{9}$/);
+            if(!phoneFormat.test(newVal)){
                 ToastStore.warning("Invalid Phone Number. Please try another one");
-                return; //^ Invalidates phone numbers that aren't 10 digits long, or which aren't numeric. 
-            // ToDo : Find working regex for Indian phone numbers.
+                return; //^ If phone number isn't of format - [6-9]{1}[1-9]{9}
             }
         }
         else if(field=="email"){
