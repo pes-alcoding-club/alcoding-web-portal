@@ -1,9 +1,11 @@
 var multer = require('multer');
 const User = require('../models/User');
 const File = require('../models/Files');
+var Assignment = require('../models/assignments/Assignment');
 var fs = require("fs");
 var path = require('path');
 var homedir = require('os').homedir();
+var archiver = require('archiver');
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -126,6 +128,95 @@ var downloadFile = function (dir) {
     }
 }
 
+var addFilesForZip = function(){
+    return function(req,res,next){
+        console.log("hello");
+        Assignment.findOne({
+            _id: req.params.assignmentID
+        }, function(err, assignment){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: server error"
+                });
+            }
+            if(!assignment){
+                return res.status(404).send({
+                    success: false,
+                    message: "Error: No such assignment found"
+                });
+            }
+            if(assignment.submissions.length>0){
+                var files = [];
+                assignment.submissions.forEach(obj => {
+                    User.findOne({
+                        _id: obj.user
+                    }, function(err, user){
+                        if(err){
+                            return res.status(500).send({
+                                success: false,
+                                message: "Error: server error"
+                            });
+                        }
+                        if(!user){
+                            return res.status(404).send({
+                                success: false,
+                                message: "Error: No such user found"
+                            });
+                        }
+                        var usn = user.usn;
+                        File.findOne({
+                            _id: obj.file
+                        }, function(err,file){
+                            if(err){
+                                return res.status(500).send({
+                                    success: false,
+                                    message: "Error: server error"
+                                });
+                            }
+                            if(!file){
+                                return res.status(404).send({
+                                    success: false,
+                                    message: "Error: No such file found"
+                                });
+                            }
+                            var filePath = path.join(dir, file.originalname);
+                            var fileName = usn+'_'+file.originalname;
+                            var fileObj = {'path': filePath, 'name':fileName};
+                            // fileObj['path'] = filePath;
+                            // fileObj['name'] = fileName;
+                            files.push(fileObj);
+                            req.filesZip = files;
+                        });
+                    })
+                })
+            }
+        })
+        next();
+    }
+}
+
+var zipFile = function(dir){
+    return function(req,res,next){
+        console.log(req)
+        var archive = archiver('zip');
+        archive.on('error',function(err) {
+            res.status(500).send({error: err.message});
+        });
+        res.on('close', function() {
+            console.log('Archive wrote %d bytes', archive.pointer());
+            return res.status(200).send('OK').end();
+        });
+        var zipName = req.params.assignmentID+'.zip'
+        res.attachment(zipName);
+        archive.pipe(res);
+        req.files.forEach(file => {
+            archive.append(fs.createReadStream(file.path), {name: file.name})
+        });
+        archive.finalize();
+    }
+}
+
 //TODO: Delete file endpoint
 
-module.exports = { diskStorage, fileUpload, downloadFile };
+module.exports = { diskStorage, fileUpload, downloadFile, zipFile, addFilesForZip };
