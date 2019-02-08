@@ -68,6 +68,8 @@ render((
 
               <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
+              <PrivateRoute exact path="/zip/:assignmentID" component={zipFiles} />
+
               <PrivateRoute exact path="/updateHandle" component={updateHandle} />
 
               <Route exact path="/contribute" component={contribute} />
