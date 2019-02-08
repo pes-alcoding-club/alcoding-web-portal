@@ -8,6 +8,8 @@ import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';
 import { ToastContainer, ToastStore } from 'react-toasts';
 
+ 
+
 
 class Profile extends React.Component {
     constructor() {
@@ -106,11 +108,39 @@ class Profile extends React.Component {
     }
 
     updateValue(field, newVal) {
-        // TODO: Some Form validation based on field
+        // TODO: Verify email and phone existance.
         var basicInfoCopy = Object.assign({}, this.state.basicInfo);
+        if(basicInfoCopy[field]==newVal){
+            ToastStore.warning("Current "+field+". Please try another one");
+            return; //^ If old value equals updated value, displays appropriate error
+        }
+        if(field=="phone"){
+            if(newVal[0]!='+'){
+                newVal='+91'+newVal;
+            }
+            var phoneFormat=new RegExp(/^((\+){1}91){1}[6-9]{1}[0-9]{9}$/);
+            if(!phoneFormat.test(newVal)){
+                ToastStore.warning("Invalid Phone Number. Please try another one");
+                return; //^ If phone number isn't of format - [6-9]{1}[1-9]{9}
+            }
+        }
+        else if(field=="email"){
+            var emailFormat=new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+            if(!emailFormat.test(newVal)){
+                ToastStore.warning("Invalid Email ID. Please try another one");
+                return; //^ If email ID isn't of format - {x@y.z}
+            }
+        }
+        else if(field=="dob"){
+            var givenDob=new Date(newVal);
+            var presentDate=new Date();
+            if(presentDate-givenDob<16*365*24*3600*1000 || presentDate-givenDob>65*365*24*3600*1000){
+                ToastStore.warning("Invalid Date of Birth. Please try another one");
+                return; //^ If user is less than 16 years or greater than 65 years
+            }
+        }
         basicInfoCopy[field] = newVal;
         this.setState({ basicInfo: basicInfoCopy });
-
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/' + userID + '/basicInfo'
@@ -118,7 +148,6 @@ class Profile extends React.Component {
         body["phone"] = basicInfoCopy.phone;
         body["email"] = basicInfoCopy.email;
         body["dob"] = basicInfoCopy.dob;
-
         axios.put(
             apiPath,
             body,
