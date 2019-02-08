@@ -128,11 +128,12 @@ var downloadFile = function (dir) {
     }
 }
 
-var zipFile = function(dir){
+var addFilesForZip = function(){
     return function(req,res,next){
+        console.log("hello");
         Assignment.findOne({
             _id: req.params.assignmentID
-        }, function(err,assignment){
+        }, function(err, assignment){
             if(err){
                 return res.status(500).send({
                     success: false,
@@ -146,18 +147,7 @@ var zipFile = function(dir){
                 });
             }
             if(assignment.submissions.length>0){
-                var output = fs.createWriteStream(path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/'+req.params.assignmentID+'.zip'));
-                var archive = archiver('zip', {
-                    gzip: true,
-                    zlib: {level: 9}
-                });
-                archive.on('error', function(err){
-                    console.log(err);
-                    throw err;
-                });
-                archive.pipe(output);
                 var files = [];
-                var itemsProcessed = 0;
                 assignment.submissions.forEach(obj => {
                     User.findOne({
                         _id: obj.user
@@ -192,30 +182,41 @@ var zipFile = function(dir){
                             }
                             var filePath = path.join(dir, file.originalname);
                             var fileName = usn+'_'+file.originalname;
-                            var fileObj = {};
-                            fileObj['path'] = filePath;
-                            fileObj['name'] = fileName;
-                            itemsProcessed++;
+                            var fileObj = {'path': filePath, 'name':fileName};
+                            // fileObj['path'] = filePath;
+                            // fileObj['name'] = fileName;
                             files.push(fileObj);
-                            if(itemsProcessed == assignment.submissions.length){
-                                console.log(files);
-                                files.forEach(fileObj => {
-                                    archive.file(fileObj.path, {name: fileObj.name});
-                                })
-                                archive.finalize();
-                                return res.status(200).send({
-                                    success: true,
-                                    message: "The Files have been successfully zipped"
-                                })
-                            }
+                            req.filesZip = files;
                         });
-                    });
+                    })
                 })
             }
         })
+        next();
+    }
+}
+
+var zipFile = function(dir){
+    return function(req,res,next){
+        console.log(req)
+        var archive = archiver('zip');
+        archive.on('error',function(err) {
+            res.status(500).send({error: err.message});
+        });
+        res.on('close', function() {
+            console.log('Archive wrote %d bytes', archive.pointer());
+            return res.status(200).send('OK').end();
+        });
+        var zipName = req.params.assignmentID+'.zip'
+        res.attachment(zipName);
+        archive.pipe(res);
+        req.files.forEach(file => {
+            archive.append(fs.createReadStream(file.path), {name: file.name})
+        });
+        archive.finalize();
     }
 }
 
 //TODO: Delete file endpoint
 
-module.exports = { diskStorage, fileUpload, downloadFile, zipFile };
+module.exports = { diskStorage, fileUpload, downloadFile, zipFile, addFilesForZip };

@@ -67,13 +67,15 @@ class Profile extends React.Component {
     }
 
     updateUsername(field, newVal) {
+        var self = this;
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/'+userID+'/username'
         var body = {username: newVal};
         var previous_username = this.state.username;
+        this.setState({"username": newVal}) 
         if(newVal==previous_username){
-            ToastStore.warning("Current username. Please try another one");
+            ToastStore.warning("Current username. Please try another one.");
             return;
         }
         axios.post(apiPath, body, {
@@ -86,20 +88,21 @@ class Profile extends React.Component {
             if(!response.data.success){
                 // TODO: throw appropriate error and redirect
                 console.log("Error: " + response.data.message);
+                self.setState({"username": previous_username});
                 return;
             }
             else if(response.status == 200) {
-                this.setState({username: newVal});
                 ToastStore.success('Successfully updated!');
             }
         }).catch(function (error) {
             // TODO: Reload the page after ToastStore
             console.log(error);
+            self.setState({"username": previous_username});
             if(error.response.status == 404){
-                ToastStore.warning("Username already exists. Please try another one");
+                ToastStore.warning("Username already exists. Please try another one.");
             }
             else if(error.response.status == 500){
-                ToastStore.error("Server Error. Please try again after a while");
+                ToastStore.error("Server Error. Please try again after a while.");
             }
         });
     }

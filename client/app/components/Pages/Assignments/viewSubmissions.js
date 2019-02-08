@@ -46,6 +46,7 @@ class viewSubmissions extends Component {
     //add usn
     render() {
         let content;
+        const zipSubmission = "/api/assignments/" + this.props.location.state.assignmentID +'/zip?token=' + localStorage.getItem('token');
         const Content = (
             <div>
               {
@@ -54,7 +55,7 @@ class viewSubmissions extends Component {
           })
         }
                 <div>
-                    <div className="text-center"><a href={window.location['href']} className="btn btn-dark" role="button" onClick={this.zipFile}>Download All</a>   <a href="/" className="btn btn-dark" role="button">Home</a></div>
+                    <div className="text-center"><a href={zipSubmission} className="btn btn-dark" role="button">Download All</a>   <a href="/" className="btn btn-dark" role="button">Home</a></div>
                 </div>
             </div>
         );
