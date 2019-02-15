@@ -8,6 +8,8 @@ const File = require('../../models/Files');
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
 var downloadFile = require('../../middleware/fileStorage').downloadFile;
+var zipFile = require('../../middleware/fileStorage').zipFile;
+var addFilesForZip = require('../../middleware/fileStorage').addFilesForZip;
 var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
@@ -524,6 +526,8 @@ module.exports = (app) => {
     })
 
     app.get('/api/assignments/:fileID/:userID/download', requireRole('prof'), downloadFile(dir));
+
+    app.get('/api/assignments/:assignmentID/zip', requireRole('prof'), addFilesForZip, zipFile(dir));
 
     app.get('/api/assignments/:assignmentID/details', function(req,res){
         Assignment.find({

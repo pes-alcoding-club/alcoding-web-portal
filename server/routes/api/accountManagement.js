@@ -400,8 +400,6 @@ module.exports = (app) => {
         delete user.createdAt;
         delete user.updatedAt;
         delete user._id;
-        console.log(user);
-
 
         // Return a response with user data
         return res.status(200).send({

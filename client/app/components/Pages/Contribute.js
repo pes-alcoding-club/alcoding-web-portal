@@ -84,7 +84,7 @@ export default class Contribute extends Component {
                                     <a href="https://github.com/adityavinodk" target="_blank">
                                         <p className="bold lead">Aditya Vinod Kumar</p>
                                     </a>
-                                    {/* <p>Some Random Bio</p> */}
+                                    <p>Full-Stack Developer. Machine Learning and Competitive Coding Enthusiast.</p>
                                     <hr />
                                 </Col>
                             </Row>

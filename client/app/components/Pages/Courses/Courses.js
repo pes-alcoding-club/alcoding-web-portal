@@ -50,7 +50,6 @@ class CoursesAdd extends Component {
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleisCoreChange = this.handleisCoreChange.bind(this);
     this.handleHoursChange = this.handleHoursChange.bind(this);
-
   }
 
   componentDidMount() {
@@ -178,7 +177,6 @@ class CoursesAdd extends Component {
     this.setState({
       professorID: e.target.value
     })
-    // this.handleClassChange({professorID: this.state.professorID, sections: this.state.sections})
   }
   handleAnchorDescriptionChange(e) {
     this.setState({
@@ -228,30 +226,6 @@ class CoursesAdd extends Component {
           alert('Course Failed to Upload!')
         })
     }
-    else if ("anchor".localeCompare(self.state.profRole) == 0) {
-      // var classes = self.state.classes;
-      // // self.state.classes is an array of objects
-      // // Each object has 2 items - ProfessorID and Array of sections just like in Model
-      // // [{professorID: value , sections:[.....]},{professorID:value, sections:[.....]}]
-      // for (var i = 0; i < classes.length; i++) {
-      //   var classData = classes[i];
-      //   var body = data;
-      //   body.professorID = classData.professorID;
-      //   body.sections = classData.sections;
-      //   data.anchorDescription = self.state.anchorDescription;
-      //   data.role = "anchor"
-      //   axios.post(apiPath, data, config)
-      //     .then(res => {
-      //       console.log(res.data);
-      //       this.reload();
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //       alert('Course Failed to Upload!')
-      //     })
-      // }
-    }
-
   }
   showForm() {
     this.setState({
@@ -356,11 +330,10 @@ class CoursesAdd extends Component {
             <h6>Resources</h6>
             <input type="url" className="form-control" placeholder="URLs" value={this.state.resourcesUrl} onChange={this.handleURLChange} />
           </div>
-
-
         </form>
-        {this.state.profRole == 'anchor' ? anchorBoxes : null}
 
+        {this.state.profRole == 'anchor' ? anchorBoxes : null}
+        {this.state.profRole == 'anchor' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
       </div>
     )
 
@@ -385,8 +358,9 @@ class CoursesAdd extends Component {
             <div className='card-body'>
               {this.state.profRole == '' ? this.state.show && this.state.profRole == '' ? chooseRole : <button type="button" className="btn btn-dark w-50 mx-3" onClick={this.showForm}>Add Course</button> : null}
               {this.state.show && this.state.profRole != '' ? click : null}
+              {this.state.show && this.state.profRole != 'anchor' ? <hr />: null}
               {this.state.show && this.state.profRole == 'prof' ? <button type="submit" className="btn btn-dark mx-3 w-20 " onClick={this.onAdd}>Submit</button> : null}
-              {this.state.show && this.state.profRole != '' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
+              {this.state.show && this.state.profRole != 'anchor' ? <button type="close" className="btn mx-3 w-20" onClick={this.closeForm}>Close</button> : null}
 
             </div>
           </div>
