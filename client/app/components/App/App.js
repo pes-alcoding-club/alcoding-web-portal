@@ -9,7 +9,7 @@ const App = ({ children }) => (
 
     <main style={{
       paddingTop: "100px",
-      paddingBottom: "50px",
+      // paddingBottom: "50px",
       minHeight: "90vh",
       overflow: "hidden",
       display: "block",

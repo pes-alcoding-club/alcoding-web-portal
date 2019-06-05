@@ -6,10 +6,11 @@ import {
   Link,
   Switch
 } from 'react-router-dom'
+import { PersistGate } from 'redux-persist/integration/react';
 import './styles/styles.scss';
 import { setCurrentUser, logoutUser, loginUser } from './actions/authActions';
 import { Provider } from 'react-redux';
-import store from '../app/store/store';
+import { store, persistor } from '../app/store/store';
 import PrivateRoute from '../app/components/common/PrivateRoute';
 import App from '../app/components/App';
 import Home from '../app/components/Home';
@@ -28,54 +29,61 @@ import downloadFile from './components/Pages/Assignments/downloadFile';
 import zipFiles from './components/Pages/Assignments/zipFiles';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
+import ReactLoading from './components/common/Loading'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-if (localStorage.token) {
-  store.dispatch(setCurrentUser(localStorage.token));
-} else {
-  store.dispatch(setCurrentUser({}));
-}
+// if (store.getState().auth.isAuthenticated) {
+//   // store.dispatch(logoutUser());
+//   store.dispatch(setCurrentUser(store.getState().token, store.getState().user_id));
+// }
+
 render((
   <Provider store={store}>
-    <Router>
-      <App>
-        <div className='container'>
-          <Switch>
-            <Route exact path="/" component={Home} />
+    <PersistGate loading={<ReactLoading />} persistor={persistor}>
 
-            <PrivateRoute exact path="/assignments" component={Assignments} />
+      <Router>
+        <App>
+          <div className='container'>
+            <Switch>
+              <Route exact path="/" component={Home} />
 
-            <PrivateRoute exact path='/assignments/:assignmentID' component={viewAssignment} />
+              <Route exact path="/users/:username" component={PublicProfile} />
 
-            <PrivateRoute exact path="/contests" component={Contests} />
+              <PrivateRoute exact path="/assignments" component={Assignments} />
 
-            <PrivateRoute exact path="/courses" component={Courses} />
+              <PrivateRoute exact path='/assignments/:assignmentID' component={viewAssignment} />
 
-            <PrivateRoute exact path="/profile" component={Profile} />
+              <PrivateRoute exact path="/contests" component={Contests} />
 
-            <PrivateRoute exact path="/admin" component={SignupForm} />
+              <PrivateRoute exact path="/courses" component={Courses} />
 
-            <PrivateRoute exact path="/courses/:courseID" component={AssignmentAdd} />
+              <PrivateRoute exact path="/profile" component={Profile} />
 
-            <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
+              <PrivateRoute exact path="/admin" component={SignupForm} />
 
-            <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
+              <PrivateRoute exact path="/courses/:courseID" component={AssignmentAdd} />
 
-            <PrivateRoute exact path="/zip/:assignmentID" component={zipFiles} />
+              <PrivateRoute exact path="/assignments/submissions/:assignmentID" component={viewSubmissions} />
 
-            <PrivateRoute exact path="/updateHandle" component={updateHandle} />
+              <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
-            <Route exact path="/contribute" component={contribute} />
+              <PrivateRoute exact path="/zip/:assignmentID" component={zipFiles} />
 
-            <Route exact path="/forgotpassword" component={ForgotPassword} />
+              <PrivateRoute exact path="/updateHandle" component={updateHandle} />
 
-            <Route exact path="/reset/:token/:userID" component={ChangePassword} />
+              <Route exact path="/contribute" component={contribute} />
 
-            <Route component={NotFound} />
-          </Switch>
-        </div>
-      </App>
-    </Router>
+              <Route exact path="/forgotpassword" component={ForgotPassword} />
+
+              <Route exact path="/reset/:token/:userID" component={ChangePassword} />
+
+              <Route component={NotFound} />
+            </Switch>
+
+          </div>
+        </App>
+      </Router>
+    </PersistGate>
   </Provider>
 ), document.getElementById('app'));

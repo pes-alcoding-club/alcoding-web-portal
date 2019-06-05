@@ -7,8 +7,9 @@ import StaticBox from './StaticBox.js';
 import MutableBox from './MutableBox.js';
 import PasswordBox from './PasswordBox.js';
 import { ToastContainer, ToastStore } from 'react-toasts';
+import { _API_CALL } from './../../../Utils/api';
 
- 
+
 
 
 class Profile extends React.Component {
@@ -31,21 +32,10 @@ class Profile extends React.Component {
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
 
-        var apiPath = '/api/account/' + userID + '/details'
-        axios.get(apiPath, {
-            headers: {
-                'x-access-token': token,
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(function (response) {
-                if (!response.data.success) {
-                    // TODO: throw appropriate error and redirect
-                    console.log("Error:" + response.data);
-                    return;
-                }
+        var apiPath = '/api/account/' + userID + '/details';
+        _API_CALL(apiPath, "GET", {}, token)
+            .then(response => {
                 var data = response.data;
-                // TODO: Update dob with calendar
                 self.setState({ isLoading: false });
                 self.setState({
                     usn: data.user.usn,
@@ -53,87 +43,72 @@ class Profile extends React.Component {
                     basicInfo: data.user.basicInfo
                 });
             })
-            .catch(function (error) {
-                // TODO: Try again after sometime? 
-                console.log('error is ', error);
-                if (error.response) {
-                    if (error.response.status) {
-                        alert("Session timed out.");
-                        window.location.href = '/';
-                    }
-                }
-            });
+            .catch(error => {
+                console.log(error);
+            })
     }
 
     updateUsername(field, newVal) {
         var self = this;
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
-        var apiPath = '/api/account/'+userID+'/username'
-        var body = {username: newVal};
+        var apiPath = '/api/account/' + userID + '/username'
+        var body = { username: newVal };
         var previous_username = this.state.username;
-        this.setState({"username": newVal}) 
-        if(newVal==previous_username){
-            ToastStore.warning("Current username. Please try another one.");
+        this.setState({ "username": newVal })
+        if (newVal == previous_username) {
+            ToastStore.warning("Current username. Please try another one");
             return;
         }
-        axios.post(apiPath, body, {
-            headers: {
-                'x-access-token': token,
-                'Content-Type': 'application/json'
-            }
-        }).then(function(response){
-            console.log(response);
-            if(!response.data.success){
-                // TODO: throw appropriate error and redirect
-                console.log("Error: " + response.data.message);
-                self.setState({"username": previous_username});
-                return;
-            }
-            else if(response.status == 200) {
-                ToastStore.success('Successfully updated!');
-            }
-        }).catch(function (error) {
-            // TODO: Reload the page after ToastStore
-            console.log(error);
-            self.setState({"username": previous_username});
-            if(error.response.status == 404){
-                ToastStore.warning("Username already exists. Please try another one.");
-            }
-            else if(error.response.status == 500){
-                ToastStore.error("Server Error. Please try again after a while.");
-            }
-        });
+
+        _API_CALL(apiPath, "POST", body, token)
+            .then(response => {
+                if (response.status == 200) {
+                    this.setState({ username: newVal });
+                    ToastStore.success('Successfully updated!');
+                } else {
+                    throw new Error("Unsucessful")
+                }
+            })
+            .catch(error => {
+                self.setState({ "username": previous_username });
+                if (error.response.status == 404) {
+                    ToastStore.warning("Username already exists. Please try another one");
+                }
+                else if (error.message) {
+                    ToastStore.error(error.message);
+                }
+            });
     }
 
     updateValue(field, newVal) {
         // TODO: Verify email and phone existance.
         var basicInfoCopy = Object.assign({}, this.state.basicInfo);
-        if(basicInfoCopy[field]==newVal){
-            ToastStore.warning("Current "+field+". Please try another one");
+        if (basicInfoCopy[field] == newVal) {
+            ToastStore.warning("Current " + field + ". Please try another one");
             return; //^ If old value equals updated value, displays appropriate error
         }
-        if(field=="phone"){
-            if(newVal[0]!='+'){
-                newVal='+91'+newVal;
+        if (field == "phone") {
+            if (newVal[0] != '+') {
+                newVal = '+91' + newVal;
             }
-            var phoneFormat=new RegExp(/^((\+){1}91){1}[6-9]{1}[0-9]{9}$/);
-            if(!phoneFormat.test(newVal)){
+            var phoneFormat = new RegExp(/^((\+){1}91){1}[6-9]{1}[0-9]{9}$/);
+            if (!phoneFormat.test(newVal)) {
                 ToastStore.warning("Invalid Phone Number. Please try another one");
                 return; //^ If phone number isn't of format - [6-9]{1}[1-9]{9}
             }
         }
-        else if(field=="email"){
-            var emailFormat=new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-            if(!emailFormat.test(newVal)){
+        else if (field == "email") {
+            var emailFormat = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+            if (!emailFormat.test(newVal)) {
                 ToastStore.warning("Invalid Email ID. Please try another one");
                 return; //^ If email ID isn't of format - {x@y.z}
             }
         }
-        else if(field=="dob"){
-            var givenDob=new Date(newVal);
-            var presentDate=new Date();
-            if(presentDate-givenDob<16*365*24*3600*1000 || presentDate-givenDob>65*365*24*3600*1000){
+        else if (field == "dob") {
+            var givenDob = new Date(newVal);
+            var presentDate = new Date();
+            if (presentDate - givenDob < 16 * 365 * 24 * 3600 * 1000 || presentDate - givenDob > 65 * 365 * 24 * 3600 * 1000) {
                 ToastStore.warning("Invalid Date of Birth. Please try another one");
                 return; //^ If user is less than 16 years or greater than 65 years
             }
@@ -142,7 +117,7 @@ class Profile extends React.Component {
         this.setState({ basicInfo: basicInfoCopy });
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
-        var apiPath = '/api/account/' + userID + '/basicInfo'
+        var apiPath = '/api/account/' + userID + '/basicInfo';
         var body = new Object();
         body["phone"] = basicInfoCopy.phone;
         body["email"] = basicInfoCopy.email;
@@ -195,8 +170,9 @@ class Profile extends React.Component {
                     <p />
                     <Link to="/updateHandle" className="text-dark">Update Contest Handles</Link>
                     <PasswordBox />
-
                 </div>
+                <hr />
+                <MutableBox updateFieldValue={this.updateUsername} changeEditingStatus={this.changeEditingStatus} field="username" inputType="text" fieldName="Username" val={this.state.username} />
                 <hr />
                 <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />
                 <hr />
@@ -210,7 +186,7 @@ class Profile extends React.Component {
         );
 
         if (this.state.isLoading)
-            return <ReactLoading/>;
+            return <ReactLoading />;
         else
             return (
                 <div>

@@ -1,79 +1,112 @@
-import { SET_CURRENT_USER, GET_DETAILS } from '../actions/types';
+import { SET_CURRENT_USER, SET_DETAILS, LOGOUT_USER } from '../actions/types';
 import axios from 'axios';
 
-export const loginUser = user => dispatch => {
-    axios.post("/api/account/signin", user)
-        .then((response) => {
-            console.log(response);
-
-            if (response.data.success) {
-
-                //save data into local storage
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user_id', response.data.user_id);
-
-                //set current user
-                dispatch(setCurrentUser(response.data.token));
-            }
-
-        })
-        .catch(err =>
-            alert('Invalid Login')
-        );
-};
-
-
-// Set logged in user
-export const setCurrentUser = token => {
+/*
+ACTION CREATORS
+*/
+// Set a logged in user
+export const setCurrentUser = (token, user_id) => {
     return {
         type: SET_CURRENT_USER,
-        payload: token
+        payload: {
+            token, user_id
+        }
     };
 };
 
-export const logoutUser = () => dispatch => {
-    var userID = localStorage.getItem('user_id')
-    var token = localStorage.getItem('token')
-    axios.get('/api/account/' + userID + '/logout', {
-        headers: {
-            'x-access-token': token,
-            'Content-Type': 'application/json'
-        },
-    })
-    console.log(userID + " logged out.");
-    //save data into local storage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
-    dispatch(setCurrentUser({}))
-}
+// Set name of logged in user
+export const setName = (name) => {
+    return {
+        type: SET_DETAILS,
+        payload: {
+            name
+        }
+    };
+};
 
-export const getName = () => dispatch => {
-    var userID = localStorage.getItem('user_id')
-    var token = localStorage.getItem('token')
-    axios.get('/api/account/' + userID + '/details',
-        {
+// Logout a user
+const logoutUserCreator = () => {
+    return {
+        type: LOGOUT_USER,
+        payload: {
+            success: true
+        }
+    };
+};
+
+
+/*
+ACTION FUNCTIONS aka THUNKS
+*/
+
+export const logoutUser = () => {
+    return (dispatch, getState) => {
+        const userID = getState().auth.user_id;
+        const token = getState().auth.token;
+        axios.get('/api/account/' + userID + '/logout', {
             headers: {
                 'x-access-token': token,
                 'Content-Type': 'application/json'
             },
         })
-        .then(res => {
-            dispatch({
-                type: GET_DETAILS,
-                payload: res.data.user.name
+            .then(response => {
+                console.log(response);
             })
-        })
-        .catch((error) => {
-            // Error
-            if (error.response) {
-                console.log(error.response.status);
-                if (error.response.status == 401) {
-                    // import logoutUser from './authActions';
-                    console.log("User not authenticated");
-                    localStorage.clear();
-                    dispatch(setCurrentUser({}))
-                }
-            }
-            else console.log(error)
-        })
+            .catch(err => {
+                console.log(err);
+            })
+            .finally(() => {
+                console.log(userID + " logged out.");
+                //remove data from local storage
+                localStorage.clear();
+                return dispatch(logoutUserCreator());
+            })
+    }
 }
+
+export const getName = () => {
+    return (dispatch, getState) => {
+        const userID = getState().auth.user_id;
+        const token = getState().auth.token;
+        axios.get('/api/account/' + userID + '/details',
+            {
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(res => {
+                dispatch(setName(res.data.user.name));
+            })
+            .catch((error) => {
+                if (error.response) {
+                    if (error.response.status == 401) {
+                        dispatch(logoutUser());
+                    }
+                }
+                else console.log(error)
+            });
+    }
+}
+
+export const loginUser = user => dispatch => {
+    axios.post("/api/account/signin", user)
+        .then((res) => {
+            // console.log(res);
+
+            if (res.data.success) {
+                //save data into local storage
+                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('user_id', res.data.user_id);
+
+                //set current user
+                dispatch(setCurrentUser(res.data.token, res.data.user_id));
+            }
+            dispatch(getName());
+        })
+        .catch(err => {
+            console.log(err);
+            alert('Invalid Login.');
+        }
+        );
+};
