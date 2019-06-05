@@ -23,6 +23,7 @@ class Profile extends React.Component {
             basicInfo: {}
         };
         this.updateValue = this.updateValue.bind(this);
+        this.updateUsername = this.updateUsername.bind(this);
         this.changeEditingStatus = this.changeEditingStatus.bind(this);
     }
 
@@ -83,6 +84,7 @@ class Profile extends React.Component {
 
     updateValue(field, newVal) {
         // TODO: Verify email and phone existance.
+        console.log(this.state)
         var basicInfoCopy = Object.assign({}, this.state.basicInfo);
         if (basicInfoCopy[field] == newVal) {
             ToastStore.warning("Current " + field + ". Please try another one");

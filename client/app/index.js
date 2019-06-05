@@ -15,6 +15,7 @@ import PrivateRoute from '../app/components/common/PrivateRoute';
 import App from '../app/components/App';
 import Home from '../app/components/Home';
 import Profile from '../app/components/Pages/Profile';
+import PublicProfile from '../app/components/Pages/Profile/PublicProfile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses';
