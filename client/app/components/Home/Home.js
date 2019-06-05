@@ -111,7 +111,7 @@ class Home extends Component {
           </div>
         </div>
         <div className="jumbotron pt-3 pb-2 bg-light">
-          <div className='display-4 mb-3 text-center'>Global Rank List</div>
+          <div className='display-4 mb-3'>Global Rank List</div>
           <br />
           <ReactTable
             loading={this.state.loading}

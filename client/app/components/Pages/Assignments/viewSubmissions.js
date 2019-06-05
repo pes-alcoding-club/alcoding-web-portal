@@ -8,7 +8,7 @@ class viewSubmissions extends Component {
         this.state = ({
             submissions:[]
         })
-        
+        this.zipFile = this.zipFile.bind(this);
     }
     
     componentDidMount(){
@@ -16,6 +16,7 @@ class viewSubmissions extends Component {
 
         ///api/assignments/:assignmentID/submissions
         var token = localStorage.getItem('token')
+
         axios.get(`/api/assignments/${this.props.location.state.assignmentID}/submissions`, {
             headers: {
                 'x-access-token': token,
@@ -29,9 +30,23 @@ class viewSubmissions extends Component {
         })
         .catch(err => console.log(err))
     }
+
+    zipFile(){
+        var token = localStorage.getItem('token');
+        axios.get(`/api/assignments/${this.props.location.state.assignmentID}/zip`, {
+            headers: {
+                'x-access-token': token,
+            }
+        }).then(function(res){
+            console.log("Files successfully zipped");
+        }).catch(function(err){
+            console.log(err);
+        })
+    }
     //add usn
     render() {
         let content;
+        const zipSubmission = "/api/assignments/" + this.props.location.state.assignmentID +'/zip?token=' + localStorage.getItem('token');
         const Content = (
             <div>
               {
@@ -39,7 +54,9 @@ class viewSubmissions extends Component {
             return <SubmissionsCard key={each.user} fileID={each.file} user={each.user}/>
           })
         }
-              <div className="text-center"><a href="/" className="btn btn-dark" role="button">Home</a></div>
+                <div>
+                    <div className="text-center"><a href={zipSubmission} className="btn btn-dark" role="button">Download All</a>   <a href="/" className="btn btn-dark" role="button">Home</a></div>
+                </div>
             </div>
         );
         content = Content;

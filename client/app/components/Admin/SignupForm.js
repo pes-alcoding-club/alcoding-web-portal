@@ -7,13 +7,19 @@ class SignupForm extends Component {
 	constructor() {
 		super();
 		this.state = {
-			isLoading: true
+			isLoading: true,
+			group_name: "",
+			grad_year:"",
 		}
 		this.handleSubmitStudents = this.handleSubmitStudents.bind(this);
 		this.handleSubmitContenders = this.handleSubmitContenders.bind(this);
+		this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
 		this.handleDownload = this.handleDownload.bind(this);
 		this.fileInput = React.createRef();
 		this.fileInput_contest = React.createRef();
+		this.fileInput_group = React.createRef();
+		this.changeGroupName = this.changeGroupName.bind(this);
+		this.changeGradYear = this.changeGradYear.bind(this);
 	}
 
 	componentDidMount() {
@@ -132,6 +138,53 @@ class SignupForm extends Component {
 		else { console.log('Please Upload a file!..'); }
 	}
 
+	handleSubmitGroup(e){
+		e.preventDefault();
+		var fileObj = this.fileInput_group.current.files[0];
+		var token = 'Bearer ' + localStorage.getItem('token');
+		var configSignup = {
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Authorization': token
+			}
+		};
+		var createGroupUrl = '/api/admin/createGroup';
+		var reader = new FileReader();
+		var body = 'name='+this.state.group_name+'&graduating='+parseInt(this.state.grad_year);
+		reader.onload = function (file) {
+			var data = file.target.result.split('\n');
+			for (var row_count = 0; row_count < data.length; row_count++) {
+				var row = data[row_count].split(',')[0];
+				var obj = body+'&usn='+row
+				console.log(obj);
+				axios.post(createGroupUrl, obj, configSignup)
+				.then(function(response) {
+					console.log(response.data);
+				})
+				.catch(function (err) {
+					console.log(err);
+				})
+			}
+		}
+
+		if (fileObj) {
+			reader.readAsText(fileObj, "UTF-8");
+		}
+		else { console.log('Please Upload a file!..'); }
+	}
+
+	changeGroupName(e){
+		this.setState({
+			group_name: e.target.value
+		})
+	}
+
+	changeGradYear(e){
+		this.setState({
+			grad_year: e.target.value
+		})
+	}
+
 	handleDownload(event) {
 		event.preventDefault();
 
@@ -160,6 +213,16 @@ class SignupForm extends Component {
 						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitContenders}>Submit</button> &nbsp;
 					{/* <button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleDownload}>Download</button> */}
 						<a href={updatedHandlesWtoken} className="btn btn-dark form-control col-2">Download</a>
+					</form>
+					<br />
+					<h3>Create New Group: </h3>
+					<form id="formObject">
+						<span>Name of Group: <input type="text" className="form-control col-2" placeholder="Group Name" value={this.state.group_name} onChange={this.changeGroupName}/></span>
+						<span>Year of Graduation: <input type="text" className="form-control col-2" placeholder="Graduating Year" value={this.state.grad_year} onChange={this.changeGradYear}/></span>
+						<span>Please upload a csv file of student USN's in group</span>
+						<input type="file" className="btn btn-default form-control" ref={this.fileInput_group} />
+						<br />
+						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitGroup}>Submit</button> &nbsp;
 					</form>
 				</div>
 			);

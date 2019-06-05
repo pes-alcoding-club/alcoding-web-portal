@@ -19,11 +19,9 @@ class Profile extends React.Component {
             isEditing: 0,
             usn: "",
             name: "",
-            username: "",
             basicInfo: {}
         };
         this.updateValue = this.updateValue.bind(this);
-        this.updateUsername = this.updateUsername.bind(this);
         this.changeEditingStatus = this.changeEditingStatus.bind(this);
     }
 
@@ -50,7 +48,6 @@ class Profile extends React.Component {
                 // TODO: Update dob with calendar
                 self.setState({ isLoading: false });
                 self.setState({
-                    username: data.user.username,
                     usn: data.user.usn,
                     name: data.user.name.firstName + " " + data.user.name.lastName,
                     basicInfo: data.user.basicInfo
@@ -69,16 +66,17 @@ class Profile extends React.Component {
     }
 
     updateUsername(field, newVal) {
+        var self = this;
         var token = localStorage.getItem('token')
         var userID = localStorage.getItem('user_id')
         var apiPath = '/api/account/'+userID+'/username'
         var body = {username: newVal};
         var previous_username = this.state.username;
+        this.setState({"username": newVal}) 
         if(newVal==previous_username){
-            ToastStore.warning("Current username. Please try another one");
+            ToastStore.warning("Current username. Please try another one.");
             return;
         }
-        this.setState({username: newVal});
         axios.post(apiPath, body, {
             headers: {
                 'x-access-token': token,
@@ -89,20 +87,21 @@ class Profile extends React.Component {
             if(!response.data.success){
                 // TODO: throw appropriate error and redirect
                 console.log("Error: " + response.data.message);
+                self.setState({"username": previous_username});
                 return;
             }
             else if(response.status == 200) {
-                console.log(response.data);
                 ToastStore.success('Successfully updated!');
             }
         }).catch(function (error) {
             // TODO: Reload the page after ToastStore
             console.log(error);
+            self.setState({"username": previous_username});
             if(error.response.status == 404){
-                ToastStore.warning("Username already exists. Please try another one");
+                ToastStore.warning("Username already exists. Please try another one.");
             }
             else if(error.response.status == 500){
-                ToastStore.error("Server Error. Please try again after a while");
+                ToastStore.error("Server Error. Please try again after a while.");
             }
         });
     }
@@ -179,6 +178,10 @@ class Profile extends React.Component {
         this.state.isEditing += value;
     }
 
+    changeEditingStatus(value) {
+        this.state.isEditing += value;
+    }
+
     render() {
         const { isAuthenticated, user } = this.props.auth;
 
@@ -192,7 +195,7 @@ class Profile extends React.Component {
                     <p />
                     <Link to="/updateHandle" className="text-dark">Update Contest Handles</Link>
                     <PasswordBox />
-                    <MutableBox updateFieldValue={this.updateUsername} changeEditingStatus={this.changeEditingStatus} field="username" inputType="text" fieldName="Username" val={this.state.username} />
+
                 </div>
                 <hr />
                 <MutableBox updateFieldValue={this.updateValue} changeEditingStatus={this.changeEditingStatus} field="phone" inputType="text" fieldName="Phone" val={this.state.basicInfo["phone"]} />

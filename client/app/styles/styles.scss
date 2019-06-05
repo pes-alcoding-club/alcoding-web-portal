@@ -8,7 +8,7 @@ $theme-colors: (
 //   "navbar-dark": #A83738  //t2
   // "navbar-dark": #225378  //t3
   // "navbar-dark": #5f63bd  //t4
-  "navbar-dark": #212529  //t5
+  "navbar-dark": #25799f  //t5
 );
 
 /* bootstrap override color variables */
@@ -16,7 +16,7 @@ $theme-colors: (
 // $body-bg: #D95242; //t2
 // $body-bg: #ACF0F2;  //t3
 // $body-bg: #87cef5; //t4
-$body-bg: #18bc9c; //t5
+// $body-bg: #212529; //t5
 // #ACF0F2;
 // $primary: #2E418C;
 // $secondary: #6c757d;
@@ -25,7 +25,7 @@ $body-bg: #18bc9c; //t5
 // $warning: #ffc107;
 // $danger: #dc3545;
 $light: #ffffff;
-$dark: #212529;
+$dark: #2188b6;
 // $white: #05DBFE;
 
 @import "node_modules/bootstrap/scss/bootstrap.scss";

@@ -25,8 +25,8 @@ import viewAssignment from './components/Pages/Assignments/viewAssignment';
 import ForgotPassword from './components/Layout/ForgotPassword';
 import ChangePassword from './components/Layout/ChangePassword';
 import downloadFile from './components/Pages/Assignments/downloadFile';
+import zipFiles from './components/Pages/Assignments/zipFiles';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
-import PublicProfile from './components/Pages/Profile/PublicProfile';
 import contribute from './components/Pages/Contribute';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -43,8 +43,6 @@ render((
         <div className='container'>
           <Switch>
             <Route exact path="/" component={Home} />
-
-            <Route exact path="/users/:username" component = {PublicProfile} />
 
             <PrivateRoute exact path="/assignments" component={Assignments} />
 
@@ -64,6 +62,8 @@ render((
 
             <PrivateRoute exact path="/download/:fileID/:userID" component={downloadFile} />
 
+            <PrivateRoute exact path="/zip/:assignmentID" component={zipFiles} />
+
             <PrivateRoute exact path="/updateHandle" component={updateHandle} />
 
             <Route exact path="/contribute" component={contribute} />
@@ -74,7 +74,6 @@ render((
 
             <Route component={NotFound} />
           </Switch>
-
         </div>
       </App>
     </Router>

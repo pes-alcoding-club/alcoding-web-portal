@@ -154,13 +154,14 @@ module.exports = (app) => {
 
         User.findOne({
             usn: req.body.usn,
+            role: 'student',
             isDeleted: false
         }, function (err, user) {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: 'Error: Server error'
-                });
+                }); 
             }
             if (!user) {
                 return res.status(404).send({
@@ -246,45 +247,4 @@ module.exports = (app) => {
             })
         })
     });
-
-    app.get("/api/users/:username", function(req,res){
-        if(!req.params.username){
-            return res.status(400).send({
-                success: false,
-                message: "Error: username not recieved"
-            });
-        }
-
-        User.findOne({
-            username: req.params.username,
-            isDeleted: false,
-        }, function(err, user){
-            if(err){
-                return res.status(500).send({
-                    success: false,
-                    message: 'Error: Server error'
-                });
-            }
-            if(!user){
-                return res.status(404).send({
-                    success: false,
-                    message: 'Error: No such user found'
-                });
-            }
-            // TODO: Retrieve more data like courses assigned for the users who are professors
-            var user_data = new Object();
-            user_data.usn = user.usn;
-            user_data.name = user.name;
-            user_data.username = user.username;
-            user_data.groups = user.groups;
-            user_data.rating = user.contender.rating;
-            user_data.best = user.contender.best;
-            user_data.role = user.role;
-            return res.status(200).send({
-                success: true,
-                message: "Successfully retrieved",
-                user: user_data
-            })
-        })
-    })
 }
