@@ -43,11 +43,14 @@ npm run start:dev
   ```
       app.post('/api/admin/signup', function (req, res) {
   ```
-  2. Make a `POST` request using any REST API client to `http://localhost:8080/api/admin/signup` with the body as `{ "usn": "admin", "firstName": "YourName" }`
+  2. Run the server.
+  3. Make a `POST` request using any REST API client to `http://localhost:8080/api/admin/signup` with the body as `{ "usn": "admin", "firstName": "YourName" }`
   
-  3. Using Mongo Compass, change the role of the created user to `admin`. 
-  4. Undo changes to `server/routes/api/admin.js`.
-  5. Run the server.
+  4. Using Mongo Compass, change the role of the created user to `admin`  
+    OR  
+    Use command `db.users.findOneAndUpdate({'usn': 'ADMIN'},{ $set:{'role':'admin'}} )` on the mongo shell
+  5. Undo changes to `server/routes/api/admin.js`.
+  
   6. Log in using admin credentials. ( username = "ADMIN", password = "ADMIN" )
   
   ### Steps to add new users
