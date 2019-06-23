@@ -44,13 +44,13 @@ export default class ForgotPassword extends Component {
         var data = { USN: this.state.signInUsn }
         axios.post("/api/account/forgotPassword", data, config)
             .then(res => {
-                console.log(res);
-                // alert(res.data.message);
+                // console.log(res);
                 this.setState({ isLoading: false });
-                ToastStore.success('Successfully updated!');
+                // alert(res.data.message);
+                ToastStore.success(res.data.message);
                 setTimeout(()=>{
                     this.setState({ redirect: true })
-                }, 1000);
+                }, 2000);
             })
             .catch(err => {
                 this.setState({ isLoading: false });

@@ -15,6 +15,8 @@ class Loading extends React.Component {
                                 type={this.props.type ? this.props.type : "bubbles"} 
                             // color={this.props.color ? this.props.color : "#18bc9c"} 
                                 color={this.props.color ? this.props.color : "#212529"} 
+                                height={100}
+                                width={100}
                                 />
                             {/* Loading.. */}
                         </div>
