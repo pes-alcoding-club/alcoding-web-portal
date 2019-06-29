@@ -253,7 +253,7 @@ module.exports = (app) => {
         });
       }
       else {
-        console.log("User not found.")
+        console.log(`Error: ${usn} not found`)
         return res.status(400).send({
           success: false,
           message: 'Error: User not found.'
