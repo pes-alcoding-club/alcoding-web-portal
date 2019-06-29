@@ -209,7 +209,6 @@ module.exports = (app) => {
     var timesPlayed = req.body.timesPlayed;
     var lastFive = req.body.lastFive;
     var best = req.body.best;
-
     if (!usn) {
       return res.status(400).send({
         success: false,
@@ -254,6 +253,7 @@ module.exports = (app) => {
         });
       }
       else {
+        console.log("User not found.")
         return res.status(400).send({
           success: false,
           message: 'Error: User not found.'

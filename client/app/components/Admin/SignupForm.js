@@ -109,9 +109,10 @@ class SignupForm extends Component {
 		var reader = new FileReader();
 		reader.onload = function (file) {
 			var data = JSON.parse(file.target.result);
+			data=data["_default"];
 			for (var key in data) {
 				// console.log(key + " -> " + data[key]);
-				var body = "usn=" + key;
+				var body = "usn=" + data[key].usn;
 				body += "&name=" + data[key].name;
 				body += "&email=" + data[key].email;
 				body += "&rating=" + data[key].rating;
