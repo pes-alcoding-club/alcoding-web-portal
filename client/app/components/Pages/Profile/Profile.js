@@ -19,6 +19,7 @@ class Profile extends React.Component {
             isLoading: true,
             isEditing: 0,
             usn: "",
+            username: "",
             name: "",
             basicInfo: {}
         };
@@ -40,6 +41,7 @@ class Profile extends React.Component {
                 self.setState({ isLoading: false });
                 self.setState({
                     usn: data.user.usn,
+                    username: data.user.username,
                     name: data.user.name.firstName + " " + data.user.name.lastName,
                     basicInfo: data.user.basicInfo
                 });
