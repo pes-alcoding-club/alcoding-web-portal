@@ -2,9 +2,11 @@ var Docker = require("dockerode");
 var docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
 const getOutput = async jsonObj => {
-  let container = null;
-  var temp = "output";
-  let strJson = null;
+
+  var container = null;
+  var containerOutput = "";
+  var strJson = null;
+
   container = await docker.createContainer({
     Image: "alcoding/compiler_store",
     AttachStdin: true,
@@ -34,17 +36,15 @@ const getOutput = async jsonObj => {
 
   await container.wait();
 
-  temp = await container.logs({
+  containerOutput = await container.logs({
     stdout: true
   });
 
-  console.log(temp);
-  strArr = temp.split(strJson + "\r" + "\n");
-  console.log(strArr);
+  var outputArray = containerOutput.split(strJson + "\r" + "\n");
+  
   container = await container.remove();
 
-  console.log("container removed");
-  return JSON.parse(strArr[1]);
+  return JSON.parse(outputArray[1]);
 };
 
 module.exports = getOutput;
