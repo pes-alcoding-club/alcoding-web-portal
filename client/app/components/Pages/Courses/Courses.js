@@ -35,20 +35,8 @@ class CoursesAdd extends Component {
     this.closeForm = this.closeForm.bind(this);
     this.chooseProfRole = this.chooseProfRole.bind(this);
     this.chooseAnchorRole = this.chooseAnchorRole.bind(this);
-    this.handleGraduatingChange = this.handleGraduatingChange.bind(this);
-    this.handleProfessorChange = this.handleProfessorChange.bind(this);
-    this.handleSectionChange = this.handleSectionChange.bind(this);
-    // this.handleClassChange = this.handleClassChange.bind(this);
-    this.handleAnchorDescriptionChange = this.handleAnchorDescriptionChange.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleCodeChange = this.handleCodeChange.bind(this);
-    this.handleDepartmentChange = this.handleDepartmentChange.bind(this);
-    this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
     this.handleCreditsChange = this.handleCreditsChange.bind(this);
-    this.handleURLChange = this.handleURLChange.bind(this);
-    this.handleStartDateChange = this.handleStartDateChange.bind(this);
-    this.handleEndDateChange = this.handleEndDateChange.bind(this);
-    this.handleisCoreChange = this.handleisCoreChange.bind(this);
     this.handleHoursChange = this.handleHoursChange.bind(this);
   }
 
@@ -106,81 +94,20 @@ class CoursesAdd extends Component {
         console.log('Error2: ', error);
       });
   }
-  handleNameChange(e) {
+  handleInputChange(e) {
     this.setState({
-      name: e.target.value
+      [e.target.name]: e.target.value
     })
   }
-  handleCodeChange(e) {
-    this.setState({
-      code: e.target.value
-    })
-  }
-  handleDepartmentChange(e) {
-    this.setState({
-      department: e.target.value
-    })
-  }
-  handleDescriptionChange(e) {
-    this.setState({
-      description: e.target.value
-    })
-  }
+  
   handleCreditsChange(e) {
     this.setState({
       credits: e.target.value
     })
   }
-  handleURLChange(e) {
-    this.setState({
-      resourcesUrl: e.target.value
-    })
-  }
-  handleStartDateChange(e) {
-    this.setState({
-      startDate: e.target.value
-    })
-  }
-  handleEndDateChange(e) {
-    this.setState({
-      endDate: e.target.value
-    })
-  }
-  handleisCoreChange(e) {
-    this.setState({
-      isCore: e.target.value
-    })
-  }
   handleHoursChange(e) {
     this.setState({
       hours: e.target.value
-    })
-  }
-  handleGraduatingChange(e) {
-    this.setState({
-      graduating: e.target.value
-    })
-  }
-  handleSectionChange(e) {
-    this.setState({
-      sections: e.target.value
-    })
-  }
-  handleClassChange(obj) {
-    var classes = this.state.classes;
-    classes.push(obj)
-    this.setState({
-      classes: classes
-    })
-  }
-  handleProfessorChange(e) {
-    this.setState({
-      professorID: e.target.value
-    })
-  }
-  handleAnchorDescriptionChange(e) {
-    this.setState({
-      anchorDescription: e.target.value
     })
   }
   reload() {
@@ -262,9 +189,9 @@ class CoursesAdd extends Component {
     const professorBoxes = (
       <div className="form-group text-left">
         <h6>Sections<sup>*</sup></h6>
-        <input type="text" className="form-control mb-3" placeholder="Enter Sections with a comma in between" value={this.state.sections} onChange={this.handleSectionChange} />
+        <input type="text" className="form-control mb-3" placeholder="Enter Sections with a comma in between" name="sections" value={this.state.sections} onChange={this.handleInputChange} />
         <h6>Professor<sup>*</sup></h6>
-        <input type="text" className="form-control" placeholder="Professor of Class" value={this.state.professorID} onChange={this.handleProfessorChange} />
+        <input type="text" className="form-control" placeholder="Professor of Class" name="professorID" value={this.state.professorID} onChange={this.handleInputChange} />
       </div>
     )
 
@@ -277,14 +204,14 @@ class CoursesAdd extends Component {
     const anchorDescription = (
       <div className="form-group text-left">
         <h6>Anchor Description</h6>
-        <textarea className="form-control" placeholder="Anchor Description" value={this.state.anchorDescription} onChange={this.handleAnchorDescriptionChange} />
+        <textarea className="form-control" placeholder="Anchor Description" name="anchorDescription" value={this.state.anchorDescription} onChange={this.handleInputChange} />
       </div>
     )
 
     const description = (
       <div className="form-group text-left">
         <h6>Course Description</h6>
-        <textarea className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleDescriptionChange} />
+        <textarea className="form-control" placeholder="Description" name="description" value={this.state.description} onChange={this.handleInputChange} />
       </div>
     )
 
@@ -293,19 +220,19 @@ class CoursesAdd extends Component {
         <form>
           <div className="form-group text-left">
             <h6>Course Name<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Name" value={this.state.name} onChange={this.handleNameChange} required="true" />
+            <input type="text" className="form-control" placeholder="Name" name="name" value={this.state.name} onChange={this.handleInputChange} required={true} />
           </div>
           <div className="form-group text-left">
             <h6>Code<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Code" value={this.state.code} onChange={this.handleCodeChange} required="true" />
+            <input type="text" className="form-control" placeholder="Code" name="code" value={this.state.code} onChange={this.handleInputChange} required={true} />
           </div>
           <div className="form-group text-left">
             <h6>Year of Graduation<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Graduating" value={this.state.graduating} onChange={this.handleGraduatingChange} required="true" />
+            <input type="text" className="form-control" placeholder="Graduating" name="graduating" value={this.state.graduating} onChange={this.handleInputChange} required={true} />
           </div>
           <div className="form-group text-left">
             <h6>Department<sup>*</sup></h6>
-            <input type="text" className="form-control" placeholder="Department" value={this.state.department} onChange={this.handleDepartmentChange} required="true" />
+            <input type="text" className="form-control" placeholder="Department" name="department" value={this.state.department} onChange={this.handleInputChange} required={true} />
           </div>
           <div className="form-group text-left">
             <div>
@@ -315,20 +242,20 @@ class CoursesAdd extends Component {
           </div>
           <div className="form-group text-left">
             <h6>Credits<sup>*</sup></h6>
-            <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} required="true" />
+            <input type="number" className="form-control" placeholder="Credits" value={this.state.credits} onChange={this.handleCreditsChange} required={true} />
           </div>
           <div className="form-group text-left">
             <h6>Duration</h6>
             <label>Start Date<sup>*</sup></label>
-            <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} required="true" />
+            <input type="date" className="form-control" placeholder="Start Date" name="startDate" value={this.state.startDate} onChange={this.handleInputChange} required={true} />
             <label>End Date<sup>*</sup></label>
-            <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} required="true" />
+            <input type="date" className="form-control" placeholder="End Date" name="endDate" value={this.state.endDate} onChange={this.handleInputChange} required={true} />
             <label>Number of Hours</label>
             <input type="number" className="form-control" placeholder="Hours" value={this.state.hours} onChange={this.handleHoursChange} />
           </div>
           <div className="form-group text-left">
             <h6>Resources</h6>
-            <input type="url" className="form-control" placeholder="URLs" value={this.state.resourcesUrl} onChange={this.handleURLChange} />
+            <input type="url" className="form-control" placeholder="URLs" name="resourcesUrl" value={this.state.resourcesUrl} onChange={this.handleInputChange} />
           </div>
         </form>
 

@@ -16,25 +16,18 @@ class AssignmentAdd extends Component {
             endDate: '',
             assignment: {},
             assignments: [],
-            show: false.anchorDescription,
+            show: false,
             showDescription: true
         };
         this.onAdd = this.onAdd.bind(this);
         this.showForm = this.showForm.bind(this);
         this.closeForm = this.closeForm.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleUniqueidChange = this.handleUniqueidChange.bind(this);
-        this.handleTypeChange = this.handleTypeChange.bind(this);
-        this.handleDetailsChange = this.handleDetailsChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleMarksChange = this.handleMarksChange.bind(this);
-        this.handleURLChange = this.handleURLChange.bind(this);
-        this.handleStartDateChange = this.handleStartDateChange.bind(this);
-        this.handleEndDateChange = this.handleEndDateChange.bind(this);
     }
     componentDidMount() {
         var self = this;
         const { match: { params } } = this.props;
-        console.log(this.props.anchorDescription);
         if(this.props.anchorDescription == ""){
             this.setState({
                 showDescription:false
@@ -60,44 +53,14 @@ class AssignmentAdd extends Component {
                 console.log('Error2: ', error);
             });
     }
-    handleNameChange(e) {
+    handleInputChange(e) {
         this.setState({
-            name: e.target.value
-        })
-    }
-    handleUniqueidChange(e) {
-        this.setState({
-            uniqueID: e.target.value
-        })
-    }
-    handleTypeChange(e) {
-        this.setState({
-            type: e.target.value
-        })
-    }
-    handleDetailsChange(e) {
-        this.setState({
-            details: e.target.value
+            [e.target.name]: e.target.value
         })
     }
     handleMarksChange(e) {
         this.setState({
             maxMarks: e.target.value
-        })
-    }
-    handleURLChange(e) {
-        this.setState({
-            resourcesUrl: e.target.value
-        })
-    }
-    handleStartDateChange(e) {
-        this.setState({
-            startDate: e.target.value
-        })
-    }
-    handleEndDateChange(e) {
-        this.setState({
-            endDate: e.target.value
         })
     }
     reload() {
@@ -155,19 +118,19 @@ class AssignmentAdd extends Component {
                 <form>
                     <div className="form-group text-left">
                         <h6>Assignment Name<sup>*</sup></h6>
-                        <input type="text" className="form-control " placeholder="Name" value={this.state.name} onChange={this.handleNameChange} required="true"/>
+                        <input type="text" className="form-control " placeholder="Name" name="name" value={this.state.name} onChange={this.handleInputChange} required={true}/>
                     </div>
                     <div className="form-group text-left">
                         <h6>Unique ID<sup>*</sup></h6>
-                        <input type="text" className="form-control" placeholder="Unique ID" value={this.state.uniqueID} onChange={this.handleUniqueidChange} required="true"/>
+                        <input type="text" className="form-control" placeholder="Unique ID" name="uniqueID" value={this.state.uniqueID} onChange={this.handleInputChange} required={true}/>
                     </div>
                     <div className="form-group text-left">
                         <h6>Type<sup>*</sup></h6>
-                        <input type="text" className="form-control" placeholder="Type" value={this.state.type} onChange={this.handleTypeChange} required="true"/>
+                        <input type="text" className="form-control" placeholder="Type" name="type" value={this.state.type} onChange={this.handleInputChange} required={true}/>
                     </div>
                     <div className="form-group text-left">
                         <h6>Assignment Details<sup>*</sup></h6>
-                        <textarea className="form-control" placeholder="Details" value={this.state.details} onChange={this.handleDetailsChange} />
+                        <textarea className="form-control" placeholder="Details" name="details" value={this.state.details} onChange={this.handleInputChange} />
                     </div>
                     <div className="form-group text-left">
                         <h6>Maximum Marks<sup>*</sup></h6>
@@ -176,13 +139,13 @@ class AssignmentAdd extends Component {
                     <div className="form-group text-left">
                         <h6>Duration</h6>
                         <label>Start Date<sup>*</sup></label>
-                        <input type="date" className="form-control" placeholder="Start Date" value={this.state.startDate} onChange={this.handleStartDateChange} required="true"/>
+                        <input type="date" className="form-control" placeholder="Start Date" name="startDate" value={this.state.startDate} onChange={this.handleInputChange} required={true}/>
                         <label>End Date<sup>*</sup></label>
-                        <input type="date" className="form-control" placeholder="End Date" value={this.state.endDate} onChange={this.handleEndDateChange} required="true"/>
+                        <input type="date" className="form-control" placeholder="End Date" name="endDate" value={this.state.endDate} onChange={this.handleInputChange} required={true}/>
                     </div>
                     <div className="form-group text-left">
                         <h6>Resources<sup>*</sup></h6>
-                        <input type='text' className="form-control" placeholder="URLs" value={this.state.resourcesUrl} onChange={this.handleURLChange} />
+                        <input type='text' className="form-control" placeholder="URLs" name="resourcesUrl" value={this.state.resourcesUrl} onChange={this.handleInputChange} />
                     </div>
                 </form>
             </div>

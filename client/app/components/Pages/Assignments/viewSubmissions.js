@@ -62,7 +62,7 @@ class viewSubmissions extends Component {
         content = Content;
         return (
             <div>
-                {content}
+                {this.state.submissions.length === 0 ? <div className="text-center">No Submissions Found</div> : content}
             </div>
         )
     }

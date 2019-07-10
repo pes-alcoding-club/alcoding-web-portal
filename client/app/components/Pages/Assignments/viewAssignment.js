@@ -28,7 +28,7 @@ export default class viewAssignment extends Component {
             <div>
                 <div id="AssignmentCard">
                     <div className="card bg-light mx-auto">
-                        <div className="card-title"><h3><i>{this.state.assignment.uniqueID}</i>: <strong>{this.state.assignment.name}</strong></h3></div>
+                        <div className="card-title h3"><i>{this.state.assignment.uniqueID}</i>: <strong>{this.state.assignment.name}</strong></div>
                         <div className="card-body text-left">
                             Description: {this.state.assignment.details}<br />
                             Type: {this.state.assignment.type}<br />
