@@ -1,5 +1,19 @@
 var Docker = require("dockerode");
 var docker = new Docker({ socketPath: "/var/run/docker.sock" });
+/**
+ * 
+ * @param {Object} jsonObj
+ * @param {String} jsonObj.language
+ * @param {Array<String>} jsonObj.testCases
+ * @param {String} jsonObj.timeout
+ * @param {Array<{name : String, content : String}>} jsonObj.files 
+ * @return {{stdout: Array<String>, stderr: Array<String>, error : String }} 
+ */
+
+// on each call getOutput spawns a new docker container which compiles and runs the
+// code passed and returns an output json
+ 
+
 
 const getOutput = async jsonObj => {
 
