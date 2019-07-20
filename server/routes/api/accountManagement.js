@@ -3,10 +3,10 @@ const UserSession = require('../../models/UserSession');
 const jwt = require('jsonwebtoken');
 var verifyUser = require('../../middleware/Token').verifyUser;
 const fs = require('fs');
-var nodemailer = require('nodemailer');
 var path = require('path');
 var privateKey = fs.readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 const config = require('../../../config/config');
+const mail=require("../../sendEmail/mainMail");
 
 // TODO: Limit number of queries to these endpoints
 // TODO: Async functionality
@@ -593,18 +593,27 @@ module.exports = (app) => {
             }
             console.log("JWT generated for forgot password.");
             var link = config.host_url + 'reset/' + token + '/' + user._id.toString();
-            var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + "\n";
-            fs.appendFile("./server/sendEmail/emails.csv", writeData, function (err) {
-              if (err) {
-                return console.log(err);
-              }
-              console.log("Email scheduled");
-            });
-            return res.status(200).send({
-              success: true,
-              message: 'Email sent'
-            });
-
+            // var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + "\n";
+            // fs.appendFile("./server/sendEmail/emails.csv", writeData, function (err) {
+            //   if (err) {
+            //     return console.log(err);
+            //   }
+            //   console.log("Email scheduled");
+            // });
+            mail.sendPasswordResetMail(user.basicInfo.email, user.name.firstName, link)
+              .then( () => {                
+                  return res.status(200).send({
+                    success: true,
+                    message: 'Email sent'
+                  });                
+              })
+              .catch( (err) => {
+                  return res.status(500).send({
+                    success: false,
+                    message: err.message
+                  })
+              }) 
+            
           });
         });
       })
