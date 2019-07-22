@@ -31,6 +31,7 @@ import zipFiles from './components/Pages/Assignments/zipFiles';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
 import ReactLoading from './components/common/Loading'
+import CodeEditor from './components/Pages/CodeEditor'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -78,6 +79,8 @@ render((
               <Route exact path="/forgotpassword" component={ForgotPassword} />
 
               <Route exact path="/reset/:token/:userID" component={ChangePassword} />
+
+              <Route exact path="/code-editor" component={CodeEditor} />
 
               <Route component={NotFound} />
             </Switch>
