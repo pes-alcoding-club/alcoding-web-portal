@@ -34,7 +34,7 @@ export default class Contribute extends Component {
                         <Col sm="12" lg="6">
                             <Row>
                                 <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar googleId="107470330673159780136" name="Aniket Nitin Kaulavkar" size="100" round={"5px"} />&nbsp;
+                                    <Avatar githubHandle='aniketnk' name="Aniket Nitin Kaulavkar" size="100" round={"5px"} />&nbsp;
                                 </Col>
                                 <Col >
                                     <a href="https://github.com/aniketnk" target="_blank">
@@ -48,13 +48,13 @@ export default class Contribute extends Component {
                         <Col sm="12" lg="6">
                             <Row>
                                 <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar name="Parth Vipul Shah" githubhandle="parthvshah" size="100" round={"5px"} />&nbsp;
+                                    <Avatar githubHandle='parthvshah' name="Parth Vipul Shah" size="100" round={"5px"} />&nbsp;
                                 </Col>
                                 <Col>
-                                    <a href="https://parthvshah.github.io" target="_blank">
+                                    <a href="https://parthvshah.me" target="_blank">
                                         <p className="bold lead">Parth V Shah</p>
                                     </a>
-                                    <p>Technology enthusiast and Full-stack developer.</p>
+                                    <p>Full-stack Developer and technology enthusiast.</p>
                                     <hr />
                                 </Col>
                             </Row>
@@ -64,7 +64,7 @@ export default class Contribute extends Component {
                         <Col sm="12" lg="6">
                             <Row>
                                 <Col sm="12" md="2" lg="3" className="mb-4">
-                                    <Avatar initials="RRK" name="Rishi Ravikumar" size="100" round={"5px"} />&nbsp;
+                                    <Avatar githubHandle='RRK1000' initials="RRK" name="Rishi Ravikumar" size="100" round={"5px"} />&nbsp;
                                 </Col>
                                 <Col>
                                     <a href="https://github.com/RRK1000" target="_blank">

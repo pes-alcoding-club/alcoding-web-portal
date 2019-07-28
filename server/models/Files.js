@@ -6,12 +6,12 @@ const FileSchema = new mongoose.Schema({
         required: true
     },
     encoding: {
-        type:String,
+        type: String,
         required: true
     },
     mimetype:{
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
     destination: {
         type: String,
@@ -27,7 +27,7 @@ const FileSchema = new mongoose.Schema({
     }, 
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        required:true
+        required: true
     }
 }, {strict:false});
 
