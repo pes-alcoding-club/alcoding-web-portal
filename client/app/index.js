@@ -30,7 +30,8 @@ import downloadFile from './components/Pages/Assignments/downloadFile';
 import zipFiles from './components/Pages/Assignments/zipFiles';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
-import ReactLoading from './components/common/Loading'
+import ReactLoading from './components/common/Loading';
+import Signup from './components/Signup/Signup'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -76,6 +77,8 @@ render((
               <Route exact path="/contribute" component={contribute} />
 
               <Route exact path="/forgotpassword" component={ForgotPassword} />
+
+              <Route exact path="/signup" component={Signup} />
 
               <Route exact path="/reset/:token/:userID" component={ChangePassword} />
 
