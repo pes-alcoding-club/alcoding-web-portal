@@ -160,6 +160,10 @@ class NavbarClass extends Component {
             <DropdownItem tag={Link} to="/forgotPassword">
                 Forgot Password
             </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem tag={Link} to="/signup">
+                Signup
+            </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
         </Nav>
