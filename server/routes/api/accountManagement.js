@@ -13,17 +13,85 @@ const config = require('../../../config/config');
 // TODO: Change logout to POST as it isn't idempotent
 
 module.exports = (app) => {
-  app.post('/api/account/signin', function (req, res) {
-
-    var usn = req.body.usn;
+  app.post('/api/admin/signup', function (req, res) {
+    var firstName = req.body.firstName;
+    var lastName = req.body.lastName;
+    var email = req.body.email;
     var password = req.body.password;
 
-    console.log("USN: " + usn + " attempting to signIn.");
+    if (!firstName) {
+        return res.status(400).send({
+            success: false,
+            message: 'Error: First name cannot be blank.'
+        });
+    }
+    if (!email) {
+        return res.status(400).send({
+            success: false,
+            message: 'Error: email cannot be blank.'
+        });
+    }
+    if (!password) {
+        return res.status(400).send({
+            success: false,
+            message: 'Error: password cannot be blank.'
+        });
+    }
 
-    if (!usn) {
+    // Process data
+    email = ('' + email).toLowerCase().trim();
+
+    // Deduplication flow
+    User.find({
+      "basicInfo.email":{$eq: email},
+    }, (err, previousUsers) => {
+        if (err) {
+            return res.status(500).send({
+                success: false,
+                message: 'Error: Server find error'
+            });
+        } else if (previousUsers.length > 0) {
+            return res.status(409).send({
+                success: false,
+                message: 'Error: Account already exists.'
+            });
+        }
+        // Save the new user
+        const newUser = new User();
+
+        newUser.name.firstName = firstName;
+        newUser.basicInfo.email = email;
+        if (lastName) { newUser.name.lastName = lastName; }
+        newUser.password = newUser.generateHash(password);
+        newUser.valid = true;
+
+        newUser.save((err, user) => {
+            if (err) {
+                return res.status(500).send({
+                    success: false,
+                    message: 'Error: Server error'
+                });
+            }
+            console.log(newUser._id + " Added to DB.")
+            return res.status(200).send({
+                success: true,
+                message: 'Signed up'
+            });
+        });
+    });
+  }); // end of sign up endpoint
+
+  app.post('/api/account/signin', function (req, res) {
+
+    var email = req.body.email;
+    var password = req.body.password;
+
+    console.log("Email " + email + " attempting to signIn.");
+
+    if (!email) {
       return res.status(400).send({
         success: false,
-        message: 'Error: usn cannot be blank.'
+        message: 'Error: email cannot be blank.'
       });
     }
     if (!password) {
@@ -34,13 +102,14 @@ module.exports = (app) => {
     }
 
     // Process data
-    usn = ('' + usn).toUpperCase().trim();
+    email = ('' + email).toLowerCase().trim();
     password = '' + password;
 
     // Search for user in db
     User.find({
-      usn: usn,
-      isDeleted: false
+      "basicInfo.email":{$eq: email},
+      isDeleted: false,
+      valid: true
     }, (err, users) => {
       if (err) {
         return res.status(500).send({
@@ -66,7 +135,8 @@ module.exports = (app) => {
       // Otherwise correct user
       payload = {
         user_id: user._id,
-        role: user.role
+        role: user.role,
+        tags: user.tags
       };
       jwt.sign(payload, privateKey, {
         expiresIn: "2d"
@@ -126,6 +196,7 @@ module.exports = (app) => {
 
       User.find({
         _id: user_id,
+        valid: true,
         isDeleted: false
       }, function (err, users) {
         if (err) {
@@ -244,7 +315,8 @@ module.exports = (app) => {
         _id: req.params.userID
       }, {
           $set: {
-            password: newPassword
+            password: newPassword,
+            valid: true
           }
         }, null, function (err, user) {
           if (err) {
@@ -338,6 +410,7 @@ module.exports = (app) => {
         }
         User.findOneAndUpdate({
           _id: req.user_id,
+          valid: true,
           isDeleted: false
         }, {
             username: req.body.username
@@ -372,6 +445,7 @@ module.exports = (app) => {
 
       User.findOne({
         username: req.params.username,
+        valid: true,
         isDeleted: false,
       }, function(err, user){
         if(err){
@@ -418,7 +492,8 @@ module.exports = (app) => {
       console.log("Request to access details of " + user_id);
       // Search for the user in the User model with his user_id
       User.find({
-        _id: user_id
+        _id: user_id,
+        valid: true
       }, (err, users) => {
         if (err) {
           return res.status(500).send({
@@ -463,7 +538,8 @@ module.exports = (app) => {
       console.log("Requesting info of " + user_id);
       // Search for the user in the User model with his user_id
       User.find({
-        _id: user_id
+        _id: user_id,
+        valid: true
       }, (err, users) => {
         if (err) {
           return res.status(500).send({
@@ -516,7 +592,8 @@ module.exports = (app) => {
       var update = req.body
 
       User.findOneAndUpdate({
-        _id: user_id
+        _id: user_id,
+        valid: true
       }, {
           basicInfo: Object.assign({}, update)
         },
@@ -538,14 +615,15 @@ module.exports = (app) => {
     }), //end of basic info endpoint
 
     app.post('/api/account/forgotPassword', function (req, res) {
-      if (!req.body.USN) {
+      if (!req.body.email) {
         return res.status(400).send({
           success: false,
           message: 'Error: No SRN'
         });
       }
       User.findOne({
-        usn: req.body.USN
+        email: req.body.email,
+        valid: true
       }, function (err, user) {
         if (err) {
           return res.status(500).send({
@@ -559,23 +637,17 @@ module.exports = (app) => {
             message: "No User"
           })
         }
-        if (!user.basicInfo.email) {
-          return res.status(404).send({
-            success: false,
-            message: "No User email"
-          })
-        }
 
         payload = {
           user_id: user._id,
-          role: user.role
+          role: user.role,
+          tags: user.tags
         };
 
         jwt.sign(payload, privateKey, {
           expiresIn: "1h"
         }, (err, token) => {
           if (err) {
-            console.log(err);
             return res.status(500).send({
               success: false,
               message: 'Error: Server Error'
@@ -593,7 +665,7 @@ module.exports = (app) => {
             }
             console.log("JWT generated for forgot password.");
             var link = config.host_url + 'reset/' + token + '/' + user._id.toString();
-            var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + "\n";
+            var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + ',forgotPassword' + "\n";
             fs.appendFile("./server/sendEmail/emails.csv", writeData, function (err) {
               if (err) {
                 return console.log(err);

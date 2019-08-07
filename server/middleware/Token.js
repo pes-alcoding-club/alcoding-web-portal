@@ -37,6 +37,7 @@ var verifyToken = function (req, res, next) {
     req.user_id = decoded.user_id;
     req.role = decoded.role;
     req.token = token;
+    req.tags = decoded.tags
     // Check log in status
     UserSession.findOne({
       token: token
@@ -72,6 +73,20 @@ var requireRole = function (role) {
   }
 }
 
+var requireTag = function(tag) {
+  return function (req,res,next) {
+    verifyToken(req, res, () => {
+      if(!(req.tags.includes(tag))){
+        return res.status(403).send({
+          success: false,
+          message: "Error: Forbidden request."
+        });
+      }
+      next();
+    })
+  }
+}
+
 var verifyUser = function (req, res, next) {
   verifyToken(req, res, function () {
     if (req.params.userID == req.user_id || req.role == "admin") {
@@ -89,4 +104,4 @@ var verifyUser = function (req, res, next) {
 // Use verifyUser for non-admins when they want to access their own data
 // Use requireRole for role specfic functions, for eg, instructors setting up assignments or admin signup
 
-module.exports = { verifyToken, requireRole, verifyUser };
+module.exports = { verifyToken, requireRole, verifyUser, requireTag };  

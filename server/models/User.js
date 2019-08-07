@@ -2,14 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-  usn: {
-    type: String,
-    default: "",
-    required: true
-  },
   password: {
     type: String,
-    // required: true,
     default: ""
   },
   name: {
@@ -96,11 +90,15 @@ const UserSchema = new mongoose.Schema({
     }
   },
   role: {
-    type: String,
-    default: "student"
+    type: String
   },
   files: [mongoose.Schema.Types.ObjectId],
+  tags: [String],
   isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  valid: {
     type: Boolean,
     default: false
   }

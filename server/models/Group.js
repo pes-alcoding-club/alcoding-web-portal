@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const GroupSchema = new mongoose.Schema({
-    students:[{
+    members:[{
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
@@ -10,9 +10,8 @@ const GroupSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    graduating:{
-        type: String,
-        required: true
+    termEndYear:{
+        type: Number
     },
     isDeleted:{
         type: Boolean,

@@ -1,44 +1,53 @@
 const User = require('../../models/User');
 const File = require('../../models/Files');
 const Group = require('../../models/Group')
+const jwt = require('jsonwebtoken');
+var fs = require("fs");
+var privateKey = fs.readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 var requireRole = require('../../middleware/Token').requireRole;
+const UserSession = require('../../models/UserSession');
 // var fileDB = require('../../middleware/fileStorage').fileDB;
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
 var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
-var fs = require("fs");
 var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
+const config = require('../../../config/config');
 
 module.exports = (app) => {
-    app.post('/api/admin/signup', requireRole("admin"), function (req, res) {
-
-        var usn = req.body.usn;
+    app.post('/api/admin/signupMembers', requireRole('admin'), function (req, res) {
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var email = req.body.email;
-        var role = req.body.role;
-
+    
         if (!firstName) {
             return res.status(400).send({
                 success: false,
                 message: 'Error: First name cannot be blank.'
             });
         }
-        if (!usn) {
+        
+        if (!email) {
             return res.status(400).send({
                 success: false,
-                message: 'Error: usn cannot be blank.'
+                message: 'Error: email cannot be blank.'
             });
         }
 
+        if (!req.body.usn && !req.body.employeeID) {
+            return res.status(400).send({
+                success: false,
+                message: 'Error: identity details cannot be blank. Please enter SRN or EmplyeeID'
+            });
+        }
+    
         // Process data
-        usn = ('' + usn).toUpperCase().trim();
+        if(req.body.usn) usn = ('' + req.body.usn).toUpperCase().trim();
+        if(req.body.employeeID) employeeID = ('' + req.body.employeeID).toUpperCase().trim();
         email = ('' + email).toLowerCase().trim();
-
         // Deduplication flow
         User.find({
-            usn: usn
+            "basicInfo.email":{$eq: email},
         }, (err, previousUsers) => {
             if (err) {
                 return res.status(500).send({
@@ -53,22 +62,20 @@ module.exports = (app) => {
             }
             // Save the new user
             const newUser = new User();
-
-            newUser.usn = usn;
+    
             newUser.name.firstName = firstName;
+            newUser.basicInfo.email = email;
             if (lastName) { newUser.name.lastName = lastName; }
-            if (email) { newUser.basicInfo.email = email; }
-            newUser.password = newUser.generateHash(usn);
-
-            if (role) {
-                if (role == "admin") {
-                    return res.status(403).send({
-                        success: false,
-                        message: "Error: Forbidden request, Cannot assign role:\"admin\"."
-                    });
-                }
-                newUser.role = role;
+            newUser.tags.push('part of college')
+            if (typeof employeeID!=='undefined'){
+                newUser.tags.push('part of department')
+                newUser.employeeID = employeeID
             }
+            if (typeof usn!=='undefined'){
+                newUser.tags.push('student')
+                newUser.usn = usn
+            }
+    
             newUser.save((err, user) => {
                 if (err) {
                     return res.status(500).send({
@@ -77,39 +84,60 @@ module.exports = (app) => {
                     });
                 }
                 console.log(newUser._id + " Added to DB.")
-                return res.status(200).send({
-                    success: true,
-                    message: 'Signed up'
-                });
+
+                payload = {
+                    user_id: user._id,
+                    role: user.role,
+                    tags: user.tags
+                };
+
+                jwt.sign(payload, privateKey, {
+                    expiresIn: "1h"
+                }, (err, token) => {
+                    if(err){
+                        return res.status(500).send({
+                            success: false,
+                            message: 'Error: Server Error'
+                        });
+                    }
+                    newSession = new UserSession();
+                    newSession.token = token;
+                    newSession.save((err, session) => {
+                        if(err){
+                            return res.status(500).send({
+                                success: false,
+                                message: 'Error: Server error'
+                            });
+                        }
+                        console.log("JWT generated for set password.");
+                        var link = config.host_url + 'set/' + token + '/' + user._id.toString();
+                        var writeData = user.basicInfo.email + "," + user.name.firstName + "," + link + ',setPassword' + "\n";
+                        fs.appendFile("./server/sendEmail/emails.csv", writeData, function(err){
+                            if(err){
+                                return console.log(err);
+                            }
+                            console.log("Email scheduled")
+                        })
+                        return res.status(200).send({
+                            success: true,
+                            message: 'Signed Up successfully with email.'
+                        })
+                    })
+                })
             });
         });
     }); // end of sign up endpoint
 
-    app.post('/api/admin/upload', requireRole("admin"), diskStorage(dir).single(keyName), fileUpload, function (req, res) {
-        if (!req.file) {
-            return res.status(400).send({
-                success: false,
-                message: "Error: File not recieved"
-            });
-        }
-        if (req.file) {
-            return res.status(200).send({
-                success: true,
-                message: "File uploaded and added to DB",
-                data: req.file
-            });
-        }
-    });
-
     app.delete('/api/admin/user', requireRole("admin"), function (req, res) {
-        if (!req.body.usn) {
+        if (!req.body.email) {
             return res.status(400).send({
                 success: false,
-                message: "Error: usn not recieved"
+                message: "Error: email not recieved"
             });
         }
+        email = ('' + req.body.email).toLowerCase().trim();
         User.findOneAndDelete({
-            usn: req.body.usn
+            "basicInfo.email":{$eq: email},
         }, function (err, user) {
             if (err) {
                 return res.status(500).send({
@@ -138,23 +166,24 @@ module.exports = (app) => {
             });
         }
 
-        if (!req.body.usn) {
+        if (!req.body.email) {
             return res.status(400).send({
                 success: false,
-                message: "Error: usn not recieved"
+                message: "Error: email not recieved"
             });
         }
 
-        if (!req.body.graduating) {
+        if(!req.body.termEndYear){
             return res.status(400).send({
                 success: false,
-                message: "Error: graduating year not recieved"
-            });
+                message: "Error: termEndYear not recieved"
+            })
         }
 
+        termEndYear = parseInt(req.body.termEndYear)
+        email = ('' + req.body.email).toLowerCase().trim();
         User.findOne({
-            usn: req.body.usn,
-            role: 'student',
+            "basicInfo.email" : {$eq: email},
             isDeleted: false
         }, function (err, user) {
             if (err) {
@@ -173,7 +202,7 @@ module.exports = (app) => {
             var userID = user._id;
             Group.findOne({
                 name: req.body.name,
-                graduating: req.body.graduating
+                termEndYear: termEndYear
             }, function (err, group) {
                 if (err) {
                     return res.status(500).send({
@@ -184,9 +213,9 @@ module.exports = (app) => {
                 if (!group) {
                     var newGroup = new Group();
                     newGroup.name = req.body.name;
-                    newGroup.graduating = req.body.graduating;
-                    newGroup.students = new Array();
-                    newGroup.students.push(userID);
+                    newGroup.termEndYear = termEndYear;
+                    newGroup.members = new Array();
+                    newGroup.members.push(userID);
                     newGroup.save(function (err, group) {
                         if (err) {
                             return res.status(500).send({
@@ -218,7 +247,7 @@ module.exports = (app) => {
                         _id: group._id,
                         isDeleted: false
                     }, {
-                            $push: { "students": userID }
+                            $push: { "members": userID }
                         }, { new: true }, function (err, group) {
                             if (err) {
                                 return res.status(500).send({

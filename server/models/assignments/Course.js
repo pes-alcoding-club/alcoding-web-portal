@@ -3,13 +3,18 @@ var Schema = mongoose.Schema;
 
 const CourseSchema = new mongoose.Schema({
   class: {
-    professor:{
-      type: Schema.Types.ObjectId,
-      required: true
-    },
+    teachingMembers:[{
+      teacher : {
+        type: Schema.Types.ObjectId,
+        required: true,
+      },
+      role : {
+        type: String,
+        required: true
+      }
+    }],
     sections: [{
-      type: String,
-      required: true
+      type: String
     }]
   },
   students: [{
@@ -30,12 +35,6 @@ const CourseSchema = new mongoose.Schema({
   },
   description: {
     type: String, 
-  },
-  anchorDescription: {
-    type: String
-  },
-  resourcesUrl: {
-    type: String
   },
   duration: {
     startDate: {
@@ -60,6 +59,14 @@ const CourseSchema = new mongoose.Schema({
       type: Boolean,
       default: true
     },
+  },
+  validated: {
+    type: Boolean,
+    default: false
+  },
+  active: {
+    type: Boolean,
+    default: false
   },
   isDeleted: {
     type: Boolean,

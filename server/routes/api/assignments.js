@@ -1,6 +1,7 @@
 var Course = require('../../models/assignments/Course');
 var Assignment = require('../../models/assignments/Assignment');
 var requireRole = require('../../middleware/Token').requireRole;
+var requireTag = require('../../middleware/Token').requireTag;
 var verifyUser = require('../../middleware/Token').verifyUser;
 const User = require('../../models/User');
 const Group = require('../../models/Group')
@@ -14,7 +15,7 @@ var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
 module.exports = (app) => {
-    app.get('/api/assignments/:userID/courses', verifyUser, function (req, res) {
+    app.get('/api/assignments/:userID/courses', requireTag('part of college'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
                 success: false,
@@ -22,12 +23,13 @@ module.exports = (app) => {
             });
         }
 
-        var search = { isDeleted: false };
-        if(req.role == 'student') search.students = req.user_id;
-        else if(req.role == 'prof') {
-            search['class.professor']=req.user_id;
+        var search = { isDeleted: false, validated: true, active: true };
+        if(req.tags.includes('part of department')){
+            search['class.teachingMembers']= {"$elemMatch": {"teacher": userID}};
         }
-
+        else{
+            search.students = req.user_id;
+        }
         Course.find(search, (err, courses) => {
             if (err) {
                 return res.status(500).send({
@@ -35,12 +37,6 @@ module.exports = (app) => {
                     message: "Error: Server error."
                 });
             }
-            // if (courses.length < 1) {
-            //     return res.status(404).send({
-            //         success: false,
-            //         message: 'Error: No courses found for this user.'
-            //     });
-            // }
 
             return res.status(200).send({
                 success: true,
@@ -60,6 +56,8 @@ module.exports = (app) => {
         }
         Course.find({
             _id: courseID,
+            active: true,
+            validated: true,
             isDeleted: false
         }, (err, course) => {
             if (err) {
@@ -114,6 +112,8 @@ module.exports = (app) => {
         }
         Course.find({
             _id: courseID,
+            active: true,
+            validated: true,
             isDeleted: false
         }, (err, course) => {
             if (err) {
@@ -153,59 +153,36 @@ module.exports = (app) => {
         })
     })
 
-    // Endpoint for creating a new course as a professor or anchor
-    app.post('/api/assignments/createCourse', requireRole('prof'), function (req, res) {
-        if (!req.body.name) {
+    app.post('/api/assignments/requestCourse', requireTag("part of college"), function(req, res){
+        if(!req.body.code){
             return res.status(400).send({
                 success: false,
-                message: 'Course name required.'
+                message: 'Course code required in parameters.'
             });
         }
 
-        if (!req.body.code) {
+        if(!req.body.role){
             return res.status(400).send({
                 success: false,
-                message: 'Course code required.'
+                message: 'Role required in parameters.'
             });
         }
 
-        if (!req.body.department) {
+        if(!req.body.name){
             return res.status(400).send({
                 success: false,
-                message: 'Department required.'
+                message: 'Course name required in parameters.'
             });
         }
 
-        if (!req.body.professorID) {
+        if(!req.body.department){
             return res.status(400).send({
                 success: false,
-                message: 'ProfessorID in Course required.'
-            })
+                message: 'Course department required in parameters.'
+            });
         }
-
-        if (!req.body.sections) {
-            return res.status(400).send({
-                success: false,
-                message: 'Section in Course required.'
-            })
-        }
-
-        if(!req.body.role) {
-            return res.status(400).send({
-                success: false,
-                message: 'Role of Professor in Course required.'
-            })
-        }
-
-        if(!req.body.graduating){
-            return res.status(400).send({
-                success: false,
-                message: 'Graduating year of students in Course required.'
-            })
-        }
-
         User.findOne({
-            usn: req.body.professorID,
+            _id: req.user_id,
             isDeleted: false
         }, function(err, user){
             if(err){
@@ -222,17 +199,16 @@ module.exports = (app) => {
             }
             Course.find({
                 code: req.body.code,
-                'class.professor': user._id,
-                isDeleted: false
-            }, function(err, previousCourse){
-                if (err) {
+                department: req.body.department
+            }, function(err, courses){
+                if(err){
                     return res.status(500).send({
                         success: false,
-                        message: "Error: Server Error"
+                        message: "Error: Server error"
                     });
                 }
-                if (previousCourse.length > 0) {
-                    return res.status(409).send({
+                if(courses.length>0){
+                    return res.status(404).send({
                         success: false,
                         message: "Error: Course already exists"
                     });
@@ -241,63 +217,102 @@ module.exports = (app) => {
                 newCourse.name = req.body.name;
                 newCourse.code = req.body.code;
                 newCourse.department = req.body.department;
-                newCourse.description = req.body.description;
-                newCourse.resourcesUrl = req.body.resourcesUrl;
-                newCourse.duration.startDate = req.body.startDate;
-                newCourse.duration.endDate = req.body.endDate;
-                newCourse.details.credits = req.body.credits;
-                newCourse.details.hours = req.body.hours;
-                newCourse.class.professor = user._id;
-                newCourse.students = new Array();
-                var sections = req.body.sections.split(',');
-                newCourse.class.sections = sections;
-                Group.find({
-                    isDeleted: false,
-                    name: {$in: sections}, 
-                    graduating: req.body.graduating
-                }, function(err, groups){
-                    if (err) {
+                newCourse.class.teachingMembers.push({teacher: user._id, role: req.body.role});
+                newCourse.save((err, course) => {
+                    if(err){
                         return res.status(500).send({
                             success: false,
                             message: "Error: Server error"
                         });
                     }
-                    if (!groups){
-                        return res.status(404).send({
-                            success: false,
-                            message: "Error: No such user group found"
-                        })
-                    }
-                    groups.forEach(group => {
-                        group.students.forEach( student => {
-                            newCourse.students.push(student)
-                        })
+                    console.log("Course Request ID made - "+course._id.toString())
+                    return res.status(200).send({
+                        success: true,
+                        message: "Course Request ID - "+course._id.toString()
                     })
-                    if(req.body.role=='anchor'){
-                        if(req.body.anchorDescription){
-                            newCourse.anchorDescription = req.body.anchorDescription;
-                        }
-                    }
-                    // console.log(newCourse);
-                    newCourse.save((err, course) => {
-                        if (err) {
-                            return res.status(500).send({
-                                success: false,
-                                message: "Error: Server error"
-                            });
-                        }
-                        console.log(course._id + " Course Added to DB")
-                        return res.status(200).send({
-                            success: true,
-                            message: "New course created"
-                        });
-                    });
-                });
+                })
             })
         })
     })
 
-    app.post('/api/assignments/:userID/createAssignment', requireRole('prof'), function (req, res) {
+    // Endpoint for creating a new course as a professor or anchor
+    app.put('/api/assignments/:courseID/createValidatedCourse', requireTag('member of course'), function (req, res) {
+        if(!req.params.courseID){
+            return res.status(400).send({
+                success: false,
+                message: 'CourseID required in parameters.'
+            });
+        }    
+        
+        if (!req.body.description) {
+            return res.status(400).send({
+                success: false,
+                message: 'Description required.'
+            });
+        }
+
+        if (!req.body.duration) {
+            return res.status(400).send({
+                success: false,
+                message: 'Duration required.'
+            });
+        }
+
+        if (!req.body.details) {
+            return res.status(400).send({
+                success: false,
+                message: 'Details like Credits, Hours required.'
+            });
+        }
+
+        User.findOne({
+            _id: req.user_id,
+            isDeleted: false
+        }, function(err, user){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: Server error"
+                });
+            }
+            if(!user){
+                return res.status(404).send({
+                    success: false,
+                    message: "Error: No such user exists in DB"
+                });
+            }
+            Course.findOneAndUpdate({
+                _id: req.params.courseID,
+                validated: true,
+                active: false,
+                isDeleted: false
+            }, {
+                description: req.body.description,
+                duration: req.body.duration,
+                details: req.body.details,
+                active: true
+            }, {new: true}, function(err, course){
+                if(err){
+                    return res.status(500).send({
+                        success: false,
+                        message: "Error: Server Error"
+                    });
+                }
+                if(!course){
+                    return res.status(404).send({
+                        success: false,
+                        message: "Error: Course not found"
+                    });
+                }
+                return res.status(200).send({
+                    success:true,
+                    message: "Course successfully created with ID - "+course._id.toString(),
+                })
+            })
+        })
+    })
+
+    app.post('/api/assignments/:userID/createAssignment', requireTag('member of course'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
                 success: false,
@@ -333,7 +348,9 @@ module.exports = (app) => {
         Course.find({
             _id: req.body.courseID,
             isDeleted: false,
-            'class.professor': req.params.userID
+            'class.professor': req.params.userID,
+            active: true,
+            validated: true
         }, function (err, courses) {
             if (err) {
                 return res.status(500).send({
@@ -389,44 +406,6 @@ module.exports = (app) => {
                     });
             })
         });
-    })
-
-    app.delete('/api/assignemnts/:userID/:courseID/delete', requireRole('prof'), function(req,res){
-        if(!req.params.courseID){
-            return res.status(400).send({
-                success: false,
-                message: "Error: courseID not in parameters. Please try again."
-            });
-        }
-
-        if(!req.params.userID){
-            return res.status(400).send({
-                success: false,
-                message: "Error: userID not in parameters. Please try again."
-            });
-        }
-
-        Course.findOneAndDelete({
-            _id: req.params.courseID,
-            "class.professor": req.params.userID
-        }, function(err, course){
-            if(err){
-                return res.status(500).send({
-                    success: false,
-                    message: "Error: server error"
-                });
-            }
-            if(!course){
-                return res.status(404).send({
-                    success: false,
-                    message: "Error: Course not found"
-                });
-            }
-            return res.status(200).send({
-                success: true,
-                message: "Course "+course._id+" successfully deleted"
-            })
-        })
     })
 
     // Upload Assignment
@@ -492,7 +471,7 @@ module.exports = (app) => {
             });
     })
 
-    app.get('/api/assignments/:assignmentID/submissions', requireRole('prof'), function(req,res){
+    app.get('/api/assignments/:assignmentID/submissions', requireTag('member of course'), function(req,res){
         Assignment.find({
             _id:req.params.assignmentID
         }, function(err, assignments){
@@ -525,9 +504,9 @@ module.exports = (app) => {
         })
     })
 
-    app.get('/api/assignments/:fileID/:userID/download', requireRole('prof'), downloadFile(dir));
+    app.get('/api/assignments/:fileID/:userID/download', requireTag('member of course'), downloadFile(dir));
 
-    app.get('/api/assignments/:assignmentID/zip', requireRole('prof'), addFilesForZip, zipFile(dir));
+    app.get('/api/assignments/:assignmentID/zip', requireTag('member of course'), addFilesForZip, zipFile(dir));
 
     app.get('/api/assignments/:assignmentID/details', function(req,res){
         Assignment.find({

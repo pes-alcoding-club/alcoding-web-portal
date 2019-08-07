@@ -6,8 +6,8 @@ __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
-def mail(emailid, username, link):
-    body = open(os.path.join(__location__, "forgotPassword.txt"), 'r').read()
+def forgotPasswordMail(emailid, username, link):
+    body = open(os.path.join(__location__, "templates/forgotPassword.txt"), 'r').read()
     body = body.replace("{{username}}",username).replace("{{link}}",link)
     to = emailid
     sender = "alcodingclubportal@gmail.com"
@@ -15,6 +15,14 @@ def mail(emailid, username, link):
     SendMessage(sender, to, subject, body, '')
     print(sender, to, ' at ', datetime.datetime.now(), "\n", sep = "\n")
 
+def setPasswordMail(emailid, username, link):
+    body = open(os.path.join(__location__, "templates/setPassword.txt"), 'r').read()
+    body = body.replace("{{username}}",username).replace("{{link}}",link)
+    to = emailid
+    sender = "alcodingclubportal@gmail.com"
+    subject = "[The Alcoding Club] Set Account Password"
+    SendMessage(sender, to, subject, body, '')
+    print(sender, to, ' at ', datetime.datetime.now(), "\n", sep = "\n")
 
 if __name__ == '__main__':
     try:
@@ -23,10 +31,13 @@ if __name__ == '__main__':
     except IOError:
         print("Error: File open error" + IOError)
         exit()
-
+    mailDispatcher = {'forgotPassword': forgotPasswordMail, 'setPassword': setPasswordMail}
     for line in lines:
-        emailid, username, link = line.split(",")
-        mail(emailid, username, link)
+        emailid, username, link, mailType = line.split(",")
+        try:
+            mailDispatcher[mailType](emailid, username, link)
+        except KeyError:
+            raise ValueError('invalid input emailType')
     fdel = open(os.path.join(__location__, 'emails.csv'), 'w')
     fdel.seek(0)
     fdel.truncate()
