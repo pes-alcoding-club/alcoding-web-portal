@@ -15,6 +15,7 @@ var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
 module.exports = (app) => {
+    // Endpoint for retrieving all courses for a user
     app.get('/api/assignments/:userID/courses', requireTag('part of college'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
@@ -46,6 +47,7 @@ module.exports = (app) => {
         });
     })
 
+    // Endpoint for retreiving assignments under particular course
     app.get('/api/assignments/:courseID/assignments', function (req, res) {
         var courseID = req.params.courseID;
         if (!courseID) {
@@ -153,6 +155,7 @@ module.exports = (app) => {
         })
     })
 
+    // Endpoint for user to request course to courseAdmin
     app.post('/api/assignments/requestCourse', requireTag("part of college"), function(req, res){
         if(!req.body.code){
             return res.status(400).send({
@@ -235,7 +238,7 @@ module.exports = (app) => {
         })
     })
 
-    // Endpoint for creating a new course as a professor or anchor
+    // Endpoint for creating a course after it is validated by courseAdmin
     app.put('/api/assignments/:courseID/createValidatedCourse', requireTag('member of course'), function (req, res) {
         if(!req.params.courseID){
             return res.status(400).send({
@@ -312,6 +315,7 @@ module.exports = (app) => {
         })
     })
 
+    // Endpoint for creating assignment under course
     app.post('/api/assignments/:userID/createAssignment', requireTag('member of course'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
@@ -345,10 +349,10 @@ module.exports = (app) => {
             });
         }
 
-        Course.find({
+        Course.findOne({
             _id: req.body.courseID,
             isDeleted: false,
-            'class.professor': req.params.userID,
+            'class.teachingMembers': {"$elemMatch": {"teacher": req.params.userID}},
             active: true,
             validated: true
         }, function (err, courses) {
@@ -358,7 +362,7 @@ module.exports = (app) => {
                     message: "Error: Server error"
                 });
             }
-            if (courses.length == 0) {
+            if (!courses) {
                 return res.status(404).send({
                     success: false,
                     message: 'Error: No courses found for this user.'
@@ -471,6 +475,7 @@ module.exports = (app) => {
             });
     })
 
+    // Shows the submissions for particular assignment
     app.get('/api/assignments/:assignmentID/submissions', requireTag('member of course'), function(req,res){
         Assignment.find({
             _id:req.params.assignmentID
@@ -504,10 +509,13 @@ module.exports = (app) => {
         })
     })
 
+    // Endpoint for downloading File Submission
     app.get('/api/assignments/:fileID/:userID/download', requireTag('member of course'), downloadFile(dir));
 
+    // Endpoint for zipping the submissions
     app.get('/api/assignments/:assignmentID/zip', requireTag('member of course'), addFilesForZip, zipFile(dir));
 
+    // Endpoint for getting Assignmeents details
     app.get('/api/assignments/:assignmentID/details', function(req,res){
         Assignment.find({
             _id:req.params.assignmentID,

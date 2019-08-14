@@ -15,6 +15,7 @@ var keyName = "inputFile";
 const config = require('../../../config/config');
 
 module.exports = (app) => {
+    // Endpoint for signup up members of college by admin
     app.post('/api/admin/signupMembers', requireRole('admin'), function (req, res) {
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
@@ -128,6 +129,7 @@ module.exports = (app) => {
         });
     }); // end of sign up endpoint
 
+    // Delete user endpoint
     app.delete('/api/admin/user', requireRole("admin"), function (req, res) {
         if (!req.body.email) {
             return res.status(400).send({
@@ -158,6 +160,7 @@ module.exports = (app) => {
         })
     });
 
+    // Endpoint to create group by admin
     app.post('/api/admin/createGroup', requireRole('admin'), function (req, res) {
         if (!req.body.name) {
             return res.status(400).send({

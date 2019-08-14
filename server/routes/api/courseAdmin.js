@@ -7,6 +7,7 @@ const File = require('../../models/Files');
 const addNewDetails = require('../../middleware/courseDetails').addNewDetails;
 
 module.exports = (app) => {
+    // Endpoint for getting unvalidated new course requestss
     app.get('/api/courseAdmin/newCourses', requireRole('courseAdmin'), function(req, res){
         Course.find({
             validated: false, 
@@ -34,6 +35,7 @@ module.exports = (app) => {
         })
     })
 
+    // Endpoint to delete course request
     app.delete('/api/courseAdmin/:courseID/delete', requireRole('courseAdmin'), function(req,res){
         if(!req.params.courseID){
             return res.status(400).send({
@@ -64,6 +66,33 @@ module.exports = (app) => {
         })
     })
 
+    // Endpoint to retrieve userID's of all professors
+    app.get('/api/courseAdmin/getDepartmentMembers', requireRole('courseAdmin'), function(req, res){
+        Group.findOne({
+            name: 'prof',
+            termEndYear: -1
+        }, function(err, group){
+            if(err){
+                return res.status(500).send({
+                    success:false,
+                    message: "Error: Server error"
+                })
+            }
+            if(!group){
+                return res.status(404).send({
+                    success: false,
+                    message: "Error: no such group found"
+                })
+            }
+            return res.status(200).send({
+                success: true,
+                message: "Details successfully retrieved",
+                members: group.members
+            })
+        })
+    })
+
+    // Endpoint for validating course request
     app.put('/api/courseAdmin/:courseID/validate', requireRole('courseAdmin'), addNewDetails, function(req, res){
         var newCourse = Object.assign({}, req.newCourse)
         newCourse.validated = true

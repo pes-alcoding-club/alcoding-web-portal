@@ -13,6 +13,7 @@ const config = require('../../../config/config');
 // TODO: Change logout to POST as it isn't idempotent
 
 module.exports = (app) => {
+  // Endpoint for signup on portal
   app.post('/api/admin/signup', function (req, res) {
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
@@ -81,6 +82,7 @@ module.exports = (app) => {
     });
   }); // end of sign up endpoint
 
+  // Endpoint for Signin of users
   app.post('/api/account/signin', function (req, res) {
 
     var email = req.body.email;
@@ -170,6 +172,7 @@ module.exports = (app) => {
     });
   }), //end of sign in endpoint
 
+    // Endpoint for changing Password
     app.post('/api/account/:userID/changePassword', verifyUser, function (req, res) {
       var user_id = req.params.userID;
       var oldPassword = req.body.oldPassword;
@@ -295,6 +298,7 @@ module.exports = (app) => {
       })
     }), //end of change password endpoint
 
+    // Endpoint for college member to set password after signup
     app.post('/api/account/:userID/newPassword', verifyUser, function (req, res) {
       var newPassword = req.body.newPassword;
       if (!req.params.userID) {
@@ -342,6 +346,7 @@ module.exports = (app) => {
         });
     }), //end of new password endpoint
 
+    // Endpoint for logging out
     app.get('/api/account/:userID/logout', verifyUser, function (req, res) {
       // GET http://localhost:8080/api/account/:userID/logout
       var user_id = req.params.userID;
@@ -385,6 +390,7 @@ module.exports = (app) => {
       });
     }), //end of verifyToken endpoint 
 
+    // Endpoint for updating username
     app.post('/api/account/:userID/username', verifyUser, function (req, res) {
       if (!req.body.username) {
         return res.status(400).send({
@@ -435,6 +441,7 @@ module.exports = (app) => {
       })
     }),
 
+    // Endpoint for getting details using username
     app.get("/api/users/:username", function(req,res){
       if(!req.params.username){
         return res.status(400).send({
@@ -477,6 +484,7 @@ module.exports = (app) => {
       })
     })
 
+    // Endpoint for getting details using userID
     app.get('/api/account/:userID/details', verifyUser, function (req, res) {
       // GET http://localhost:8080/api/account/:userID/details
       var user_id = req.params.userID;
@@ -576,6 +584,7 @@ module.exports = (app) => {
       });
     }), //end of info endpoint
 
+    // Endpoint for updating basicInfo in profile of User
     app.put('/api/account/:userID/basicInfo', verifyUser, function (req, res) {
       // PUT http://localhost:8080/api/account/:userID/basicInfo
       var user_id = req.params.userID;
@@ -614,6 +623,7 @@ module.exports = (app) => {
 
     }), //end of basic info endpoint
 
+    // Endpoint for forgotPassword
     app.post('/api/account/forgotPassword', function (req, res) {
       if (!req.body.email) {
         return res.status(400).send({
