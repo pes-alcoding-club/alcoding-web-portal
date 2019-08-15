@@ -15,7 +15,7 @@ var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
 module.exports = (app) => {
-    // Endpoint for retrieving all courses for a user
+    // Endpoint for retrieving all active courses for a user - either as teachingMember or student
     app.get('/api/assignments/:userID/courses', requireTag('part of college'), function (req, res) {
         if (!req.params.userID) {
             return res.status(400).send({
@@ -25,25 +25,30 @@ module.exports = (app) => {
         }
 
         var search = { isDeleted: false, validated: true, active: true };
-        if(req.tags.includes('part of department')){
-            search['class.teachingMembers']= {"$elemMatch": {"teacher": userID}};
-        }
-        else{
-            search.students = req.user_id;
-        }
-        Course.find(search, (err, courses) => {
+        search['class.teachingMembers']= {"$elemMatch": {"teacher": req.params.userID}};
+        Course.find(search, (err, teachingCourses) => {
             if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: Server error."
                 });
             }
-
-            return res.status(200).send({
-                success: true,
-                message: "Details successfully retrieved.",
-                courses
-            });
+            delete search['class.teachingMembers']
+            search.students = req.params.userID
+            Course.find(search, function(err, courses){
+                if (err) {
+                    return res.status(500).send({
+                        success: false,
+                        message: "Error: Server error."
+                    });
+                }
+                courses = courses.concat(teachingCourses)
+                return res.status(200).send({
+                    success: true,
+                    message: "Details successfully retrieved.",
+                    courses
+                });
+            })
         });
     })
 
@@ -234,6 +239,39 @@ module.exports = (app) => {
                         message: "Course Request ID - "+course._id.toString()
                     })
                 })
+            })
+        })
+    })
+
+    app.get('/api/assignments/:userID/getValidatedCourses', requireTag('member of course'), function(req, res){
+        if(!req.params.userID){
+            return res.status(400).send({
+                success: false,
+                message: 'userID required in parameters.'
+            });
+        }
+        Course.find({
+            active: false,
+            validated: true,
+            isDeleted: false,
+            'class.teachingMembers': {"$elemMatch": {"teacher": req.params.userID}}
+        }, function(err, courses){
+            if(err){
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: Server error"
+                });
+            }
+            if(courses.length==0){
+                return res.status(200).send({
+                    success: true,
+                    message: "No inactive validated courses found"
+                });
+            }
+            return res.status(200).send({
+                success: true,
+                message: "Courses retrieved successfully",
+                courses
             })
         })
     })
