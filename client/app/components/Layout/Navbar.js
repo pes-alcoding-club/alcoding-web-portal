@@ -27,7 +27,7 @@ class NavbarClass extends Component {
   constructor() {
     super();
     this.state = {
-      signInUsn: "",
+      signInEmail: "",
       signInpassword: "",
       loginShow: true,
       navbarIsOpen: false
@@ -35,7 +35,7 @@ class NavbarClass extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
-    this.onTextboxChangeSignInUsn = this.onTextboxChangeSignInUsn.bind(this);
+    this.onTextboxChangeSignInEmail = this.onTextboxChangeSignInEmail.bind(this);
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
   };
 
@@ -52,10 +52,10 @@ class NavbarClass extends Component {
 
   }
 
-  onTextboxChangeSignInUsn(event) {
+  onTextboxChangeSignInEmail(event) {
     event.preventDefault();
     this.setState({
-      signInUsn: event.target.value,
+      signInEmail: event.target.value,
     });
 
   }
@@ -63,7 +63,7 @@ class NavbarClass extends Component {
   onSignIn(event) {
     event.preventDefault();
     const user = {
-      usn: this.state.signInUsn,
+      email: this.state.signInEmail,
       password: this.state.signInPassword
     };
 
@@ -137,8 +137,8 @@ class NavbarClass extends Component {
         <Nav className="ml-auto" navbar>
           <Form inline onSubmit={this.onSignIn}>
             <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-              <Label for="usn" hidden>USN</Label>
-              <Input type="text" name="usn" id="usn" placeholder="USN" required onChange={this.onTextboxChangeSignInUsn} />
+              <Label for="email" hidden>Email</Label>
+              <Input type="text" name="email" id="email" placeholder="Email" required onChange={this.onTextboxChangeSignInEmail} />
             </FormGroup>
             {' '}
             <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
@@ -159,6 +159,10 @@ class NavbarClass extends Component {
             <DropdownItem divider />
             <DropdownItem tag={Link} to="/forgotPassword">
                 Forgot Password
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem tag={Link} to="/signup">
+                Signup
             </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
