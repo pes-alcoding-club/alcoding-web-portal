@@ -25,7 +25,7 @@ class CoursesAdminView extends Component {
 	getProfName(user_id){
 		const token = localStorage.getItem('token');        
 		return new Promise((resolve, reject) => {
-			axios.get('/api/account/'+user_id+'/details', {
+			axios.get('/api/account/'+user_id+'/info', {
 				headers: {
 					'x-access-token': token,
 					'Content-Type': 'application/json'
@@ -34,7 +34,7 @@ class CoursesAdminView extends Component {
 			.then(function(response) {
 				resolve({
 					name:response.data.user.name,
-					id:response.data.user._id
+					id:user_id
 				});
 			})	
 			.catch(err => {

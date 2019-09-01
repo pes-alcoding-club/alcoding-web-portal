@@ -531,6 +531,7 @@ module.exports = (app) => {
       });
     }), //end of getDetails endpoint
 
+    // Endpoint for getting info of other users based on userID
     app.get('/api/account/:userID/info', function (req, res) {
       // GET http://localhost:8080/api/account/:userID/info
       var user_id = req.params.userID;
@@ -574,7 +575,8 @@ module.exports = (app) => {
         delete user.createdAt;
         delete user.updatedAt;
         delete user._id;
-
+        delete user.tags;
+        
         // Return a response with user data
         return res.status(200).send({
           success: true,
