@@ -50,11 +50,12 @@ class CoursesView extends Component {
             }
         }
         const requestCourseFormElements = event.target.getElementsByTagName("input");
-        const data = Object.assign({}, self.state.course);        
+        const requestCourseRoleElement = event.target.getElementsByTagName("select");
+        const data = Object.assign({}, self.state.course);             
         data.name = requestCourseFormElements["name"].value;
         data.code = requestCourseFormElements["code"].value;
         data.department = requestCourseFormElements["department"].value; 
-        data.role = this.state.role;                   
+        data.role = requestCourseRoleElement["role"].value;                   
         axios.post(apiPath, data, config)
             .then(res => {
                 console.log(res.data);
@@ -176,6 +177,14 @@ class CoursesView extends Component {
                     <div className="form-group text-left">
                         <h6>Department<sup>*</sup></h6>
                         <input type="text" className="form-control" placeholder="Department" name="department" value="CSE" onChange={this.handleInputChange} required={true} disabled/>
+                    </div>
+                    <div className="form-group text-left">
+                        <h6>Role<sup>*</sup></h6>
+                        <select name="role" className="form-control" required>
+                            <option>Professor</option>
+                            <option>Teaching Assistant</option>                            
+                            <option>Student</option>
+                        </select>                             
                     </div>
                     <hr></hr>
                     <button type="submit" className="btn btn-dark mx-3 w-20 ">Submit</button>
