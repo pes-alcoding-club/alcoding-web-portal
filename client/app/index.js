@@ -19,6 +19,7 @@ import PublicProfile from '../app/components/Pages/Profile/PublicProfile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
 import Courses from '../app/components/Pages/Courses';
+import OnlineJudge from '../app/components/Pages/OnlineJudge/OnlineJudge';
 import NotFound from './components/App/NotFound';
 import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
@@ -31,6 +32,7 @@ import zipFiles from './components/Pages/Assignments/zipFiles';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
 import ReactLoading from './components/common/Loading'
+
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -72,6 +74,8 @@ render((
               <PrivateRoute exact path="/zip/:assignmentID" component={zipFiles} />
 
               <PrivateRoute exact path="/updateHandle" component={updateHandle} />
+
+              <PrivateRoute exact path="/onlinejudge" component={OnlineJudge} />
 
               <Route exact path="/contribute" component={contribute} />
 
