@@ -23,9 +23,9 @@ module.exports = (app) => {
         }
 
         var search = { isDeleted: false };
-        if(req.role == 'student') search.students = req.user_id;
-        else if(req.role == 'prof') {
-            search['class.professor']=req.user_id;
+        if (req.role == 'student') search.students = req.user_id;
+        else if (req.role == 'prof') {
+            search['class.professor'] = req.user_id;
         }
 
         Course.find(search, (err, courses) => {
@@ -131,7 +131,7 @@ module.exports = (app) => {
             Assignment.find({
                 course: courseID,
                 submissions: {
-                    "$not": {"$elemMatch": {"user": userID}}
+                    "$not": { "$elemMatch": { "user": userID } }
                 },
                 isDeleted: false
             }, (err, assignments) => {
@@ -141,8 +141,8 @@ module.exports = (app) => {
                         message: "Error: Server error."
                     });
                 }
-                if(assignments){
-                    var assignments = {assignments}
+                if (assignments) {
+                    assignments = Object.assign({}, { assignments })
                 }
                 return res.status(200).send({
                     success: true,
@@ -190,14 +190,14 @@ module.exports = (app) => {
             })
         }
 
-        if(!req.body.role) {
+        if (!req.body.role) {
             return res.status(400).send({
                 success: false,
                 message: 'Role of Professor in Course required.'
             })
         }
 
-        if(!req.body.graduating){
+        if (!req.body.graduating) {
             return res.status(400).send({
                 success: false,
                 message: 'Graduating year of students in Course required.'
@@ -207,14 +207,14 @@ module.exports = (app) => {
         User.findOne({
             usn: req.body.professorID,
             isDeleted: false
-        }, function(err, user){
-            if(err){
+        }, function (err, user) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: Server error"
                 });
             }
-            if(!user){
+            if (!user) {
                 return res.status(404).send({
                     success: false,
                     message: "Error: No such user exists in DB"
@@ -224,7 +224,7 @@ module.exports = (app) => {
                 code: req.body.code,
                 'class.professor': user._id,
                 isDeleted: false
-            }, function(err, previousCourse){
+            }, function (err, previousCourse) {
                 if (err) {
                     return res.status(500).send({
                         success: false,
@@ -253,28 +253,28 @@ module.exports = (app) => {
                 newCourse.class.sections = sections;
                 Group.find({
                     isDeleted: false,
-                    name: {$in: sections}, 
+                    name: { $in: sections },
                     graduating: req.body.graduating
-                }, function(err, groups){
+                }, function (err, groups) {
                     if (err) {
                         return res.status(500).send({
                             success: false,
                             message: "Error: Server error"
                         });
                     }
-                    if (!groups){
+                    if (!groups) {
                         return res.status(404).send({
                             success: false,
                             message: "Error: No such user group found"
                         })
                     }
                     groups.forEach(group => {
-                        group.students.forEach( student => {
+                        group.students.forEach(student => {
                             newCourse.students.push(student)
                         })
                     })
-                    if(req.body.role=='anchor'){
-                        if(req.body.anchorDescription){
+                    if (req.body.role == 'anchor') {
+                        if (req.body.anchorDescription) {
                             newCourse.anchorDescription = req.body.anchorDescription;
                         }
                     }
@@ -391,15 +391,15 @@ module.exports = (app) => {
         });
     })
 
-    app.delete('/api/assignemnts/:userID/:courseID/delete', requireRole('prof'), function(req,res){
-        if(!req.params.courseID){
+    app.delete('/api/assignemnts/:userID/:courseID/delete', requireRole('prof'), function (req, res) {
+        if (!req.params.courseID) {
             return res.status(400).send({
                 success: false,
                 message: "Error: courseID not in parameters. Please try again."
             });
         }
 
-        if(!req.params.userID){
+        if (!req.params.userID) {
             return res.status(400).send({
                 success: false,
                 message: "Error: userID not in parameters. Please try again."
@@ -409,14 +409,14 @@ module.exports = (app) => {
         Course.findOneAndDelete({
             _id: req.params.courseID,
             "class.professor": req.params.userID
-        }, function(err, course){
-            if(err){
+        }, function (err, course) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
                 });
             }
-            if(!course){
+            if (!course) {
                 return res.status(404).send({
                     success: false,
                     message: "Error: Course not found"
@@ -424,13 +424,13 @@ module.exports = (app) => {
             }
             return res.status(200).send({
                 success: true,
-                message: "Course "+course._id+" successfully deleted"
+                message: "Course " + course._id + " successfully deleted"
             })
         })
     })
 
     // Upload Assignment
-    app.all('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res, next) {
+    app.all('/api/assignments/:userID/:assignmentID/upload', verifyUser, diskStorage(dir).single(keyName), fileUpload, function (req, res) {
         Assignment.findOneAndUpdate({
             _id: req.params.assignmentID,
             isDeleted: false
@@ -440,7 +440,7 @@ module.exports = (app) => {
                         'user': req.params.userID,
                     }
                 }
-            }, { new: true }, function(err, assignment) {
+            }, { new: true }, function (err, assignment) {
                 if (err) {
                     return res.status(500).send({
                         success: false,
@@ -448,75 +448,75 @@ module.exports = (app) => {
                     });
                 }
                 var submissions = [];
-                for(var i=0; i<assignment.submissions.length; i++){
+                for (var i = 0; i < assignment.submissions.length; i++) {
                     var submission = assignment.submissions[i];
-                    if(submission.user!=req.params.userID){
+                    if (submission.user != req.params.userID) {
                         submissions.push(submission);
                     }
                 }
                 File.find({
                     user_id: req.user_id,
                     originalname: req.file.originalname
-                }, function(err, files){
+                }, function (err, files) {
                     if (err) {
                         return res.status(500).send({
                             success: false,
                             message: "Error: Server error"
                         });
                     }
-                    req.fileID = files[files.length-1]._id; //Get Latest file submitted by user
-                    var object = {user:req.user_id, file:req.fileID};
+                    req.fileID = files[files.length - 1]._id; //Get Latest file submitted by user
+                    var object = { user: req.user_id, file: req.fileID };
                     submissions.push(object);
-                    
+
                     Assignment.findOneAndUpdate({
                         _id: req.params.assignmentID,
                         isDeleted: false,
-                    },{
-                        "$set":{
-                            submissions:submissions
-                        }
-                    },null, function(err, assignment){
-                        if (err) {
-                            return res.status(500).send({
-                                success: false,
-                                message: "Error: Server error"
+                    }, {
+                            "$set": {
+                                submissions: submissions
+                            }
+                        }, null, function (err) {
+                            if (err) {
+                                return res.status(500).send({
+                                    success: false,
+                                    message: "Error: Server error"
+                                });
+                            }
+                            console.log("User " + req.params.userID + " has successfully submitted the assignment");
+                            return res.status(200).send({
+                                success: true,
+                                message: "User " + req.params.userID + " has successfully submitted the assignment"
                             });
-                        }
-                        console.log("User " + req.params.userID + " has successfully submitted the assignment");
-                        return res.status(200).send({
-                            success: true,
-                            message: "User " + req.params.userID + " has successfully submitted the assignment"
-                        });
-                    })
+                        })
                 })
             });
     })
 
-    app.get('/api/assignments/:assignmentID/submissions', requireRole('prof'), function(req,res){
+    app.get('/api/assignments/:assignmentID/submissions', requireRole('prof'), function (req, res) {
         Assignment.find({
-            _id:req.params.assignmentID
-        }, function(err, assignments){
-            if(err){
+            _id: req.params.assignmentID
+        }, function (err, assignments) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
                 });
             }
-            if(!assignments){
+            if (!assignments) {
                 return res.status(404).send({
                     success: false,
                     message: 'Error: No such assignment found'
                 });
             }
             var assignment = assignments[0];
-            if(assignment.submissions.length){
+            if (assignment.submissions.length) {
                 return res.status(200).send({
-                    success:true,
+                    success: true,
                     message: "Assignment submissions successfully retrieved",
-                    data: {assignment}
+                    data: { assignment }
                 })
             }
-            else{
+            else {
                 return res.status(404).send({
                     success: false,
                     message: 'Error: No submissions for this assignment'
@@ -529,18 +529,18 @@ module.exports = (app) => {
 
     app.get('/api/assignments/:assignmentID/zip', requireRole('prof'), addFilesForZip, zipFile(dir));
 
-    app.get('/api/assignments/:assignmentID/details', function(req,res){
+    app.get('/api/assignments/:assignmentID/details', function (req, res) {
         Assignment.find({
-            _id:req.params.assignmentID,
-            isDeleted:false
-        }, function(err,assignments){
-            if(err){
+            _id: req.params.assignmentID,
+            isDeleted: false
+        }, function (err, assignments) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
                 });
             }
-            if(!assignments){
+            if (!assignments) {
                 return res.status(404).send({
                     success: false,
                     message: 'Error: No such assignment found'
@@ -549,9 +549,9 @@ module.exports = (app) => {
             var assignment = assignments[0].toObject();
             delete assignment.submissions;
             return res.status(200).send({
-                success:true,
-                message:"Assignment Details successfully retrieved",
-                data:{assignment}
+                success: true,
+                message: "Assignment Details successfully retrieved",
+                data: { assignment }
             })
         })
     })

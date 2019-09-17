@@ -37,7 +37,7 @@ class NavbarClass extends Component {
     this.onSignIn = this.onSignIn.bind(this);
     this.onTextboxChangeSignInUsn = this.onTextboxChangeSignInUsn.bind(this);
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
-  };
+  }
 
 
   componentDidMount() {

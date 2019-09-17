@@ -4,8 +4,8 @@ const File = require('../models/Files');
 var Assignment = require('../models/assignments/Assignment');
 var fs = require("fs");
 var path = require('path');
-var homedir = require('os').homedir();
 var archiver = require('archiver');
+var dir = "."
 
 var diskStorage = function (dir) {
     var storage = multer.diskStorage({
@@ -31,7 +31,7 @@ var fileUpload = function (req, res, next) {
     File.find({
         user_id: req.user_id,
         originalname: req.file.originalname
-    }, function (err, files) {
+    }, function (err) {
         if (err) {
             return res.status(500).send({
                 success: false,
@@ -80,7 +80,7 @@ var fileUpload = function (req, res, next) {
 }
 
 var downloadFile = function (dir) {
-    return function (req, res, next) {
+    return function (req, res) {
         File.find({
             _id: req.params.fileID
         }, function (err, files) {
@@ -196,8 +196,8 @@ var addFilesForZip = function(){
     }
 }
 
-var zipFile = function(dir){
-    return function(req,res,next){
+var zipFile = function(){
+    return function(req,res){
         console.log(req)
         var archive = archiver('zip');
         archive.on('error',function(err) {

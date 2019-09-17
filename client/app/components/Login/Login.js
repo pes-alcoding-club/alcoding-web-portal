@@ -15,7 +15,7 @@ class Login extends Component {
     this.onSignIn = this.onSignIn.bind(this);
     this.onTextboxChangeSignInEmail = this.onTextboxChangeSignInEmail.bind(this);
     this.onTextboxChangeSignInPassword = this.onTextboxChangeSignInPassword.bind(this);
-  };
+  }
 
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {

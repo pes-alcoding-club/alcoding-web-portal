@@ -70,7 +70,7 @@ class SignupForm extends Component {
 				attributes = row.split(',');
 				for (count = 0; count < NO_OF_MANDATORY_FIELDS; count++) {
 					if (attributes[count] == "") { invalid = 1; }
-				};//to check cases where there are blank fields for each user
+				}//to check cases where there are blank fields for each user
 				if (!invalid) {
 					var body = "firstName=" + attributes[0];
 					body += '&email=' + attributes[1];

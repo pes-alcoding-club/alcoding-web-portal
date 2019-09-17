@@ -1,14 +1,9 @@
 const User = require('../../models/User');
-const File = require('../../models/Files');
 var requireRole = require('../../middleware/Token').requireRole;
 var verifyUser = require('../../middleware/Token').verifyUser;
 var path = require("path")
-var diskStorage = require('../../middleware/fileStorage').diskStorage;
-var fileUpload = require('../../middleware/fileStorage').fileUpload;
-var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
 var fs = require("fs");
 var dir = process.cwd() + '/../temp';
-var keyName = "inputFile";
 
 module.exports = (app) => {
   app.get('/api/contests/:userID/contenderInfo', function (req, res) {
@@ -76,7 +71,7 @@ module.exports = (app) => {
       }
       var userContenderDetails = {};
       for (var user of users) {
-        let name = user.name.firstName + " " + user.name.lastName;
+        // let name = user.name.firstName + " " + user.name.lastName;
         delete user.contender["$init"];
         userContenderDetails[user.usn] = Object.assign({}, user.contender);
         userContenderDetails[user.usn]["batch"] = user.batch;
@@ -122,7 +117,7 @@ module.exports = (app) => {
       var userContenderDetails = [];
       for (var user of users) {
         var name = user.name.firstName + " " + user.name.lastName;
-        pushObject = Object.assign({ usn: user.usn, name }, user.contender.toObject());
+        var pushObject = Object.assign({ usn: user.usn, name }, user.contender.toObject());
         pushObject.rating = Math.round(pushObject.rating);
         pushObject.best = Math.round(pushObject.best);
         if (pushObject.rating != -1 && pushObject.timesPlayed != 0)
@@ -175,7 +170,7 @@ module.exports = (app) => {
         if (codechef) handles.codechef = codechef;
 
         previousUsers[0].contender.handles = handles;
-        previousUsers[0].save((err, user) => {
+        previousUsers[0].save((err) => {
           if (err) {
             console.log(err);
             return res.status(500).send({
@@ -190,20 +185,18 @@ module.exports = (app) => {
         });
       }
       else {
-        if (!usn) {
-          return res.status(400).send({
-            success: false,
-            message: 'Error: Could not find user'
-          });
-        }
+        return res.status(400).send({
+          success: false,
+          message: 'Error: Could not find user'
+        });
       }
     });
   });
 
   app.post('/api/contests/updateContenders', requireRole("admin"), function (req, res) {
     var usn = req.body.usn;
-    var name = req.body.name;
-    var email = req.body.email;
+    // var name = req.body.name;
+    // var email = req.body.email;
     var rating = req.body.rating;
     var volatility = req.body.volatility;
     var timesPlayed = req.body.timesPlayed;
@@ -239,7 +232,7 @@ module.exports = (app) => {
         previousUsers[0].contender.lastFive = lastFive;
         previousUsers[0].contender.best = best;
 
-        previousUsers[0].save((err, user) => {
+        previousUsers[0].save((err) => {
           if (err) {
             console.log(err);
             return res.status(500).send({

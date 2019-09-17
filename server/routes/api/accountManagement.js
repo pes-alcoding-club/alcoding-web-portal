@@ -3,8 +3,6 @@ const UserSession = require('../../models/UserSession');
 const jwt = require('jsonwebtoken');
 var verifyUser = require('../../middleware/Token').verifyUser;
 const fs = require('fs');
-var nodemailer = require('nodemailer');
-var path = require('path');
 var privateKey = fs.readFileSync('server/sslcert/server.key', 'utf8'); //privatekey for jwt
 const config = require('../../../config/config');
 
@@ -64,7 +62,7 @@ module.exports = (app) => {
       }
 
       // Otherwise correct user
-      payload = {
+      var payload = {
         user_id: user._id,
         role: user.role
       };
@@ -79,9 +77,9 @@ module.exports = (app) => {
           });
         }
 
-        newSession = new UserSession();
+        var newSession = new UserSession();
         newSession.token = token;
-        newSession.save((err, session) => {
+        newSession.save((err) => {
           if (err) {
             return res.status(500).send({
               success: false,
@@ -141,7 +139,6 @@ module.exports = (app) => {
           })
         }
         var user = users[0];
-        var toemail = user.basicInfo.email;
         if (user.checkPassword(oldPassword)) {
           newPassword = user.generateHash(newPassword);
           User.findByIdAndUpdate({
@@ -246,7 +243,7 @@ module.exports = (app) => {
           $set: {
             password: newPassword
           }
-        }, null, function (err, user) {
+        }, null, function (err) {
           if (err) {
             return res.status(500).send({
               success: false,
@@ -305,11 +302,10 @@ module.exports = (app) => {
     }), //end of logout endpoint
 
     app.get('/api/account/:userID/verifyToken', verifyUser, function (req, res) {
-      console.log("Is valid token? ");
       return res.status(200).send({
         success: true,
         message: "Token is valid.",
-        user: user
+        user: req.params.userID
       });
     }), //end of verifyToken endpoint 
 
@@ -566,7 +562,7 @@ module.exports = (app) => {
           })
         }
 
-        payload = {
+        var payload = {
           user_id: user._id,
           role: user.role
         };
@@ -582,9 +578,9 @@ module.exports = (app) => {
             });
           }
 
-          newSession = new UserSession();
+          var newSession = new UserSession();
           newSession.token = token;
-          newSession.save((err, session) => {
+          newSession.save((err) => {
             if (err) {
               return res.status(500).send({
                 success: false,

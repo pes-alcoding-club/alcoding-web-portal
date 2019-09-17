@@ -1,12 +1,9 @@
 const User = require('../../models/User');
-const File = require('../../models/Files');
 const Group = require('../../models/Group')
 var requireRole = require('../../middleware/Token').requireRole;
 // var fileDB = require('../../middleware/fileStorage').fileDB;
 var diskStorage = require('../../middleware/fileStorage').diskStorage;
 var fileUpload = require('../../middleware/fileStorage').fileUpload;
-var retrieveFile = require('../../middleware/fileStorage').retrieveFile;
-var fs = require("fs");
 var dir = process.cwd() + '/../temp';
 var keyName = "inputFile";
 
@@ -69,7 +66,7 @@ module.exports = (app) => {
                 }
                 newUser.role = role;
             }
-            newUser.save((err, user) => {
+            newUser.save((err) => {
                 if (err) {
                     return res.status(500).send({
                         success: false,
@@ -199,7 +196,7 @@ module.exports = (app) => {
                             _id: userID
                         }, {
                                 $push: { "groups": group._id }
-                            }, { new: true }, function (err, user) {
+                            }, { new: true }, function (err) {
                                 if (err) {
                                     return res.status(500).send({
                                         success: false,
@@ -230,7 +227,7 @@ module.exports = (app) => {
                                 _id: userID
                             }, {
                                     $push: { "groups": group._id }
-                                }, { new: true }, function (err, user) {
+                                }, { new: true }, function (err) {
                                     if (err) {
                                         return res.status(500).send({
                                             success: false,

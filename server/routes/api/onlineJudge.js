@@ -25,10 +25,10 @@ module.exports = app => {
     
     try {
       const val = await getOutput(data);
-      res.json(val);
+      return res.status(200).json(val);
     } catch (err) {
       console.log(err.message);
-      res.status(500).send("Server error");
+      return res.status(500).send("Server error");
     }
   });
 };
