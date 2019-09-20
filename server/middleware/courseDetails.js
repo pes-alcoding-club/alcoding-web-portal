@@ -3,16 +3,10 @@ var Assignment = require('../models/assignments/Assignment');
 var Group = require('../models/Group');
 
 var addNewDetails = function(req, res, next){
-    if(!req.body.class){
+    if(!req.body.classes){
         return res.status(400).send({
             success: false,
             message: "Error: class details not in body. Please try again."
-        });
-    }
-    if(!req.body.graduatingYearOfStudents){
-        return res.status(400).send({
-            success: false,
-            message: "Error: Graduating Year of Students not in body. Please try again."
         });
     }
     if(!req.params.courseID){
@@ -21,7 +15,7 @@ var addNewDetails = function(req, res, next){
             message: "Error: courseID not in parameters. Please try again."
         });
     }
-    Course.findOne({
+    Course.findOneAndDelete({
         _id: req.params.courseID,
         validated: false,
         isDeleted: false
@@ -38,35 +32,40 @@ var addNewDetails = function(req, res, next){
                 message: "Error: Course not found"
             });
         }
-        var newCourse = Object.assign({}, course._doc)
-        delete newCourse._id
-        newCourse.class = req.body.class
-        Group.find({
-            isDeleted: false,
-            name: {$in: req.body.class.sections},
-            termEndYear: req.body.graduatingYearOfStudents
-        }, function(err, groups){
-            if(err){
-                return res.status(500).send({
-                    success: false,
-                    message: "Error: server error"
-                });
-            }
-            if(!groups){
-                return res.status(404).send({
-                    success: false,
-                    message: "Error: no such group found"
-                })
-            }
-            groups.forEach(group => {
-                group.members.forEach( student => {
-                    if(newCourse.students.indexOf(student)===-1){
-                        newCourse.students.push(student)
+        var courseRequest = Object.assign({}, course._doc)
+        delete courseRequest._id
+        courseRequest.studentsList = []
+        var operations = [];
+        req.body.classes.forEach(classDetailsObject => {
+            var students = new Set();
+            operations.push(Group.find({
+                    isDeleted: false,
+                    name: {$in: classDetailsObject.class.sections},
+                    termEndYear: classDetailsObject.graduatingYearOfStudents
+                }, (err, groups)=>{
+                    if(err){
+                        return res.status(500).send({
+                            success:false,
+                            message: "Error: Server error"
+                        })
                     }
+                    groups.forEach(group => {
+                        group.members.forEach(member => {
+                            students.add(member.toString())
+                        })
+                    })
+                    courseRequest.studentsList.push(students);
                 })
-            })
-            req.newCourse = Object.assign({}, newCourse)
+            )
+        })
+        return Promise.all(operations).then(listOfJobs => {
+            req.courseRequest = Object.assign({}, courseRequest)
             next();
+        }).catch(err => {
+            return res.status(500).send({
+                success: false,
+                message: 'Error: Server error'
+            });
         })
     })
 }
