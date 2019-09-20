@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const helpers = require('./helpers');
 
@@ -73,6 +74,10 @@ module.exports = {
 
     new CopyWebpackPlugin([{
       from: helpers.root('client/public')
-    }])
+    }]),
+
+    new MonacoWebpackPlugin({
+      languages: ['cpp','java','python']
+    })
   ]
 };
