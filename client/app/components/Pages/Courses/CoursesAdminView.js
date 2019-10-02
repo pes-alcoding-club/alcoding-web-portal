@@ -42,9 +42,8 @@ class CoursesAdminView extends Component {
 			})
 		})		
 	}
-	handleApproveCourse(course){		
+	handleApproveCourse(course, classes){
 		const self = this;
-		console.log(course);		
 		const apiPath = '/api/courseAdmin/'+ course._id + '/validate';
 		const token = localStorage.getItem('token');        
         const config = {
@@ -52,6 +51,7 @@ class CoursesAdminView extends Component {
                 'x-access-token': token,                
             }
 		}		
+		course.classes = classes;
 		axios.put(apiPath, course,  config)
 			.then(res=>{
 				console.log(res);
@@ -105,15 +105,20 @@ class CoursesAdminView extends Component {
 			console.log(error);
 		});
 
-		var apiPath = '/api/courseAdmin/getDepartmentMembers';
+		var apiPath = '/api/courseAdmin/getGroups';
 		axios.get(apiPath, { // Fetch all department members (For prof suggestions during course assigning)
 			headers: {
 				'x-access-token': token,
 				'Content-Type': 'application/json'
 			}
 		})
-		.then(function (response) {											
-			Promise.all(response.data.members.map(member => self.getProfName(member)))
+		.then(function (response) {					
+			let fetchedProfessors = response.data.groups.find(group => group.name === 'prof');
+			if(!fetchedProfessors)
+				fetchedProfessors = [];
+			else
+				fetchedProfessors = fetchedProfessors.members;												
+			Promise.all(fetchedProfessors.map(member => self.getProfName(member)))
 				.then( values => {	
 					const professorsObj = {}; // Key - id, value - name
 					for(const prof of values)
@@ -130,7 +135,7 @@ class CoursesAdminView extends Component {
 				})
 		})
 		.catch(function (error) {
-			console.log(error.response.data.message);
+			console.log(error);
 		});
 
 
