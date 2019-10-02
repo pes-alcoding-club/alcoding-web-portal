@@ -8,11 +8,11 @@ const addNewDetails = require('../../middleware/courseDetails').addNewDetails;
 
 module.exports = (app) => {
     // Endpoint for getting unvalidated new course requestss
-    app.get('/api/courseAdmin/newCourses', requireRole('courseAdmin'), function(req, res){
+    app.get('/api/courseAdmin/newCourses', requireRole('courseAdmin'), function (req, res) {
         Course.find({
-            validated: false, 
+            validated: false,
             isDeleted: false
-        }, function(err, courses){
+        }, function (err, courses) {
             if (err) {
                 return res.status(500).send({
                     success: false,
@@ -36,8 +36,8 @@ module.exports = (app) => {
     })
 
     // Endpoint to delete course request
-    app.delete('/api/courseAdmin/:courseID/delete', requireRole('courseAdmin'), function(req,res){
-        if(!req.params.courseID){
+    app.delete('/api/courseAdmin/:courseID/delete', requireRole('courseAdmin'), function (req, res) {
+        if (!req.params.courseID) {
             return res.status(400).send({
                 success: false,
                 message: "Error: courseID not in parameters. Please try again."
@@ -46,14 +46,14 @@ module.exports = (app) => {
 
         Course.findOneAndDelete({
             _id: req.params.courseID,
-        }, function(err, course){
-            if(err){
+        }, function (err, course) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
                 });
             }
-            if(!course){
+            if (!course) {
                 return res.status(404).send({
                     success: false,
                     message: "Error: Course not found"
@@ -61,93 +61,122 @@ module.exports = (app) => {
             }
             return res.status(200).send({
                 success: true,
-                message: "Course "+course._id+" successfully deleted"
+                message: "Course " + course._id + " successfully deleted"
             })
         })
     })
 
     // Endpoint to retrieve userID's of all professors
-    app.get('/api/courseAdmin/getDepartmentMembers', requireRole('courseAdmin'), function(req, res){
-        Group.findOne({
-            name: 'prof',
-            termEndYear: -1
-        }, function(err, group){
-            if(err){
+    app.get('/api/courseAdmin/getGroups', requireRole('courseAdmin'), function (req, res) {
+        Group.find({
+            name: { "$nin": ["prof", "students"] }
+        }, function (err, groups) {
+            if (err) {
                 return res.status(500).send({
-                    success:false,
+                    success: false,
                     message: "Error: Server error"
                 })
             }
-            if(!group){
+            if (!groups) {
                 return res.status(404).send({
                     success: false,
-                    message: "Error: no such group found"
+                    message: "Error: no groups found"
                 })
             }
             return res.status(200).send({
                 success: true,
                 message: "Details successfully retrieved",
-                members: group.members
+                groups
             })
         })
     })
 
     // Endpoint for validating course request
-    app.put('/api/courseAdmin/:courseID/validate', requireRole('courseAdmin'), addNewDetails, function(req, res){
-        var newCourse = Object.assign({}, req.newCourse)
-        newCourse.validated = true
-        Course.findOneAndUpdate({
-            _id: req.params.courseID,
-            validated: false
-        }, newCourse, {new: true}, function(err, course){
-            if(err){
-                return res.status(500).send({
-                    success:false,
-                    message: "Error: Server error"
-                })
-            }
-            // console.log(course.class.teachingMembers)
-            teachingMembers = []
-            course.class.teachingMembers.forEach(member => {
-                if(teachingMembers.indexOf(member.teacher)===-1) {
+    app.put('/api/courseAdmin/:courseID/validate', requireRole('courseAdmin'), addNewDetails, function (req, res) {
+        var courseRequest = Object.assign({}, req.courseRequest)
+        var jobOperations = [], teachingMembers = [], classPos = 0;
+        req.body.classes.forEach(classDetailsObject => {
+            var newCourse = new Course();
+            newCourse.code = courseRequest.code;
+            newCourse.name = courseRequest.name;
+            newCourse.department = courseRequest.department;
+            classDetailsObject.class.teachingMembers.forEach(teacher => {
+                newCourse.class.teachingMembers.push(teacher);
+            })
+            classDetailsObject.class.sections.forEach(section => {
+                newCourse.class.sections.push(section);
+            })
+            courseRequest.studentsList[classPos++].forEach(student => {
+                newCourse.students.push(student)
+            })
+            newCourse.validated = true;
+            classDetailsObject.class.teachingMembers.forEach(member => {
+                if (teachingMembers.indexOf(member.teacher) === -1) {
                     teachingMembers.push(member.teacher)
                 }
             })
-            User.find({
-                _id: {$in: teachingMembers}
-            }).then(docs => {
-                var jobOperations = []
-                docs.forEach(doc => {
-                    var newTags = doc.tags
-                    if(newTags.indexOf('member of course')===-1){
-                        newTags.push('member of course')
+            jobOperations.push(newCourse.save((err, course) => {
+                if (err) {
+                    return res.status(500).send({
+                        success: false,
+                        message: 'Error: Server error'
+                    });
+                }
+            }))
+            return Promise.all(jobOperations).then(() => {
+                User.find({
+                    _id: { $in: teachingMembers }
+                }, (err, docs) => {
+                    if (err) {
+                        return res.status(500).send({
+                            success: false,
+                            message: 'Error: Server error'
+                        });
                     }
-                    jobOperations.push(User.findOneAndUpdate({
+                    if (docs.length == 0) {
+                        return res.status(400).send({
+                            success: false,
+                            message: 'Error: No such users found'
+                        });
+                    }
+                    var teacherJobs = []
+                    docs.forEach(doc => {
+                        var newTags = doc.tags
+                        if (newTags.indexOf('member of course') === -1) {
+                            newTags.push('member of course')
+                        }
+                        teacherJobs.push(User.findOneAndUpdate({
                             _id: doc._id
                         }, {
                             tags: newTags
-                        }, {new: true}, function(err, user){
-                            if(err){
+                        }, { new: true }, function (err, user) {
+                            if (err) {
                                 return res.status(500).send({
-                                    success:false,
+                                    success: false,
                                     message: "Error: Server error"
                                 })
                             }
                         })
-                    )
-                })
-                return Promise.all(jobOperations);
-            }).then(listOfJobs => {
-                res.status(200).send({
-                    success: true,
-                    message: 'Course Request validated successfully'
+                        )
+                    })
+                    return Promise.all(teacherJobs).then(teacherJobs => {
+                        return res.status(200).send({
+                            success: true,
+                            message: 'Course Request validated successfully'
+                        })
+                    }).catch(err => {
+                        return res.status(500).send({
+                            success: false,
+                            message: 'Error: Server error'
+                        });
+                    })
                 })
             }).catch(err => {
-                res.status(500).send({
+                return res.status(500).send({
                     success: false,
                     message: 'Error: Server error'
                 });
             })
-        }) 
+        });
     })
 }
