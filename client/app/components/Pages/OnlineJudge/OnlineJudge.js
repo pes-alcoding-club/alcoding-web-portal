@@ -4,7 +4,7 @@ import ReactLoading from '../../common/Loading';
 import QuestionBlock from './QuestionBlock';
 import AddQuestion from './AddQuestion';
 import 'react-table/react-table.css';
-import './OnlineJudge.css';
+
 
 class OnlineJudge extends React.Component {
     constructor(props) {
@@ -14,8 +14,13 @@ class OnlineJudge extends React.Component {
             questions:{}
         };
     }
-
+    
     render() {
+        const changePage = (page) => {
+            if (page === "Home") {
+                this.setState({ page: "AddQuestion" });
+            }
+        }
         const style = {
             QuestionBlock: {
                 marginTop: "40px",
@@ -37,7 +42,7 @@ class OnlineJudge extends React.Component {
         else{
             return(
                 <div>
-                    <AddQuestion/>
+                    <AddQuestion page={changePage}/>
                 </div>
             );
         }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './QuestionBlock.css';
+
 import axios from 'axios';
 
 class Contests extends React.Component {

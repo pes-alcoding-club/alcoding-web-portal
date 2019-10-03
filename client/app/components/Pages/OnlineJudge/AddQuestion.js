@@ -24,6 +24,11 @@ class AddQuestion extends React.Component {
             submitBtn:{
                 width:"20%",
                 marginLeft:"40%"
+            },
+            cancelBtn: {
+                width: "20%",
+                marginLeft: "40%",
+                marginTop:"20px"
             }
         }
 
@@ -94,6 +99,7 @@ class AddQuestion extends React.Component {
                         </div>
                     </div>
                     <button type="button" class="btn btn-success" style={styles.submitBtn}>Submit</button>
+                    <button type="button" class="btn btn-danger" onClick={() => this.props.page("Home")} style={styles.cancelBtn}>Cancel</button>
                 </div>
             </div>
         );
