@@ -9,9 +9,10 @@ class SignupForm extends Component {
 		this.state = {
 			isLoading: true,
 			group_name: "",
-			grad_year:"",
+			termEndYear: "",
+			category: "student"
 		}
-		this.handleSubmitStudents = this.handleSubmitStudents.bind(this);
+		this.handleSubmitUsers = this.handleSubmitUsers.bind(this);
 		this.handleSubmitContenders = this.handleSubmitContenders.bind(this);
 		this.handleSubmitGroup = this.handleSubmitGroup.bind(this);
 		this.handleDownload = this.handleDownload.bind(this);
@@ -19,7 +20,8 @@ class SignupForm extends Component {
 		this.fileInput_contest = React.createRef();
 		this.fileInput_group = React.createRef();
 		this.changeGroupName = this.changeGroupName.bind(this);
-		this.changeGradYear = this.changeGradYear.bind(this);
+		this.changeTermEndYear = this.changeTermEndYear.bind(this);
+		this.handleCategoryChange = this.handleCategoryChange.bind(this);
 	}
 
 	componentDidMount() {
@@ -48,7 +50,7 @@ class SignupForm extends Component {
 			});
 	}
 
-	handleSubmitStudents(event) {
+	handleSubmitUsers(event) {
 		event.preventDefault();
 		var fileObj = this.fileInput.current.files[0];
 		var token = 'Bearer ' + localStorage.getItem('token');
@@ -58,9 +60,11 @@ class SignupForm extends Component {
 				'Authorization': token
 			}
 		};
-		var signUpUrl = '/api/admin/signup';
+		var signUpUrl = '/api/admin/signupMembers';
 		const NO_OF_MANDATORY_FIELDS = 3; //NUMBER OF FIELDS MANDATORY FOR SIGNUP.
 		var reader = new FileReader();
+		var createGroupUrl = '/api/admin/createGroup';
+		var category = this.state.category;
 		reader.onload = function (file) {
 			var data = file.target.result.split('\n');
 			var row, invalid, attributes, count;
@@ -72,16 +76,31 @@ class SignupForm extends Component {
 					if (attributes[count] == "") { invalid = 1; }
 				};//to check cases where there are blank fields for each user
 				if (!invalid) {
+					var groupBody;
 					var body = "firstName=" + attributes[0];
 					body += '&email=' + attributes[1];
-					body += '&usn=' + attributes[2];
-
+					if(category === 'student'){ 
+						body += '&usn=' + attributes[2];
+						groupBody = 'name=students'
+					}
+					else {
+						body += '&employeeID=' + attributes[2];
+						groupBody = 'name=prof'
+					}
 					axios.post(signUpUrl, body, configSignup)
 						.then(function (response) {
-							// console.log(response.data);
+							console.log(response.data);
+							groupBody += '&termEndYear=' + parseInt('-1') + '&email=' + attributes[1];
+							axios.post(createGroupUrl, groupBody, configSignup)
+							.then(function (response) {
+								console.log(response.data);
+							})
+							.catch(function (err) {
+								console.log(err);
+							})
 						})
 						.catch(function (err) {
-							console.log(err);
+							console.log(err.response);
 						})
 				}
 				else {
@@ -138,7 +157,7 @@ class SignupForm extends Component {
 		else { console.log('Please Upload a file!..'); }
 	}
 
-	handleSubmitGroup(e){
+	handleSubmitGroup(e) {
 		e.preventDefault();
 		var fileObj = this.fileInput_group.current.files[0];
 		var token = 'Bearer ' + localStorage.getItem('token');
@@ -150,20 +169,20 @@ class SignupForm extends Component {
 		};
 		var createGroupUrl = '/api/admin/createGroup';
 		var reader = new FileReader();
-		var body = 'name='+this.state.group_name+'&graduating='+parseInt(this.state.grad_year);
+		var body = 'name=' + this.state.group_name + '&termEndYear=' + parseInt(this.state.termEndYear);
 		reader.onload = function (file) {
 			var data = file.target.result.split('\n');
 			for (var row_count = 0; row_count < data.length; row_count++) {
 				var row = data[row_count].split(',')[0];
-				var obj = body+'&usn='+row
+				var obj = body + '&email=' + row
 				console.log(obj);
 				axios.post(createGroupUrl, obj, configSignup)
-				.then(function(response) {
-					console.log(response.data);
-				})
-				.catch(function (err) {
-					console.log(err);
-				})
+					.then(function (response) {
+						console.log(response.data);
+					})
+					.catch(function (err) {
+						console.log(err);
+					})
 			}
 		}
 
@@ -173,36 +192,46 @@ class SignupForm extends Component {
 		else { console.log('Please Upload a file!..'); }
 	}
 
-	changeGroupName(e){
+	changeGroupName(e) {
 		this.setState({
 			group_name: e.target.value
 		})
 	}
 
-	changeGradYear(e){
+	changeTermEndYear(e) {
 		this.setState({
-			grad_year: e.target.value
+			termEndYear: e.target.value
 		})
 	}
 
 	handleDownload(event) {
 		event.preventDefault();
+	}
 
+	handleCategoryChange(event) {
+		this.setState({
+			category: event.target.value
+		})
 	}
 
 	render() {
 		const updatedHandlesWtoken = "/api/contests/updatedHandles?token=" + localStorage.getItem('token');
 		if (this.state.isLoading)
-			return <ReactLoading/>;
+			return <ReactLoading />;
 		else
 			return (
 				<div className='container-fluid'>
 					<h3>Upload Student Details: </h3>
 					<form id="formObject">
-						<span>Please upload a .csv file</span>
+						<span>Enter category of users to signup</span>
+						<select className='form-control col-2' value={this.state.category} onChange={this.handleCategoryChange} required>
+							<option value='student'>Students</option>
+							<option value='professor'>Professors</option>
+						</select>
+						<span>Please upload a .csv file with format - </span>
 						<input type="file" className="btn btn-default form-control" ref={this.fileInput} />
 						<br />
-						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitStudents}>Submit</button>
+						<button type="submit" className="btn btn-dark form-control col-2" onClick={this.handleSubmitUsers}>Submit</button>
 					</form>
 					<br />
 					<h3>Upload/Download Contender Details: </h3>
@@ -217,8 +246,8 @@ class SignupForm extends Component {
 					<br />
 					<h3>Create New Group: </h3>
 					<form id="formObject">
-						<span>Name of Group: <input type="text" className="form-control col-2" placeholder="Group Name" value={this.state.group_name} onChange={this.changeGroupName}/></span>
-						<span>Year of Graduation: <input type="text" className="form-control col-2" placeholder="Graduating Year" value={this.state.grad_year} onChange={this.changeGradYear}/></span>
+						<span>Name of Group: <input type="text" className="form-control col-2" placeholder="Group Name" value={this.state.group_name} onChange={this.changeGroupName} /></span>
+						<span>Term End Year: <input type="text" className="form-control col-2" placeholder="Term End Year" value={this.state.termEndYear} onChange={this.changeTermEndYear} /></span>
 						<span>Please upload a csv file of student USN's in group</span>
 						<input type="file" className="btn btn-default form-control" ref={this.fileInput_group} />
 						<br />
