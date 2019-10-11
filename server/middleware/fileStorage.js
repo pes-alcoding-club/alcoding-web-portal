@@ -61,18 +61,18 @@ var fileUpload = function (req, res, next) {
                 User.findOneAndUpdate({
                     _id: req.user_id
                 }, {
-                        $push: { files: file._id }
-                    }, { new: true }, function (err, user) {
-                        if (err) {
-                            return res.status(500).send({
-                                success: false,
-                                message: 'Error: Server error'
-                            });
-                        }
-                        else {
-                            console.log("File added to user " + user._id);
-                        }
-                    });
+                    $push: { files: file._id }
+                }, { new: true }, function (err, user) {
+                    if (err) {
+                        return res.status(500).send({
+                            success: false,
+                            message: 'Error: Server error'
+                        });
+                    }
+                    else {
+                        console.log("File added to user " + user._id);
+                    }
+                });
             });
         }
     })
@@ -98,14 +98,14 @@ var downloadFile = function (dir) {
             }
             User.findOne({
                 _id: req.params.userID
-            }, function(err, user){
-                if(err){
+            }, function (err, user) {
+                if (err) {
                     return res.status(500).send({
                         success: false,
                         message: "Error: server error"
                     });
                 }
-                if(!user){
+                if (!user) {
                     return res.status(404).send({
                         success: false,
                         message: "Error: No such user found"
@@ -114,51 +114,51 @@ var downloadFile = function (dir) {
                 var usn = user.usn
                 var file = files[0];
                 var filePath = path.join(dir, file.originalname)
-                var fileName = usn+'_'+file.originalname;
+                var fileName = usn + '_' + file.originalname;
                 return res.download(filePath, fileName, function (err) {
                     if (err) {
-                      return res.status(404).send({
-                        success: false,
-                        message: "Error: File not found."
-                      });
+                        return res.status(404).send({
+                            success: false,
+                            message: "Error: File not found."
+                        });
                     }
-                  });
+                });
             })
         });
     }
 }
 
-var addFilesForZip = function(){
-    return function(req,res,next){
+var addFilesForZip = function () {
+    return function (req, res, next) {
         console.log("hello");
         Assignment.findOne({
             _id: req.params.assignmentID
-        }, function(err, assignment){
-            if(err){
+        }, function (err, assignment) {
+            if (err) {
                 return res.status(500).send({
                     success: false,
                     message: "Error: server error"
                 });
             }
-            if(!assignment){
+            if (!assignment) {
                 return res.status(404).send({
                     success: false,
                     message: "Error: No such assignment found"
                 });
             }
-            if(assignment.submissions.length>0){
+            if (assignment.submissions.length > 0) {
                 var files = [];
                 assignment.submissions.forEach(obj => {
                     User.findOne({
                         _id: obj.user
-                    }, function(err, user){
-                        if(err){
+                    }, function (err, user) {
+                        if (err) {
                             return res.status(500).send({
                                 success: false,
                                 message: "Error: server error"
                             });
                         }
-                        if(!user){
+                        if (!user) {
                             return res.status(404).send({
                                 success: false,
                                 message: "Error: No such user found"
@@ -167,22 +167,22 @@ var addFilesForZip = function(){
                         var usn = user.usn;
                         File.findOne({
                             _id: obj.file
-                        }, function(err,file){
-                            if(err){
+                        }, function (err, file) {
+                            if (err) {
                                 return res.status(500).send({
                                     success: false,
                                     message: "Error: server error"
                                 });
                             }
-                            if(!file){
+                            if (!file) {
                                 return res.status(404).send({
                                     success: false,
                                     message: "Error: No such file found"
                                 });
                             }
                             var filePath = path.join(dir, file.originalname);
-                            var fileName = usn+'_'+file.originalname;
-                            var fileObj = {'path': filePath, 'name':fileName};
+                            var fileName = usn + '_' + file.originalname;
+                            var fileObj = { 'path': filePath, 'name': fileName };
                             // fileObj['path'] = filePath;
                             // fileObj['name'] = fileName;
                             files.push(fileObj);
@@ -196,27 +196,36 @@ var addFilesForZip = function(){
     }
 }
 
-var zipFile = function(){
-    return function(req,res){
+var zipFile = function () {
+    return function (req, res) {
         console.log(req)
         var archive = archiver('zip');
-        archive.on('error',function(err) {
-            res.status(500).send({error: err.message});
+        archive.on('error', function (err) {
+            res.status(500).send({ error: err.message });
         });
-        res.on('close', function() {
+        res.on('close', function () {
             console.log('Archive wrote %d bytes', archive.pointer());
             return res.status(200).send('OK').end();
         });
-        var zipName = req.params.assignmentID+'.zip'
+        var zipName = req.params.assignmentID + '.zip'
         res.attachment(zipName);
         archive.pipe(res);
         req.files.forEach(file => {
-            archive.append(fs.createReadStream(file.path), {name: file.name})
+            archive.append(fs.createReadStream(file.path), { name: file.name })
         });
         archive.finalize();
     }
 }
-
+var createFile = function (req, res, next) {
+    fs.writeFile(process.cwd() + "/temp/file.txt", req.body.text, function (err) {
+        if (err) {
+            res.status(500).send({ error: err });
+        }
+        console.log("File Created");
+        res.status(200).send({ success: true, message: "File Created." });
+    });
+    next();
+}
 //TODO: Delete file endpoint
 
-module.exports = { diskStorage, fileUpload, downloadFile, zipFile, addFilesForZip };
+module.exports = { diskStorage, fileUpload, downloadFile, zipFile, addFilesForZip, createFile };
