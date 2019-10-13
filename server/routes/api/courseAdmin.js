@@ -66,7 +66,7 @@ module.exports = (app) => {
         })
     })
 
-    // Endpoint to retrieve userID's of all professors
+    // Endpoint to retrieve all sections
     app.get('/api/courseAdmin/getGroups', requireRole('courseAdmin'), function (req, res) {
         Group.find({
             name: { "$nin": ["prof", "students"] }
@@ -96,6 +96,12 @@ module.exports = (app) => {
         var courseRequest = Object.assign({}, req.courseRequest)
         var jobOperations = [], teachingMembers = [], classPos = 0;
         req.body.classes.forEach(classDetailsObject => {
+            if(classDetailsObject.class.teachingMembers === undefined || classDetailsObject.class.sections === undefined){
+                return res.status(400).send({
+                    success: false,
+                    message: "Please fill a valid class object, with teachingMembers and sections"
+                })
+            }
             var newCourse = new Course();
             newCourse.code = courseRequest.code;
             newCourse.name = courseRequest.name;

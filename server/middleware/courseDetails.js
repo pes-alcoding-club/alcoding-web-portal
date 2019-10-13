@@ -15,6 +15,12 @@ var addNewDetails = function(req, res, next){
             message: "Error: courseID not in parameters. Please try again."
         });
     }
+    if(req.body.classes.length===0){
+        return res.status(400).send({
+            success: false,
+            message: "Error: Classes object is empty. Please try again."
+        });
+    }
     Course.findOneAndDelete({
         _id: req.params.courseID,
         validated: false,
