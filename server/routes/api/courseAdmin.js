@@ -69,7 +69,8 @@ module.exports = (app) => {
     // Endpoint to retrieve all sections
     app.get('/api/courseAdmin/getGroups', requireRole('courseAdmin'), function (req, res) {
         Group.find({
-            name: { "$nin": ["prof", "students"] }
+            name: { "$nin": ["prof", "students"] },
+            isDeleted: false
         }, function (err, groups) {
             if (err) {
                 return res.status(500).send({
@@ -81,6 +82,32 @@ module.exports = (app) => {
                 return res.status(404).send({
                     success: false,
                     message: "Error: no groups found"
+                })
+            }
+            return res.status(200).send({
+                success: true,
+                message: "Details successfully retrieved",
+                groups
+            })
+        })
+    })
+
+    // Endpoint to retrieve student and professor groups
+    app.get('/api/courseAdmin/getCollegeMembers', requireRole('courseAdmin'), function (req, res) {
+        Group.find({
+            name: ["prof", "students"],
+            isDeleted: false
+        }, function (err, groups) {
+            if (err) {
+                return res.status(500).send({
+                    success: false,
+                    message: "Error: Server error"
+                })
+            }
+            if (!groups) {
+                return res.status(404).send({
+                    success: false,
+                    message: "Error: no student and professor groups found"
                 })
             }
             return res.status(200).send({
