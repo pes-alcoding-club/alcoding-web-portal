@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Input, InputGroup, InputGroupAddon, Collapse, Button, CardBody, Card, Badge, Table } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Input, InputGroup, Collapse, Button, CardBody, Card, Badge, Table } from 'reactstrap';
+import classnames from 'classnames';
 import axios from 'axios';
 import {connect} from 'react-redux';
+import { ToastContainer, ToastStore } from 'react-toasts';
 import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 class CourseCardAdmin extends Component {
@@ -15,7 +16,8 @@ class CourseCardAdmin extends Component {
 			classes:[],
 			selectedTeachers:[],
 			selectedSections:[],
-			showModal:false,			
+			showModal:false,	
+			activeTab: 'professors',			
     	};
 		this.toggle = this.toggle.bind(this);
 		this.handleInputChange = this.handleInputChange.bind(this);		
@@ -24,6 +26,13 @@ class CourseCardAdmin extends Component {
 		this.toggleAddClass = this.toggleAddClass.bind(this);
 		this.addClass = this.addClass.bind(this);
 		this.removeClass = this.removeClass.bind(this);
+		this.toggleTab = this.toggleTab.bind(this);
+	}
+	toggleTab(tab) { // To toggle between student and teacher tabs
+		if(this.state.activeTab !== tab) 
+			this.setState({
+				activeTab:tab
+			})
 	}
 	toggleAddClass() {	// For create assignment modal
 		this.setState(state => ({ showModal: !state.showModal}));
@@ -70,17 +79,21 @@ class CourseCardAdmin extends Component {
 		});
 	}
 	addClass(){
-		const newClass = {};
-		newClass.class = {};
-		newClass.class.teachingMembers = this.state.selectedTeachers;
-		newClass.class.sections = this.state.selectedSections;
-		const classes = this.state.classes;
-		classes.push(newClass);
-		this.setState({
-			classes:classes,
-			selectedSections:[],
-			selectedTeachers:[]
-		})
+		if(this.state.selectedSections.length && this.state.selectedTeachers.length) {
+			const newClass = {};
+			newClass.class = {};
+			newClass.class.teachingMembers = this.state.selectedTeachers;
+			newClass.class.sections = this.state.selectedSections;
+			const classes = this.state.classes;
+			classes.push(newClass);
+			this.setState({
+				classes:classes,
+				selectedSections:[],
+				selectedTeachers:[]
+			})
+		}
+		else
+			ToastStore.error("Please add sections and corresponding teaching members");
 	}
 	removeClass(index){
 		let classes = this.state.classes;
@@ -90,19 +103,25 @@ class CourseCardAdmin extends Component {
 		})
 	}
 	selectTeacher(professor){				
+		const selectedRole = document.getElementById(professor+"Role").value;
+		if(!selectedRole){
+			ToastStore.error("Please select a role");
+			return;
+		}		
 		const updatedSelectedTeachers = this.state.selectedTeachers;				
 		if(updatedSelectedTeachers.findIndex(item => item.teacher === professor) <0){
-			updatedSelectedTeachers.push({teacher:professor, role:"professor"});
+			updatedSelectedTeachers.push({teacher:professor, role:selectedRole});
 			this.setState({selectedTeachers:updatedSelectedTeachers});
 		}					
+		console.log(this.state.selectedTeachers);
 	}
 	removeSelectedTeacher(event){		
-		const course = this.state.course;		
-		const indexToBeRemoved = course.class.teachingMembers.findIndex(teachingMember => teachingMember.teacher === event.target.id);		
+		const selectedTeachers = this.state.selectedTeachers;		
+		const indexToBeRemoved = selectedTeachers.findIndex(teachingMember => teachingMember.teacher === event.target.id);		
 		if(indexToBeRemoved >= 0){
-			course.class.teachingMembers.splice(indexToBeRemoved, 1);
+			selectedTeachers.splice(indexToBeRemoved, 1);
 			this.setState({
-				course
+				selectedTeachers
 			});		  		
 		}		
 	}  
@@ -118,18 +137,49 @@ class CourseCardAdmin extends Component {
 		const self = this;
 		const course = this.props.course;    
 		const selectedTeachers = this.state.selectedTeachers.map((teachingMember) => {  
-			const teacherName = self.props.professors[teachingMember.teacher];
-			return(
-				<Badge id={teachingMember.teacher} onClick={this.removeSelectedTeacher} color="primary">{teacherName.firstName+" "+teacherName.lastName}</Badge>
+			const teacherName = self.props.collegeMembers.professors[teachingMember.teacher] || self.props.collegeMembers.students[teachingMember.teacher];
+			return(								
+				<button style={{"margin":"5px"}} id={teachingMember.teacher} onClick={this.removeSelectedTeacher} type="button" class="btn btn-info">
+					{teacherName.firstName+" "+teacherName.lastName}&nbsp; <span id={teachingMember.teacher} onClick={this.removeSelectedTeacher} class="badge badge-light">x</span>
+				</button>				
 			)		
 		})		
-		if(this.props.professors){
-			var teachersList = Object.keys(this.props.professors).map((professorId) => {
-				const profName = this.props.professors[professorId].firstName+" "+this.props.professors[professorId].lastName;
+		if(this.props.collegeMembers.professors){
+			const professors = this.props.collegeMembers.professors;
+			var teachersList = Object.keys(professors).map((professorId) => {
+				const profName = professors[professorId].firstName+" "+professors[professorId].lastName;
 				return(
 					<tr className="professorListElement" id={professorId} key={professorId} profname={profName}>
-						<td>{profName}</td>					
-						<td><Button outline color="success" onClick={()=>this.selectTeacher(professorId)}>+</Button>{' '}</td>
+						<td>{profName}</td>     
+						<td>
+							<select id={professorId+"Role"} style={{"margin":"auto"}} name="roleSelector" className="form-control" required>
+								<option value="" selected disabled hidden>Select role</option>
+								<option>Anchor</option>
+								<option>Professor</option>                            
+								<option>Teaching Assistant</option>							
+							</select>                    		
+						</td>
+						<td><Button outline color="success" onClick={()=>this.selectTeacher(professorId)}>+</Button>{' '}</td>						
+					</tr>
+				)				
+			})
+		}
+		if(this.props.collegeMembers.students){
+			const students = this.props.collegeMembers.students;
+			var studentsList = Object.keys(students).map((studentId) => {
+				const studentName = students[studentId].firstName+" "+students[studentId].lastName;
+				return(
+					<tr className="professorListElement" id={studentId} key={studentId} profname={studentName}>
+						<td>{studentName}</td>					
+						<td>
+							<select id={studentId+"Role"} style={{"margin":"auto"}} name="roleSelector" className="form-control" required>
+								<option value="" selected disabled hidden>Select role</option>
+								<option>Anchor</option>
+								<option>Professor</option>                            
+								<option>Teaching Assistant</option>							
+							</select>                    		
+						</td>
+						<td><Button outline color="success" onClick={()=>this.selectTeacher(studentId)}>+</Button>{' '}</td>
 					</tr>
 				)				
 			})
@@ -146,18 +196,49 @@ class CourseCardAdmin extends Component {
 			})			
 		}		
 		const teacherSelector = (
-			<div>
+			<div>				
+				<Nav tabs>
+        			<NavItem>
+          				<NavLink
+            				className={classnames({ active: this.state.activeTab === 'professors' })}
+            				onClick={() => { this.toggleTab('professors'); }}
+          				>
+            				Teachers
+          				</NavLink>
+        			</NavItem>
+        			<NavItem>
+          				<NavLink
+            				className={classnames({ active: this.state.activeTab === 'students' })}
+            				onClick={() => { this.toggleTab('students'); }}
+          				>
+            				Students
+          				</NavLink>
+        			</NavItem>
+      			</Nav>
 				<InputGroup>
-					<InputGroupAddon addonType="prepend">Search</InputGroupAddon>
-					<Input onChange={this.handleSearch} placeholder="Search Professor" />
+					{/* <InputGroupAddon addonType="append">Search</InputGroupAddon> */}
+					<Input onChange={this.handleSearch} placeholder={"Search"+" "+ this.state.activeTab} />
 				</InputGroup>
-				<div style={{maxHeight:"200px", overflowY:"auto"}}>
-					<Table>   
-						<tbody>
-							{teachersList}
-						</tbody>     																
-					</Table>											
-				</div>
+				<TabContent activeTab={this.state.activeTab}>
+        			<TabPane tabId="professors">
+						<div style={{maxHeight:"200px", overflowY:"auto"}}>
+							<Table>   
+								<tbody>
+									{teachersList}
+								</tbody>     																
+							</Table>											
+						</div>
+        			</TabPane>
+			        <TabPane tabId="students">
+						<div style={{maxHeight:"200px", overflowY:"auto"}}>
+							<Table>   
+								<tbody>
+									{studentsList}
+								</tbody>     																
+							</Table>											
+						</div>
+        			</TabPane>
+      			</TabContent>				
 			</div>
 		)
 		const addClassModal = (
@@ -199,7 +280,7 @@ class CourseCardAdmin extends Component {
 						</div>
 					</div>
 					<div className="col sm 3">
-						<Badge href="#" color="warning">Pending Approval</Badge>
+						<h4><Badge href="#" color="warning">Pending Approval</Badge></h4>
 					</div>																	
 				</div>
 				<Button color="link" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Expand</Button>
@@ -223,7 +304,13 @@ class CourseCardAdmin extends Component {
                 		</div>
 						<div className="form-group text-left">
                     		<h6>Graduating Year<sup>*</sup></h6>
-                    		<input type="text" className="form-control" placeholder="Graduating Year" name="graduatingYearOfStudents" value={this.state.course.graduatingYearOfStudents} onChange={this.handleInputChange} required={true}/>
+							<select name="graduatingYearOfStudents" className="form-control" value={this.state.course.graduatingYearOfStudents} onChange = {this.handleInputChange} required>
+								<option value="" selected disabled hidden>Select Graduating Year</option>
+								<option>2020</option>
+								<option>2021</option>                            
+								<option>2022</option>
+								<option>2023</option>
+							</select>                    		
                 		</div>
 						<div className="form-group text-left">
                     		<h6>Classes<sup>*</sup></h6>
@@ -250,6 +337,7 @@ class CourseCardAdmin extends Component {
 						</Collapse>
 					</CardBody>
 				</Card>
+				<ToastContainer store={ToastStore} position={ToastContainer.POSITION.BOTTOM_LEFT} />
 			</div>
     	)        
 	}
@@ -257,7 +345,7 @@ class CourseCardAdmin extends Component {
 
 const mapStateToProps = (state) => {	
 	return{
-		professors:state.profs.professors
+		collegeMembers:state.collegeMembers
 	}
 }
 export default connect(mapStateToProps)(CourseCardAdmin);

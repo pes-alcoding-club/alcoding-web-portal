@@ -22,7 +22,7 @@ class CoursesAdminView extends Component {
 	reload() {
     	window.location.reload()
   	}    	
-	getProfName(user_id){
+	getCollegeMemberName(user_id){
 		const token = localStorage.getItem('token');        
 		return new Promise((resolve, reject) => {
 			axios.get('/api/account/'+user_id+'/info', {
@@ -43,6 +43,12 @@ class CoursesAdminView extends Component {
 		})		
 	}
 	handleApproveCourse(course, classes){
+		if(!course.graduatingYearOfStudents){
+			ToastStore.error("Please enter graduating year of course");
+			return;
+		}
+		console.log(course.graduatingYearOfStudents);
+		console.log(course);
 		const self = this;
 		const apiPath = '/api/courseAdmin/'+ course._id + '/validate';
 		const token = localStorage.getItem('token');        
@@ -104,30 +110,46 @@ class CoursesAdminView extends Component {
 		.catch(function (error) {
 			console.log(error);
 		});
-
-		var apiPath = '/api/courseAdmin/getGroups';
+		var apiPath = '/api/courseAdmin/getCollegeMembers';
 		axios.get(apiPath, { // Fetch all department members (For prof suggestions during course assigning)
 			headers: {
 				'x-access-token': token,
 				'Content-Type': 'application/json'
 			}
 		})
-		.then(function (response) {					
-			let fetchedProfessors = response.data.groups.find(group => group.name === 'prof');
-			if(!fetchedProfessors)
-				fetchedProfessors = [];
+		.then(function (response) {			
+			const fetchedGroups = response.data.groups;
+			let fetchedProfMembers = fetchedGroups.find(group => group.name === "prof");
+			let fetchedStudentMembers = fetchedGroups.find(group => group.name === "students");
+			if(!fetchedProfMembers)
+				fetchedProfMembers = [];
 			else
-				fetchedProfessors = fetchedProfessors.members;												
-			Promise.all(fetchedProfessors.map(member => self.getProfName(member)))
+				fetchedProfMembers = fetchedProfMembers.members;												
+			if(!fetchedStudentMembers)
+				fetchedStudentMembers = [];
+			else
+				fetchedStudentMembers = fetchedStudentMembers.members;			
+			Promise.all(fetchedProfMembers.map(teacherMember => self.getCollegeMemberName(teacherMember)))
 				.then( values => {	
 					const professorsObj = {}; // Key - id, value - name
 					for(const prof of values)
 						professorsObj[prof.id] = prof.name;										
 					self.props.dispatch({ 
 						type:"FETCHED_PROFS",
-						payload:{
-							professors:professorsObj
-						}	
+						payload:professorsObj						
+					})
+				})
+				.catch(err =>{
+					console.log(err);
+				})
+			Promise.all(fetchedStudentMembers.map(student => self.getCollegeMemberName(student)))
+				.then( values => {	
+					const studentsObj = {}; // Key - id, value - name
+					for(const student of values)
+						studentsObj[student.id] = student.name;										
+					self.props.dispatch({ 
+						type:"FETCHED_STUDENTS",
+						payload:studentsObj						
 					})
 				})
 				.catch(err =>{
@@ -169,7 +191,7 @@ class CoursesAdminView extends Component {
 }
 const mapStateToProps = (state) => {
 	return{
-		professors:state.profs.professors
+		collegeMembers:state.collegeMembers
 	}			
 }
 export default connect(mapStateToProps)(CoursesAdminView);

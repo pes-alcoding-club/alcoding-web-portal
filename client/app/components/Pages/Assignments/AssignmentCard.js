@@ -89,9 +89,9 @@ class AssignmentCard extends Component {
     let content;
     const profContent = (
       <div id="AssignmentCard">
-        <div className="card bg-light mx-auto">
-          <div className="card-title"><h3><i>{this.props.uniqueID}</i>: <strong>{this.props.name}</strong></h3></div>
+        <div className="card bg-light mx-auto">          
           <div className="card-body text-left">
+            <div className="card-title"><h3><i>{this.props.uniqueID}</i>: <strong>{this.props.name}</strong></h3></div>
             Description: {this.props.details}<br />
             Type: {this.props.type}<br />
             Due Date: {this.props.dueDate}<br />

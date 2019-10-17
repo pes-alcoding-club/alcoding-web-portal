@@ -132,7 +132,7 @@ class CourseCard extends Component {
 							</div>
 						</div>
 						<div className="col sm 3">							
-							<Badge href="#" color="warning">Pending Activation</Badge>
+							<h4><Badge href="#" color="warning">Pending Activation</Badge></h4>
 						</div>																	
 					</div>
 					<Button color="link" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Expand</Button>

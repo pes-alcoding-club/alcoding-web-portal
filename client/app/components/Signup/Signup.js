@@ -22,13 +22,18 @@ export default class ForgotPassword extends Component {
 
     onSignup(event){
         event.preventDefault();
-        const formElements = event.target.elements;                
+        const formElements = event.target.elements; 
+        console.log(formElements);               
         const firstName = formElements["firstName"].value;
         const lastName = formElements["lastName"].value;
         const email = formElements["emailid"].value;
         const password = formElements["password"].value;
         const confirmPassword = formElements["confirmPassword"].value;
-        // Need to add confirmPassword validation
+        // TODO: Add signup validation with regex
+        if(confirmPassword !== password){
+            ToastStore.error("Passwords do not match");
+            return;
+        }
         const signupData = {
             firstName,
             lastName,
@@ -52,22 +57,27 @@ export default class ForgotPassword extends Component {
                 {this.renderRedirect()}
                 <h4 className="card-header">Signup</h4>
                 <div className="card-body">                    
-                    <form onSubmit={this.onSignup}>                        
-                        <Label for="firstName">First Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Label>
-                        <input className="mx-2 mb-2 p-1" type="text" name="firstName" placeholder="First Name" required/>                        
-                        <br></br>
-                        <Label for="lastName">Last Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Label>
-                        <input className="mx-2 mb-2 p-1" type="text" name="lastName" placeholder="Last Name" required/>                        
-                        <br></br>
-                        <Label for="emailId">Email ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Label>
-                        <input className="mx-2 mb-2 p-1" type="text" name="emailid" placeholder="Email ID" required />                        
-                        <br></br>
-                        <Label for="password">Password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Label>
-                        <input className="mx-2 mb-2 p-1" type="password" name="password" placeholder="Password" required />                        
-                        <br></br>
-                        <Label for="confirmPassword">Retype Password</Label>
-                        <input className="mx-2 mb-2 p-1" type="password" name="confirmPassword" placeholder="Retype Password" required />                        
-                        <br></br>
+                    <form onSubmit={this.onSignup}>  
+                        <div className="form-group text-left">
+                    		<h6>First Name<sup>*</sup></h6>
+                    		<input type="text" className="form-control" placeholder="First Name" name="firstName" required={true} />
+                		</div>
+                		<div className="form-group text-left">
+                    		<h6>Last Name<sup>*</sup></h6>
+                    		<input type="text" className="form-control" placeholder="Last Name" name="lastName" required={true} />
+                		</div>
+                        <div className="form-group text-left">
+                    		<h6>Email ID<sup>*</sup></h6>
+                    		<input type="text" className="form-control" placeholder="Email ID" name="emailid" required={true} />
+                		</div>
+                        <div className="form-group text-left">
+                    		<h6>Password<sup>*</sup></h6>
+                    		<input type="password" className="form-control" placeholder="Password" name="password" required={true} />
+                		</div>
+                        <div className="form-group text-left">
+                    		<h6>Retype Password<sup>*</sup></h6>
+                    		<input type="password" className="form-control" placeholder="Retype Password" name="confirmPassword" required={true} />
+                		</div>                                              
                         <Button color="dark">Signup</Button>
                     </form>
                 </div>                

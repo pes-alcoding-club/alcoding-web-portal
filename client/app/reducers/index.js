@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer'
 import errorReducer from './errorReducer';
-import profReducer from './profReducer';
+import collegeMembersReducer from './collegeMembersReducer';
 
 export default combineReducers({
   auth: authReducer,
   errors: errorReducer,
-  profs: profReducer
+  collegeMembers: collegeMembersReducer
 });
