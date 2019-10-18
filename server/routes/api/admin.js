@@ -17,12 +17,14 @@ module.exports = (app) => {
         var role = req.body.role;
 
         if (!firstName) {
+            console.log("Error: First name cannot be blank");
             return res.status(400).send({
                 success: false,
                 message: 'Error: First name cannot be blank.'
             });
         }
         if (!usn) {
+            console.log("Error: usn cannot be blank");
             return res.status(400).send({
                 success: false,
                 message: 'Error: usn cannot be blank.'
@@ -43,6 +45,7 @@ module.exports = (app) => {
                     message: 'Error: Server find error'
                 });
             } else if (previousUsers.length > 0) {
+                console.log(`Error: ${usn} already exists`);
                 return res.status(409).send({
                     success: false,
                     message: 'Error: Account already exists.'
@@ -129,6 +132,7 @@ module.exports = (app) => {
 
     app.post('/api/admin/createGroup', requireRole('admin'), function (req, res) {
         if (!req.body.name) {
+            console.log("Error: Name not recieved");
             return res.status(400).send({
                 success: false,
                 message: "Error: name not recieved"
@@ -136,6 +140,7 @@ module.exports = (app) => {
         }
 
         if (!req.body.usn) {
+            console.log("Error: usn not recieved");
             return res.status(400).send({
                 success: false,
                 message: "Error: usn not recieved"
@@ -143,6 +148,7 @@ module.exports = (app) => {
         }
 
         if (!req.body.graduating) {
+            console.log("Error: graduating year not recieved");
             return res.status(400).send({
                 success: false,
                 message: "Error: graduating year not recieved"
@@ -161,6 +167,7 @@ module.exports = (app) => {
                 }); 
             }
             if (!user) {
+                console.log(`Error: ${req.body.usn} not found`)
                 return res.status(404).send({
                     success: false,
                     message: 'Error: User not found'
