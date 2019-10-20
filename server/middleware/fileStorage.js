@@ -216,16 +216,6 @@ var zipFile = function () {
         archive.finalize();
     }
 }
-var createFile = function (req, res, next) {
-    fs.writeFile(process.cwd() + "/temp/file.txt", req.body.text, function (err) {
-        if (err) {
-            res.status(500).send({ error: err });
-        }
-        console.log("File Created");
-        res.status(200).send({ success: true, message: "File Created." });
-    });
-    next();
-}
 //TODO: Delete file endpoint
 
 module.exports = { diskStorage, fileUpload, downloadFile, zipFile, addFilesForZip, createFile };
