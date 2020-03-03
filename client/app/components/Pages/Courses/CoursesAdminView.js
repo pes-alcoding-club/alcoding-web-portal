@@ -43,12 +43,6 @@ class CoursesAdminView extends Component {
 		})		
 	}
 	handleApproveCourse(course, classes){
-		if(!course.graduatingYearOfStudents){
-			ToastStore.error("Please enter graduating year of course");
-			return;
-		}
-		console.log(course.graduatingYearOfStudents);
-		console.log(course);
 		const self = this;
 		const apiPath = '/api/courseAdmin/'+ course._id + '/validate';
 		const token = localStorage.getItem('token');        

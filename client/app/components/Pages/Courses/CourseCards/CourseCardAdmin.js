@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Input, InputGroup, Collapse, Button, CardBody, Card, Badge, Table } from 'reactstrap';
 import classnames from 'classnames';
-import axios from 'axios';
 import {connect} from 'react-redux';
 import { ToastContainer, ToastStore } from 'react-toasts';
 import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -17,7 +16,8 @@ class CourseCardAdmin extends Component {
 			selectedTeachers:[],
 			selectedSections:[],
 			showModal:false,	
-			activeTab: 'professors',			
+			activeTab: 'professors',
+			graduatingYearOfStudents: null
     	};
 		this.toggle = this.toggle.bind(this);
 		this.handleInputChange = this.handleInputChange.bind(this);		
@@ -27,6 +27,8 @@ class CourseCardAdmin extends Component {
 		this.addClass = this.addClass.bind(this);
 		this.removeClass = this.removeClass.bind(this);
 		this.toggleTab = this.toggleTab.bind(this);
+		this.createTeacherButtons = this.createTeacherButtons.bind(this);
+		this.handleGraduatingYearChange = this.handleGraduatingYearChange.bind(this);
 	}
 	toggleTab(tab) { // To toggle between student and teacher tabs
 		if(this.state.activeTab !== tab) 
@@ -46,6 +48,11 @@ class CourseCardAdmin extends Component {
 			else
 				professorElement.style.display = "none";
 		}
+	}
+	handleGraduatingYearChange(event){
+		this.setState({
+			graduatingYearOfStudents: event.target.value
+		})
 	}
 	handleInputChange(event) {
 		const updatedCourse = this.state.course;
@@ -79,21 +86,23 @@ class CourseCardAdmin extends Component {
 		});
 	}
 	addClass(){
-		if(this.state.selectedSections.length && this.state.selectedTeachers.length) {
+		if(this.state.selectedSections.length && this.state.selectedTeachers.length && this.state.graduatingYearOfStudents != null) {
 			const newClass = {};
 			newClass.class = {};
 			newClass.class.teachingMembers = this.state.selectedTeachers;
 			newClass.class.sections = this.state.selectedSections;
+			newClass.graduatingYearOfStudents = this.state.graduatingYearOfStudents;
 			const classes = this.state.classes;
 			classes.push(newClass);
 			this.setState({
 				classes:classes,
 				selectedSections:[],
-				selectedTeachers:[]
+				selectedTeachers:[],
+				graduatingYearOfStudents: null
 			})
 		}
 		else
-			ToastStore.error("Please add sections and corresponding teaching members");
+			ToastStore.error("Please add sections and corresponding teaching members, and a graduating year");
 	}
 	removeClass(index){
 		let classes = this.state.classes;
@@ -112,8 +121,7 @@ class CourseCardAdmin extends Component {
 		if(updatedSelectedTeachers.findIndex(item => item.teacher === professor) <0){
 			updatedSelectedTeachers.push({teacher:professor, role:selectedRole});
 			this.setState({selectedTeachers:updatedSelectedTeachers});
-		}					
-		console.log(this.state.selectedTeachers);
+		}
 	}
 	removeSelectedTeacher(event){		
 		const selectedTeachers = this.state.selectedTeachers;		
@@ -124,7 +132,26 @@ class CourseCardAdmin extends Component {
 				selectedTeachers
 			});		  		
 		}		
-	}  
+	}
+	createTeacherButtons(teachersList, canDelete = true){ // Returns a jsx button list of teaching members
+		// canDelete flag to allow or disallow teaching member removal by clicin on the x in the button
+		const teacherButtonList = teachersList.map((teachingMember) => {
+			// Get the teacher name from my props (reduxed)
+			const teacherName = this.props.collegeMembers.professors[teachingMember.teacher] || this.props.collegeMembers.students[teachingMember.teacher];
+			if(canDelete)
+				return(								
+					<button style={{"margin":"5px"}} id={teachingMember.teacher} onClick={this.removeSelectedTeacher} type="button" class="btn btn-info">
+						{teacherName.firstName+" "+teacherName.lastName}&nbsp; <span id={teachingMember.teacher} onClick={this.removeSelectedTeacher} class="badge badge-light">x</span>
+					</button>				
+				)
+			return(								
+				<button style={{"margin":"5px"}} id={teachingMember.teacher} type="button" class="btn btn-info">
+					{teacherName.firstName+" "+teacherName.lastName}&nbsp;
+				</button>				
+			)
+		})
+		return teacherButtonList;
+	}
 	
 	componentWillMount() {
 	    this.setState({
@@ -133,17 +160,9 @@ class CourseCardAdmin extends Component {
     	})
   	}
   
-  	render() {      
-		const self = this;
+  	render() {
 		const course = this.props.course;    
-		const selectedTeachers = this.state.selectedTeachers.map((teachingMember) => {  
-			const teacherName = self.props.collegeMembers.professors[teachingMember.teacher] || self.props.collegeMembers.students[teachingMember.teacher];
-			return(								
-				<button style={{"margin":"5px"}} id={teachingMember.teacher} onClick={this.removeSelectedTeacher} type="button" class="btn btn-info">
-					{teacherName.firstName+" "+teacherName.lastName}&nbsp; <span id={teachingMember.teacher} onClick={this.removeSelectedTeacher} class="badge badge-light">x</span>
-				</button>				
-			)		
-		})		
+		const selectedTeachers = this.createTeacherButtons(this.state.selectedTeachers);		
 		if(this.props.collegeMembers.professors){
 			const professors = this.props.collegeMembers.professors;
 			var teachersList = Object.keys(professors).map((professorId) => {
@@ -188,9 +207,10 @@ class CourseCardAdmin extends Component {
 		if(this.state.classes.length){
 			addedClasses = this.state.classes.map((classObject, index) => {
 				return (				
-					<tr key={index} keyclassName="classListElement">
+					<tr key={index} className="classListElement">
 						<td>{classObject.class.sections.join(",")}</td>
-						<td><button className="btn btn-danger" type="button" onClick={() => this.removeClass(index)}>x</button></td>
+						<td>{this.createTeacherButtons(classObject.class.teachingMembers, false)}</td>
+						<td><button className="btn btn-danger" type="button" onClick={() => this.removeClass(index)}>X</button></td>
 					</tr>
 				)
 			})			
@@ -248,7 +268,17 @@ class CourseCardAdmin extends Component {
 					<div className="form-group text-left">
 						<h6>Sections<sup>*</sup> (Comma seperated)</h6>
                     	<input type="text" className="form-control" placeholder="Sections" name="sections" value={this.state.selectedSections.join(",")} onChange={this.handleSectionsChange} required={true}/>
-                	</div>	
+                	</div>
+					<div className="form-group text-left">
+						<h6>Graduating Year<sup>*</sup></h6>
+						<select name="graduatingYearOfStudents" className="form-control" value={this.state.graduatingYearOfStudents} onChange = {this.handleGraduatingYearChange} required>
+							<option value="" selected disabled hidden>Select Graduating Year</option>
+							<option>2020</option>
+							<option>2021</option>                            
+							<option>2022</option>
+							<option>2023</option>
+						</select>                    		
+					</div>	
 					{selectedTeachers}			
 					{teacherSelector}
 				</ModalBody>
@@ -301,16 +331,6 @@ class CourseCardAdmin extends Component {
                 		<div className="form-group text-left">
                     		<h6>Department<sup>*</sup></h6>
                     		<input type="text" className="form-control" placeholder="Department" name="department" value={this.state.course.department} onChange={this.handleInputChange} required={true} disabled/>
-                		</div>
-						<div className="form-group text-left">
-                    		<h6>Graduating Year<sup>*</sup></h6>
-							<select name="graduatingYearOfStudents" className="form-control" value={this.state.course.graduatingYearOfStudents} onChange = {this.handleInputChange} required>
-								<option value="" selected disabled hidden>Select Graduating Year</option>
-								<option>2020</option>
-								<option>2021</option>                            
-								<option>2022</option>
-								<option>2023</option>
-							</select>                    		
                 		</div>
 						<div className="form-group text-left">
                     		<h6>Classes<sup>*</sup></h6>
