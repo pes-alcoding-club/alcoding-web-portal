@@ -33,6 +33,10 @@ const CourseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  graduatingYearOfStudents: {
+    type: Number,
+    required: true
+  },
   description: {
     type: String, 
   },

@@ -133,6 +133,7 @@ module.exports = (app) => {
             newCourse.code = courseRequest.code;
             newCourse.name = courseRequest.name;
             newCourse.department = courseRequest.department;
+            newCourse.graduatingYearOfStudents = classDetailsObject.graduatingYearOfStudents;
             classDetailsObject.class.teachingMembers.forEach(teacher => {
                 newCourse.class.teachingMembers.push(teacher);
             })

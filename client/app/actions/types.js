@@ -3,3 +3,7 @@ export const SET_DETAILS = 'SET_DETAILS';
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const LOGOUT_USER = 'LOGOUT_USER';
+export const FETCHED_PROFS = 'FETCHED_PROFS';
+export const FETCHED_STUDENTS = 'FETCHED_STUDENTS';
+export const CLEARED_PROFS = 'CLEARED_PROFS';
+export const CLEARED_STUDENTS = 'CLEARED_STUDENTS';

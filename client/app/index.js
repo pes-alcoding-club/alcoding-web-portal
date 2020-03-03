@@ -18,7 +18,7 @@ import Profile from '../app/components/Pages/Profile';
 import PublicProfile from '../app/components/Pages/Profile/PublicProfile';
 import Assignments from '../app/components/Pages/Assignments';
 import Contests from '../app/components/Pages/Contests';
-import Courses from '../app/components/Pages/Courses';
+import CoursesContainer from '../app/components/Pages/Courses/CoursesContainer';
 import NotFound from './components/App/NotFound';
 import SignupForm from '../app/components/Admin/SignupForm';
 import AssignmentAdd from '../app/components/Pages/Courses/AddAssignment'
@@ -30,7 +30,8 @@ import downloadFile from './components/Pages/Assignments/downloadFile';
 import zipFiles from './components/Pages/Assignments/zipFiles';
 import updateHandle from './components/Pages/Profile/UpdateHandle';
 import contribute from './components/Pages/Contribute';
-import ReactLoading from './components/common/Loading'
+import ReactLoading from './components/common/Loading';
+import Signup from './components/Signup/Signup'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -57,7 +58,7 @@ render((
 
               <PrivateRoute exact path="/contests" component={Contests} />
 
-              <PrivateRoute exact path="/courses" component={Courses} />
+              <PrivateRoute exact path="/courses" component={CoursesContainer} />
 
               <PrivateRoute exact path="/profile" component={Profile} />
 
@@ -76,6 +77,8 @@ render((
               <Route exact path="/contribute" component={contribute} />
 
               <Route exact path="/forgotpassword" component={ForgotPassword} />
+
+              <Route exact path="/signup" component={Signup} />
 
               <Route exact path="/reset/:token/:userID" component={ChangePassword} />
 
